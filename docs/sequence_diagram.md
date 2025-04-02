@@ -31,7 +31,7 @@
 - 사용자 ID를 이용해 사용자의 보유 쿠폰 목록 조회
 
 ### 6️⃣ 주문
-![Image](https://github.com/user-attachments/assets/a39a4444-f2e4-46da-af21-893029dcfede)
+![Image](https://github.com/user-attachments/assets/241dd0c9-b41f-44b7-a477-ed749bdf7b86)
 
 - 사용자 ID, 적용할 쿠폰 ID, 주문할 상품(상품 ID, 수량)의 목록을 입력받아 주문
 - 재고가 부족한 상품이 있는 경우 주문 실패
