@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.api.coupon;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import kr.hhplus.be.server.api.coupon.api.CouponApi;
 import kr.hhplus.be.server.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.api.coupon.dto.response.CouponListResponse;
@@ -14,7 +16,7 @@ import java.util.List;
 public class CouponMockController implements CouponApi {
 
     @GetMapping("/api/v1/coupons")
-    public ApiResponse<CouponListResponse> getCoupons(@RequestParam Long userId) {
+    public ApiResponse<CouponListResponse> getCoupons(@Positive @RequestParam Long userId) {
         List<CouponResponse> coupons = List.of(
                 CouponResponse.builder()
                         .id(2L)
@@ -43,7 +45,7 @@ public class CouponMockController implements CouponApi {
     }
 
     @PostMapping("/api/v1/coupons/issue")
-    public ApiResponse<List<?>> issueCoupon(@RequestBody CouponIssueRequest request) {
+    public ApiResponse<List<?>> issueCoupon(@Valid @RequestBody CouponIssueRequest request) {
         return ApiResponse.successWithCreated(List.of());
     }
 }

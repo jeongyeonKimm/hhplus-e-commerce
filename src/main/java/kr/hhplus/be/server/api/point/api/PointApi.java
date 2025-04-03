@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import kr.hhplus.be.server.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.api.point.dto.request.PointUseRequest;
 import kr.hhplus.be.server.api.point.dto.response.PointResponse;
@@ -69,7 +71,7 @@ public interface PointApi {
                     )
             )
     })
-    ApiResponse<PointResponse> chargePoint(@RequestBody PointChargeRequest request);
+    ApiResponse<PointResponse> chargePoint(@Valid @RequestBody PointChargeRequest request);
 
     @Operation(summary = "포인트 조회", description = "포인트 조회 API")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -96,7 +98,7 @@ public interface PointApi {
                     })
     )
     @Parameter(name = "userId", description = "사용자 ID")
-    ApiResponse<PointResponse> getPoint(@RequestParam Long userId);
+    ApiResponse<PointResponse> getPoint(@Positive @RequestParam Long userId);
 
     @Operation(summary = "포인트 사용(결제)", description = "포인트 사용(결제) API")
     @ApiResponses(value = {
@@ -134,5 +136,5 @@ public interface PointApi {
                     )
             )
     })
-    ApiResponse<PointResponse> usePoint(@RequestBody PointUseRequest request);
+    ApiResponse<PointResponse> usePoint(@Valid @RequestBody PointUseRequest request);
 }

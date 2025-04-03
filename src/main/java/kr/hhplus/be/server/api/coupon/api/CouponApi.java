@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import kr.hhplus.be.server.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.api.coupon.dto.response.CouponListResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
@@ -56,7 +58,7 @@ public interface CouponApi {
                             )
                     })
     )
-    ApiResponse<CouponListResponse> getCoupons(@RequestParam Long userId);
+    ApiResponse<CouponListResponse> getCoupons(@Positive @RequestParam Long userId);
 
     @Operation(summary = "주문", description = "주문 API")
     @ApiResponses(value = {
@@ -110,5 +112,5 @@ public interface CouponApi {
                     )
             )
     })
-    ApiResponse<List<?>> issueCoupon(@RequestBody CouponIssueRequest request);
+    ApiResponse<List<?>> issueCoupon(@Valid  @RequestBody CouponIssueRequest request);
 }

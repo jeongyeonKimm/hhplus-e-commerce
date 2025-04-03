@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.order;
 
+import jakarta.validation.Valid;
 import kr.hhplus.be.server.api.order.api.OrderApi;
 import kr.hhplus.be.server.api.order.dto.request.OrderRequest;
 import kr.hhplus.be.server.api.order.dto.response.OrderResponse;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderMockController implements OrderApi {
 
     @PostMapping("/api/v1/orders")
-    public ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest request) {
+    public ApiResponse<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
         OrderResponse response = OrderResponse.builder()
                 .orderId(10L)
                 .build();

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kr.hhplus.be.server.api.order.dto.request.OrderRequest;
 import kr.hhplus.be.server.api.order.dto.response.OrderResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
@@ -85,5 +86,5 @@ public interface OrderApi {
                     )
             )
     })
-    ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest request);
+    ApiResponse<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request);
 }

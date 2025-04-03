@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.order.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 
 import java.util.List;
@@ -9,9 +10,11 @@ import java.util.List;
 @Getter
 public class OrderRequest {
 
+    @Positive
     @Schema(description = "사용자 ID")
     private Long userId;
 
+    @Positive
     @Schema(description = "사용자 쿠폰 ID")
     private Long userCouponId;
 
