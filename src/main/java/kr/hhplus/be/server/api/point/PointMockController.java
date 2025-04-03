@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.point;
 
+import kr.hhplus.be.server.api.point.api.PointApi;
 import kr.hhplus.be.server.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.api.point.dto.request.PointUseRequest;
 import kr.hhplus.be.server.api.point.dto.response.PointResponse;
@@ -7,7 +8,7 @@ import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class PointMockController {
+public class PointMockController implements PointApi {
 
     @PostMapping("/api/v1/points/charge")
     public ApiResponse<PointResponse> chargePoint(@RequestBody PointChargeRequest request) {

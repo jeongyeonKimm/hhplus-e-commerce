@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.coupon;
 
+import kr.hhplus.be.server.api.coupon.api.CouponApi;
 import kr.hhplus.be.server.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.api.coupon.dto.response.CouponListResponse;
 import kr.hhplus.be.server.api.coupon.dto.response.CouponResponse;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-public class CouponMockController {
+public class CouponMockController implements CouponApi {
 
     @GetMapping("/api/v1/coupons")
     public ApiResponse<CouponListResponse> getCoupons(@RequestParam Long userId) {

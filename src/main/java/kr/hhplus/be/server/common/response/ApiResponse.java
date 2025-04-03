@@ -1,11 +1,13 @@
 package kr.hhplus.be.server.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
 
+@Schema(description = "공통 응답 포맷")
 @Getter
 public class ApiResponse<T> {
 

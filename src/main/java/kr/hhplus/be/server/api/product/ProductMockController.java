@@ -1,17 +1,17 @@
 package kr.hhplus.be.server.api.product;
 
+import kr.hhplus.be.server.api.product.api.ProductApi;
 import kr.hhplus.be.server.api.product.dto.response.BestProductResponse;
 import kr.hhplus.be.server.api.product.dto.response.ProductListResponse;
 import kr.hhplus.be.server.api.product.dto.response.ProductResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-public class ProductMockController {
+public class ProductMockController implements ProductApi {
 
     @GetMapping("/api/v1/products")
     public ApiResponse<ProductListResponse<ProductResponse>> getProducts() {
@@ -36,6 +36,7 @@ public class ProductMockController {
 
         return ApiResponse.success(result);
     }
+
 
     @GetMapping("/api/v1/products/best")
     public ApiResponse<ProductListResponse<BestProductResponse>> getBestProducts() {

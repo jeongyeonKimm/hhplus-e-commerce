@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.api.order.dto.request;
 
-public class OrderItemRequest {
+public class OrderProductRequest {
 
     private Long productId;
     private Integer quantity;
