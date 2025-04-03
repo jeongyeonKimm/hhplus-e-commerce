@@ -3,6 +3,7 @@ package kr.hhplus.be.server.api.point.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import lombok.Getter;
 
 @Schema(description = "포인트 충전 요청 DTO")
@@ -18,4 +19,9 @@ public class PointChargeRequest {
     @Schema(description = "충전 금액")
     private Integer chargeAmount;
 
+    @Builder
+    private PointChargeRequest(Long userId, Integer chargeAmount) {
+        this.userId = userId;
+        this.chargeAmount = chargeAmount;
+    }
 }
