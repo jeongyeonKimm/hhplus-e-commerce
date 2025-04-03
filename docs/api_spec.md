@@ -326,13 +326,13 @@
 
 **Body**
 
-|          필드명           | 데이터 타입 |               설명                |  필수여부  | 유효성 검사                    |
-|:----------------------:|:------:|:-------------------------------:|:------:|:--------------------------|
-|        `userId`        | Number |       주문을 생성한 사용자의 고유 ID        | **필수** | 양의 정수                     | 
-|     `userCouponId`     | Number | 사용자가 적용한 쿠폰 ID (없으면 null 또는 생략) | **선택** | 양의 정수                     |
-|      `orderItems`      | Array  |      주문 항목 (상품 ID와 수량의 배열)      | **필수** | 최소 1개 이상의 항목이 있어야 함       |
-| `orderItems.productId` | Number |              상품 ID              | **필수** | 양의 정수                     |
-| `orderItems.quantity`  | Number |            상품 주문 수량             | **필수** | 양의 정수 (최소 1개 이상의 수량이어야 함) |
+|          필드명          | 데이터 타입 |               설명                |  필수여부  | 유효성 검사                    |
+|:---------------------:|:------:|:-------------------------------:|:------:|:--------------------------|
+|       `userId`        | Number |       주문을 생성한 사용자의 고유 ID        | **필수** | 양의 정수                     | 
+|    `userCouponId`     | Number | 사용자가 적용한 쿠폰 ID (없으면 null 또는 생략) | **선택** | 양의 정수                     |
+|    `orderProducts`    | Array  |      주문 항목 (상품 ID와 수량의 배열)      | **필수** | 최소 1개 이상의 항목이 있어야 함       |
+|  `orderProducts.productId`   | Number |              상품 ID              | **필수** | 양의 정수                     |
+| `orderProducts.quantity` | Number |            상품 주문 수량             | **필수** | 양의 정수 (최소 1개 이상의 수량이어야 함) |
 
 
 <details markdown="1">
@@ -535,7 +535,7 @@
 ### Response
 
 <details markdown="1">
-<summary>200 OK : 쿠폰 발급을 받은 경우</summary>
+<summary>201 Created : 쿠폰 발급을 받은 경우</summary>
 
 ```json
 {
