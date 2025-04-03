@@ -56,7 +56,7 @@
 ```json
 {
   "code": 200,
-  "message": "요칭이 정상적으로 처리되었습니다.",
+  "message": "요청이 정상적으로 처리되었습니다.",
   "data": {
     "userId": 1,
     "balance": 1000000
@@ -285,22 +285,24 @@
 {
   "code": 200,
   "message": "요청이 정상적으로 처리되었습니다.",
-  "data": [
-    {
-      "id": 1,
-      "name": "ice americano",
-      "price": 1000,
-      "sales": 100,
-      "stock": 100
-    },
-    {
-      "id": 2,
-      "name": "iPhone 12",
-      "price": 1200000,
-      "sales": 90,
-      "stock": 100
-    }
-  ]
+  "data": {
+    "products": [
+      {
+        "id": 1,
+        "name": "ice americano",
+        "price": 1000,
+        "sales": 100,
+        "stock": 100
+      },
+      {
+        "id": 2,
+        "name": "iPhone 12",
+        "price": 1200000,
+        "sales": 90,
+        "stock": 100
+      }
+    ]
+  }
 }
 ```
 
@@ -538,7 +540,6 @@
 ```json
 {
   "code": 201,
-  "status": "Created",
   "message": "요청이 정상적으로 처리되었습니다.",
   "data": {}
 }
