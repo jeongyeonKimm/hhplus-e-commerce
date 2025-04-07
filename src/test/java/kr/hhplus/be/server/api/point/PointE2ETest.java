@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.api.point;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kr.hhplus.be.server.api.point.dto.request.PointChargeRequest;
-import kr.hhplus.be.server.api.point.dto.request.PointUseRequest;
-import kr.hhplus.be.server.api.point.dto.response.PointResponse;
+import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
+import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
+import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
