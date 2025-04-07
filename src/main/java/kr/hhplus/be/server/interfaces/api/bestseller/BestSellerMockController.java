@@ -1,16 +1,15 @@
 package kr.hhplus.be.server.interfaces.api.bestseller;
 
-import kr.hhplus.be.server.interfaces.api.bestseller.api.BestSellerApi;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.bestseller.dto.response.BestProductListResponse;
 import kr.hhplus.be.server.interfaces.api.bestseller.dto.response.BestProductResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-public class BestSellerMockController implements BestSellerApi {
+public class BestSellerMockController implements BestSellerSpec {
 
     @GetMapping("/api/v1/products/best")
     public ApiResponse<BestProductListResponse<BestProductResponse>> getBestProducts() {

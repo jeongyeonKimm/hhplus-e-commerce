@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.interfaces.api.coupon.api;
+package kr.hhplus.be.server.interfaces.api.coupon;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,16 +7,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponListResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @Tag(name = "Coupon", description = "Coupon API")
-public interface CouponApi {
+public interface CouponSpec {
 
     @Operation(summary = "주문", description = "주문 API")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(

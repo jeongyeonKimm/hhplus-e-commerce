@@ -2,18 +2,17 @@ package kr.hhplus.be.server.interfaces.api.coupon;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import kr.hhplus.be.server.interfaces.api.coupon.api.CouponApi;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponListResponse;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-public class CouponMockController implements CouponApi {
+public class CouponMockController implements CouponSpec {
 
     @GetMapping("/api/v1/coupons")
     public ApiResponse<CouponListResponse> getCoupons(@Positive @RequestParam Long userId) {

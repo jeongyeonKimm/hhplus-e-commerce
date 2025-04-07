@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.interfaces.api.order.api;
+package kr.hhplus.be.server.interfaces.api.order;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -6,13 +6,13 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.order.dto.request.OrderRequest;
 import kr.hhplus.be.server.interfaces.api.order.dto.response.OrderResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Order", description = "Order API")
-public interface OrderApi {
+public interface OrderSpec {
 
     @Operation(summary = "주문", description = "주문 API")
     @ApiResponses(value = {

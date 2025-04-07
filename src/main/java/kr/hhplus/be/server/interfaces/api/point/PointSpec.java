@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.interfaces.api.point.api;
+package kr.hhplus.be.server.interfaces.api.point;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,15 +8,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Point", description = "Point API")
-public interface PointApi {
+public interface PointSpec {
 
     @Operation(summary = "포인트 충전", description = "포인트 충전 API")
     @ApiResponses(value = {

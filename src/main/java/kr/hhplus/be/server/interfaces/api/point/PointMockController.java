@@ -2,15 +2,14 @@ package kr.hhplus.be.server.interfaces.api.point;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import kr.hhplus.be.server.interfaces.api.point.api.PointApi;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class PointMockController implements PointApi {
+public class PointMockController implements PointSpec {
 
     @PostMapping("/api/v1/points/charge")
     public ApiResponse<PointResponse> chargePoint(@Valid @RequestBody PointChargeRequest request) {
