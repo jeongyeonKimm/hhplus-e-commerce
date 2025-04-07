@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.api.product;
 
 import kr.hhplus.be.server.api.product.api.ProductApi;
-import kr.hhplus.be.server.api.product.dto.response.BestProductResponse;
 import kr.hhplus.be.server.api.product.dto.response.ProductListResponse;
 import kr.hhplus.be.server.api.product.dto.response.ProductResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
@@ -37,30 +36,4 @@ public class ProductMockController implements ProductApi {
         return ApiResponse.success(result);
     }
 
-
-    @GetMapping("/api/v1/products/best")
-    public ApiResponse<ProductListResponse<BestProductResponse>> getBestProducts() {
-        List<BestProductResponse> bestProducts = List.of(
-                BestProductResponse.builder()
-                        .id(1L)
-                        .name("iPhone13")
-                        .price(1_000_000)
-                        .stock(50)
-                        .sales(200)
-                        .build(),
-                BestProductResponse.builder()
-                        .id(1L)
-                        .name("iPhone13")
-                        .price(1_000_000)
-                        .stock(50)
-                        .sales(100)
-                        .build()
-        );
-
-        ProductListResponse<BestProductResponse> result = ProductListResponse.<BestProductResponse>builder()
-                .products(bestProducts)
-                .build();
-
-        return ApiResponse.success(result);
-    }
 }
