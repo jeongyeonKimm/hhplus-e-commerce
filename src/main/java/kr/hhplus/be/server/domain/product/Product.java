@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.product;
 
+import kr.hhplus.be.server.domain.product.dto.ProductResult;
 import lombok.Builder;
 import lombok.Getter;
 

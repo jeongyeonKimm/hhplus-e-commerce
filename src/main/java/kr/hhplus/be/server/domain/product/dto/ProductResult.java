@@ -2,7 +2,9 @@ package kr.hhplus.be.server.domain.product.dto;
 
 import kr.hhplus.be.server.domain.product.Product;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class ProductResult {
 
     private Long id;
