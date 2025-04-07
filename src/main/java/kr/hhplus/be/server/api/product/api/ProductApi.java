@@ -15,36 +15,7 @@ public interface ProductApi {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "상품이 조회됨",
-            content = @Content(
-                    mediaType = "application/json",
-                    examples = {
-                            @ExampleObject(
-                                    name = "상품이 조회됨",
-                                    summary = "상품이 조회됨",
-                                    value = """
-                                            {
-                                              "code": 200,
-                                              "message": "요청이 정상적으로 처리되었습니다.",
-                                              "data": {
-                                                "products": [
-                                                  {
-                                                    "id": 1,
-                                                    "name": "Macbook Pro",
-                                                    "price": 2000000,
-                                                    "stock": 10
-                                                  },
-                                                  {
-                                                    "id": 2,
-                                                    "name": "iPhone 12",
-                                                    "price": 1200000,
-                                                    "stock": 20
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                            """
-                            )
-                    })
+            content = @Content(mediaType = "application/json")
     )
     ApiResponse<ProductListResponse<ProductResponse>> getProducts();
 }

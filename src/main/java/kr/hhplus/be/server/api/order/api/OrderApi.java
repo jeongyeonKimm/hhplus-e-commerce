@@ -19,23 +19,7 @@ public interface OrderApi {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "201",
                     description = "성공적으로 주문됨",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "성공적으로 주문됨",
-                                            summary = "성공적으로 주문됨",
-                                            value = """
-                                                    {
-                                                       "code": 201,
-                                                       "message": "요청이 정상적으로 처리되었습니다.",
-                                                       "data": {
-                                                         "orderId": 1
-                                                       }
-                                                    }
-                                                    """
-                                    )
-                            })
+                    content = @Content(mediaType = "application/json")
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "409",

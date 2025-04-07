@@ -23,24 +23,7 @@ public interface PointApi {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
                     description = "성공적으로 충전됨",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "정상적으로 충전됨",
-                                            summary = "정상적으로 충전됨",
-                                            value = """
-                                                    {
-                                                      "code": 200,
-                                                      "message": "요칭이 정상적으로 처리되었습니다.",
-                                                      "data": {
-                                                        "userId": 1,
-                                                        "balance": 1000000
-                                                      }
-                                                    }
-                                                    """
-                                    )
-                            })
+                    content = @Content(mediaType = "application/json")
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "409",
@@ -77,25 +60,7 @@ public interface PointApi {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "포인트 조회됨",
-            content = @Content(
-                    mediaType = "application/json",
-                    examples = {
-                            @ExampleObject(
-                                    name = "포인트 조회됨",
-                                    summary = "포인트 조회됨",
-                                    value = """
-                                            {
-                                              "code": 200,
-                                              "message": "요청이 정상적으로 처리되었습니다.",
-                                              "data": {
-                                                "userId": 1,
-                                                "balance": 1000000
-                                              }
-                                            }
-                                                                                
-                                            """
-                            )
-                    })
+            content = @Content(mediaType = "application/json")
     )
     @Parameter(name = "userId", description = "사용자 ID")
     ApiResponse<PointResponse> getPoint(@Positive @RequestParam Long userId);

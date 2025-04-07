@@ -22,41 +22,7 @@ public interface CouponApi {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "성공적으로 조회됨",
-            content = @Content(
-                    mediaType = "application/json",
-                    examples = {
-                            @ExampleObject(
-                                    name = "성공적으로 조회됨",
-                                    summary = "성공적으로 조회됨",
-                                    value = """
-                                            {
-                                               "code": 200,
-                                               "message": "요청이 정상적으로 처리되었습니다.",
-                                               "data": {
-                                                 "userId": 1,
-                                                 "coupons": [
-                                                   {
-                                                     "id": 1,
-                                                     "title": "10% 할인 쿠폰",
-                                                     "discountType": "RATE",
-                                                     "discountValue": 10,
-                                                     "startDate": "2025-08-01",
-                                                     "endDate": "2025-08-31"
-                                                   },
-                                                   {
-                                                     "id": 2,
-                                                     "title": "10,000원 할인 쿠폰",
-                                                     "discountType": "AMOUNT",
-                                                     "discountValue": 10000,
-                                                     "startDate": "2025-08-01",
-                                                     "endDate": "2025-08-31"
-                                                   }
-                                                 ]
-                                               }
-                                             }
-                                            """
-                            )
-                    })
+            content = @Content(mediaType = "application/json")
     )
     ApiResponse<CouponListResponse> getCoupons(@Positive @RequestParam Long userId);
 
@@ -65,23 +31,7 @@ public interface CouponApi {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
                     description = "성공적으로 발급됨",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "성공적으로 발급됨",
-                                            summary = "성공적으로 발급됨",
-                                            value = """
-                                                    {
-                                                       "code": 200,
-                                                       "message": "요청이 정상적으로 처리되었습니다.",
-                                                       "data": {
-                                                         "orderId": 1
-                                                       }
-                                                    }
-                                                    """
-                                    )
-                            })
+                    content = @Content(mediaType = "application/json")
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "409",
