@@ -4,17 +4,17 @@ import kr.hhplus.be.server.domain.point.Point;
 import lombok.Getter;
 
 @Getter
-public class GetPointResult {
+public class PointResult {
 
     private Long userId;
     private Integer balance;
 
-    public GetPointResult(Long userId, Integer balance) {
+    public PointResult(Long userId, Integer balance) {
         this.userId = userId;
         this.balance = balance;
     }
 
-    public static GetPointResult from(Point point) {
-        return new GetPointResult(point.getUserId(), point.getBalance());
+    public static PointResult from(Point point) {
+        return new PointResult(point.getUserId(), point.getBalance());
     }
 }

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.interfaces.api.point.dto.response;
 
-import kr.hhplus.be.server.application.point.dto.result.ChargePointResult;
-import kr.hhplus.be.server.application.point.dto.result.GetPointResult;
+import kr.hhplus.be.server.application.point.dto.result.PointResult;
 import lombok.Getter;
 
 @Getter
@@ -15,11 +14,7 @@ public class PointResponse {
         this.balance = balance;
     }
 
-    public static PointResponse from(ChargePointResult result) {
-        return new PointResponse(result.getUserId(), result.getBalance());
-    }
-
-    public static PointResponse from(GetPointResult result) {
+    public static PointResponse from(PointResult result) {
         return new PointResponse(result.getUserId(), result.getBalance());
     }
 }
