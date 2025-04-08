@@ -4,6 +4,7 @@ import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.common.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PointTest {
 
     @DisplayName("충전하려는 금액이 0 이하이면 InvalidChargeAmountException이 발생한다.")
-    @Test
+    @ParameterizedTest
     @ValueSource(ints = {0, -1000})
     void charge_shouldThrowInvalidChargeAmountException_whenChargeAmountIsZeroOrNegative(Integer chargeAmount) {
         Point point = Point.builder()
@@ -27,7 +28,7 @@ class PointTest {
     }
 
     @DisplayName("충전하려는 금액이 1,000,000을 초과하면 InvalidChargeAmountException이 발생한다.")
-    @Test
+    @ParameterizedTest
     @ValueSource(ints = {1_000_001, 2_000_000})
     void charge_shouldThrowInvalidChargeAmountException_whenChargeAmountIsExceeded(Integer chargeAmount) {
         Point point = Point.builder()
