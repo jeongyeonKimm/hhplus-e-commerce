@@ -4,6 +4,8 @@ import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 import static kr.hhplus.be.server.common.exception.ErrorCode.CHARGE_AMOUNT_EXCEEDS_LIMIT;
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_CHARGE_AMOUNT;
 
@@ -16,12 +18,16 @@ public class Point {
     private Long id;
     private Long userId;
     private Integer balance;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Builder
     private Point(Long id, Long userId, Integer balance) {
         this.id = id;
         this.userId = userId;
         this.balance = balance;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public static Point create(Long id, Long userId, Integer balance) {
