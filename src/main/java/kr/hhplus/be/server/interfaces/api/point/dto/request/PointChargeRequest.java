@@ -3,6 +3,7 @@ package kr.hhplus.be.server.interfaces.api.point.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
+import kr.hhplus.be.server.application.point.dto.ChargePointCommand;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -23,5 +24,12 @@ public class PointChargeRequest {
     private PointChargeRequest(Long userId, Integer chargeAmount) {
         this.userId = userId;
         this.chargeAmount = chargeAmount;
+    }
+
+    public ChargePointCommand toChargeCommand() {
+        return ChargePointCommand.builder()
+                .userId(userId)
+                .chargeAmount(chargeAmount)
+                .build();
     }
 }
