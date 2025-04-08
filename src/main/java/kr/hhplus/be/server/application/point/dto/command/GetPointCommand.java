@@ -6,4 +6,12 @@ import lombok.Getter;
 public class GetPointCommand {
 
     private Long userId;
+
+    public GetPointCommand(Long userId) {
+        this.userId = userId;
+    }
+
+    public static GetPointCommand of(Long userId) {
+        return new GetPointCommand(userId);
+    }
 }
