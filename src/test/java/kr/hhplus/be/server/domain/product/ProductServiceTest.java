@@ -22,7 +22,7 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
-    @DisplayName("")
+    @DisplayName("전체 상품 목록을 조회한다.")
     @Test
     void getProduct() {
         List<Product> products = List.of(
