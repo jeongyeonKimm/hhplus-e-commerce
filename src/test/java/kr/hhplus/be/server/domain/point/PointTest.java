@@ -72,12 +72,10 @@ class PointTest {
                 .balance(initialAmount)
                 .build();
 
-        Point chargedPoint = point.charge(chargeAmount);
+        point.charge(chargeAmount);
 
         int expectedAmount = initialAmount + chargeAmount;
-        assertThat(chargedPoint)
-                .extracting("id", "userId", "balance")
-                .contains(1L, 2L, expectedAmount);
+        assertThat(point.getBalance()).isEqualTo(expectedAmount);
     }
 
 }

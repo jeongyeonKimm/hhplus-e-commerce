@@ -2,10 +2,12 @@ package kr.hhplus.be.server.domain.point;
 
 import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.Builder;
+import lombok.Getter;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.CHARGE_AMOUNT_EXCEEDS_LIMIT;
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_CHARGE_AMOUNT;
 
+@Getter
 public class Point {
 
     private static final int MAX_TOTAL_CHARGE_AMOUNT = 5_000_000;
@@ -22,7 +24,7 @@ public class Point {
         this.balance = balance;
     }
 
-    public Point charge(int amount) {
+    public void charge(int amount) {
         if (amount <= 0) {
             throw new ApiException(INVALID_CHARGE_AMOUNT);
         }
@@ -36,6 +38,6 @@ public class Point {
             throw new ApiException(CHARGE_AMOUNT_EXCEEDS_LIMIT);
         }
 
-        return new Point(id, userId, newAmount);
+        this.balance += amount;
     }
 }
