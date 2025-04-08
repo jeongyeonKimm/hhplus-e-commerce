@@ -15,7 +15,7 @@ public class PointService {
                 .orElseGet(() -> Point.create(generateId(), userId, 0));
 
         point.charge(amount);
-        return pointRepository.save();
+        return pointRepository.save(point);
     }
 
     private Long generateId() {
