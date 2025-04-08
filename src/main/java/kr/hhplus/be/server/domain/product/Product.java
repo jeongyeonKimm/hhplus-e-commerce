@@ -20,4 +20,8 @@ public class Product {
         this.price = price;
         this.stock = stock;
     }
+
+    public static Product create(Long id, String name, String description, Integer price, Integer stock) {
+        return new Product(id, name, description.getBytes(), price, stock);
+    }
 }

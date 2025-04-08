@@ -26,20 +26,8 @@ class ProductServiceTest {
     @Test
     void getProduct() {
         List<Product> products = List.of(
-                Product.builder()
-                        .id(1L)
-                        .name("iPhone 13")
-                        .description("Apple iPhone 13".getBytes())
-                        .price(1_000_000)
-                        .stock(100)
-                        .build(),
-                Product.builder()
-                        .id(2L)
-                        .name("iPad Gen5")
-                        .description("Apple iPad Gen5".getBytes())
-                        .price(1_500_000)
-                        .stock(200)
-                        .build()
+                Product.create(1L, "iPhone 13", "Apple iPhone 13", 1_000_000, 100),
+                Product.create(2L, "iPad Gen5", "Apple iPad Gen5", 1_500_000, 200)
         );
 
         given(productRepository.findAll()).willReturn(products);

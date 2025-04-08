@@ -16,11 +16,7 @@ class PointTest {
     @ParameterizedTest
     @ValueSource(ints = {0, -1000})
     void charge_shouldThrowInvalidChargeAmountException_whenChargeAmountIsZeroOrNegative(Integer chargeAmount) {
-        Point point = Point.builder()
-                .id(1L)
-                .userId(2L)
-                .balance(1000)
-                .build();
+        Point point = Point.create(1L, 2L, 1000);
 
         assertThatThrownBy(() -> point.charge(chargeAmount))
                 .isInstanceOf(ApiException.class)
@@ -31,11 +27,7 @@ class PointTest {
     @ParameterizedTest
     @ValueSource(ints = {1_000_001, 2_000_000})
     void charge_shouldThrowInvalidChargeAmountException_whenChargeAmountIsExceeded(Integer chargeAmount) {
-        Point point = Point.builder()
-                .id(1L)
-                .userId(2L)
-                .balance(1000)
-                .build();
+        Point point = Point.create(1L, 2L, 1000);
 
         assertThatThrownBy(() -> point.charge(chargeAmount))
                 .isInstanceOf(ApiException.class)
@@ -49,11 +41,7 @@ class PointTest {
         int initialAmount = 4_500_000;
         int chargeAmount = 600_000;
 
-        Point point = Point.builder()
-                .id(1L)
-                .userId(2L)
-                .balance(initialAmount)
-                .build();
+        Point point = Point.create(1L, 2L, initialAmount);
 
         assertThatThrownBy(() -> point.charge(chargeAmount))
                 .isInstanceOf(ApiException.class)
@@ -66,11 +54,7 @@ class PointTest {
         int initialAmount = 3_000_000;
         int chargeAmount = 500_000;
 
-        Point point = Point.builder()
-                .id(1L)
-                .userId(2L)
-                .balance(initialAmount)
-                .build();
+        Point point = Point.create(1L, 2L, initialAmount);
 
         point.charge(chargeAmount);
 
