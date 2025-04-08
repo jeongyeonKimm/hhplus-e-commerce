@@ -18,6 +18,11 @@ public class PointService {
         return pointRepository.save(point);
     }
 
+    public Point getPoint(Long userId) {
+        return pointRepository.findByUserId(userId)
+                .orElseGet(() -> Point.create(generateId(), userId, 0));
+    }
+
     private Long generateId() {
         return sequence++;
     }
