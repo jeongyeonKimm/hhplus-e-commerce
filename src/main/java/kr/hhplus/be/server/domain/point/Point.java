@@ -24,6 +24,10 @@ public class Point {
         this.balance = balance;
     }
 
+    public static Point create(Long id, Long userId, Integer balance) {
+        return new Point(id, userId, balance);
+    }
+
     public void charge(int amount) {
         if (amount <= 0) {
             throw new ApiException(INVALID_CHARGE_AMOUNT);
