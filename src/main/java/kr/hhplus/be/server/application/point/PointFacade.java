@@ -18,7 +18,7 @@ public class PointFacade {
     public ChargePointResult charge(ChargePointCommand command) {
         Point point = pointService.chargePoint(command.getUserId(), command.getChargeAmount());
 
-        pointHistoryService.savePointHistory(point.getId(), command.getChargeAmount(), point.getBalance());
+        pointHistoryService.saveChargeHistory(point.getId(), command.getChargeAmount(), point.getBalance());
 
         return ChargePointResult.builder()
                 .userId(point.getUserId())

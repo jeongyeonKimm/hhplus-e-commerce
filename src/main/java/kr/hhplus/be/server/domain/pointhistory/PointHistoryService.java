@@ -10,7 +10,7 @@ public class PointHistoryService {
     private final PointHistoryRepository pointHistoryRepository;
     private Long sequence = 1L;
 
-    public void savePointHistory(Long pointId, Integer amount, Integer balance) {
+    public void saveChargeHistory(Long pointId, Integer amount, Integer balance) {
         PointHistory history = PointHistory.charge(generateId(), pointId, amount, balance);
 
         pointHistoryRepository.save(history);
