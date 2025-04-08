@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.application.point;
 
-import kr.hhplus.be.server.application.point.dto.ChargePointCommand;
-import kr.hhplus.be.server.application.point.dto.ChargePointResult;
+import kr.hhplus.be.server.application.point.dto.command.ChargePointCommand;
+import kr.hhplus.be.server.application.point.dto.result.ChargePointResult;
+import kr.hhplus.be.server.application.point.dto.command.GetPointCommand;
+import kr.hhplus.be.server.application.point.dto.result.GetPointResult;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointService;
 import kr.hhplus.be.server.domain.pointhistory.PointHistoryService;
@@ -20,9 +22,12 @@ public class PointFacade {
 
         pointHistoryService.saveChargeHistory(point.getId(), command.getChargeAmount(), point.getBalance());
 
-        return ChargePointResult.builder()
-                .userId(point.getUserId())
-                .balance(point.getBalance())
-                .build();
+        return ChargePointResult.from(point);
+    }
+
+    public GetPointResult getPoint(GetPointCommand command) {
+        Point point = pointService.getPoint(command.getUserId());
+
+        return GetPointResult.from(point);
     }
 }

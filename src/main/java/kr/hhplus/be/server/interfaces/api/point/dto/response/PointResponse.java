@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.interfaces.api.point.dto.response;
 
-import kr.hhplus.be.server.application.point.dto.ChargePointResult;
+import kr.hhplus.be.server.application.point.dto.result.ChargePointResult;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -3,7 +3,7 @@ package kr.hhplus.be.server.interfaces.api.point.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
-import kr.hhplus.be.server.application.point.dto.ChargePointCommand;
+import kr.hhplus.be.server.application.point.dto.command.ChargePointCommand;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -3,7 +3,7 @@ package kr.hhplus.be.server.interfaces.api.point;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import kr.hhplus.be.server.application.point.PointFacade;
-import kr.hhplus.be.server.application.point.dto.ChargePointResult;
+import kr.hhplus.be.server.application.point.dto.result.ChargePointResult;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
