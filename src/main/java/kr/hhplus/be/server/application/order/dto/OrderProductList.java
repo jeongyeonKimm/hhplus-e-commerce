@@ -9,8 +9,7 @@ import java.util.List;
 @Getter
 public class OrderProductList {
 
-    private List<OrderProductInfo> productInfos
-            ;
+    private List<OrderProductInfo> productInfos;
 
     private OrderProductList(List<OrderProductInfo> productInfos) {
         this.productInfos = productInfos;

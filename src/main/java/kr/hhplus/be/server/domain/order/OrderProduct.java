@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
+import kr.hhplus.be.server.application.external.dto.OrderProductData;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -29,5 +30,13 @@ public class OrderProduct {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public OrderProductData toData() {
+        return OrderProductData.builder()
+                .productId(productId)
+                .amount(amount)
+                .quantity(quantity)
+                .build();
     }
 }

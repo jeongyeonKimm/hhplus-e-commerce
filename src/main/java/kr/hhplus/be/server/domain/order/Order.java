@@ -28,4 +28,8 @@ public class Order {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void changeStatus(OrderStatus status) {
+        this.status = status;
+    }
 }

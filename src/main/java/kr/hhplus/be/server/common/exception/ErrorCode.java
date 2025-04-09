@@ -20,6 +20,8 @@ public enum ErrorCode {
     COUPON_DATE_EXPIRED("COUPON_DATE_EXPIRED", 409, "쿠폰이 만료되었습니다."),
     INVALID_COUPON("INVALID_COUPON", 404, "존재하지 않는 쿠폰입니다."),
 
+    INVALID_ORDER("INVALID_ORDER", 404, "유효하지 않은 주문입니다."),
+
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", 500, "서버 내부 오류입니다.");
 
     private final String code;
