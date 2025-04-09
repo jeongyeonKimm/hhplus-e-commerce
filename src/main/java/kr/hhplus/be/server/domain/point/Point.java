@@ -6,8 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.CHARGE_AMOUNT_EXCEEDS_LIMIT;
-import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_CHARGE_AMOUNT;
+import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Getter
 public class Point {
@@ -47,11 +46,19 @@ public class Point {
             throw new ApiException(INVALID_CHARGE_AMOUNT);
         }
 
-        int newAmount = balance + amount;
+        int newAmount = this.balance + amount;
         if (newAmount > MAX_TOTAL_CHARGE_AMOUNT) {
             throw new ApiException(CHARGE_AMOUNT_EXCEEDS_LIMIT);
         }
 
         this.balance += amount;
+    }
+
+    public void use(int amount) {
+        if (amount > balance) {
+            throw new ApiException(INVALID_USE_AMOUNT);
+        }
+
+        this.balance -= amount;
     }
 }

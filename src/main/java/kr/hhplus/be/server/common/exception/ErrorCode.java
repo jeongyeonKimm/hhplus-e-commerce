@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCode {
 
     INVALID_CHARGE_AMOUNT("INVALID_CHARGE_AMOUNT", 400, "유효하지 않은 충전 금액입니다."),
+    INVALID_USE_AMOUNT("INVALID_USE_AMOUNT", 400, "유효하지 않은 사용 금액입니다."),
     CHARGE_AMOUNT_EXCEEDS_LIMIT("CHARGE_AMOUNT_EXCEEDS_LIMIT", 400,"최대 누적 충전 금액을 초과하였습니다."),
 
     INSUFFICIENT_STOCK("INSUFFICIENT_STOCK", 400, "재고가 부족합니다."),
