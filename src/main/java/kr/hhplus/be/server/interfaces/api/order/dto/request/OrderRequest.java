@@ -3,9 +3,13 @@ package kr.hhplus.be.server.interfaces.api.order.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
+import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
+import kr.hhplus.be.server.application.order.dto.OrderProductList;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Schema(description = "주문 요청 DTO")
@@ -29,5 +33,20 @@ public class OrderRequest {
         this.userId = userId;
         this.userCouponId = userCouponId;
         this.orderProducts = orderProducts;
+    }
+
+    public OrderCreateCommand toOrderCreateCommand() {
+        List<OrderProductInfo> infos = new ArrayList<>();
+        for (OrderProductRequest request : orderProducts) {
+            infos.add(request.toOrderProductInfo());
+        }
+
+        OrderProductList orderProductList = OrderProductList.create(infos);
+
+        return OrderCreateCommand.builder()
+                .userId(userId)
+                .userCouponId(userCouponId)
+                .orderProducts(orderProductList)
+                .build();
     }
 }
