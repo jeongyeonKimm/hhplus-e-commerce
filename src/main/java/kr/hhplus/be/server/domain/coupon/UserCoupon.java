@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.ALREADY_USED_COUPON;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_COUPON_DATE;
 
 public class UserCoupon {
 
@@ -20,8 +21,13 @@ public class UserCoupon {
     private LocalDateTime updatedAt;
 
     public void redeem() {
-        if (isUsed) {
+        if (this.isUsed) {
             throw new ApiException(ALREADY_USED_COUPON);
+        }
+
+        if (this.expiredAt.isBefore(LocalDate.now()) ||
+                this.issuedAt.isAfter(LocalDate.now())) {
+            throw new ApiException(INVALID_COUPON_DATE);
         }
 
         this.isUsed = true;

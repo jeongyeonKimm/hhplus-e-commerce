@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     INVALID_COUPON("INVALID_COUPON", 404, "유효하지 않은 쿠폰입니다."),
     ALREADY_USED_COUPON("ALREADY_USED_COUPON", 409, "이미 사용된 쿠폰입니다."),
+    INVALID_COUPON_DATE("INVALID_COUPON_DATE", 409, "쿠폰을 사용할 수 없는 기간입니다."),
 
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", 500, "서버 내부 오류입니다.");
 
