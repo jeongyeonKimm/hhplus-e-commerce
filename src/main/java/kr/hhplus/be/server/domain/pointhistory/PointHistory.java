@@ -19,4 +19,8 @@ public class PointHistory {
     public static PointHistory charge(Long id, Long pointId, Integer amount, Integer balance) {
         return new PointHistory(id, pointId, amount, balance, TransactionType.CHARGE);
     }
+
+    public static PointHistory use(Long id, Long pointId, Integer amount, Integer balance) {
+        return new PointHistory(id, pointId, amount, balance, TransactionType.USE);
+    }
 }

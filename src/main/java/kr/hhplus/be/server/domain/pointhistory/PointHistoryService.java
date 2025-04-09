@@ -16,6 +16,12 @@ public class PointHistoryService {
         pointHistoryRepository.save(history);
     }
 
+    public void saveUseHistory(Long pointId, Integer amount, Integer balance) {
+        PointHistory history = PointHistory.use(generateId(), pointId, amount, balance);
+
+        pointHistoryRepository.save(history);
+    }
+
     private Long generateId() {
         return sequence++;
     }
