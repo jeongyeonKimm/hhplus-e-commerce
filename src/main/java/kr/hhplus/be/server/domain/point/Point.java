@@ -55,6 +55,10 @@ public class Point {
     }
 
     public void use(int amount) {
+        if (amount <= 0) {
+            throw new ApiException(INVALID_USE_AMOUNT);
+        }
+
         if (amount > balance) {
             throw new ApiException(INVALID_USE_AMOUNT);
         }
