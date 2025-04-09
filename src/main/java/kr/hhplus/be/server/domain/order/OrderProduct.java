@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.domain.order;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class OrderProduct {
 
     private Long id;

@@ -14,21 +14,22 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
-    public void redeemCoupon(Long userCouponId) {
+    public boolean redeemCoupon(Long userCouponId) {
         UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
 
         userCoupon.redeem();
         userCouponRepository.save(userCoupon);
+        return true;
     }
 
-    public void calculateFinalAmount(Long userCouponId, int totalAmount) {
+    public int calculateFinalAmount(Long userCouponId, int totalAmount) {
         UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
 
         Coupon coupon = couponRepository.findById(userCoupon.getCouponId())
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
-        coupon.calculateFinalAmount(totalAmount);
+        return coupon.calculateFinalAmount(totalAmount);
     }
 }
