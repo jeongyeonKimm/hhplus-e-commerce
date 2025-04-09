@@ -11,7 +11,10 @@ public enum ErrorCode {
     CHARGE_AMOUNT_EXCEEDS_LIMIT("CHARGE_AMOUNT_EXCEEDS_LIMIT", 400,"최대 누적 충전 금액을 초과하였습니다."),
 
     INSUFFICIENT_STOCK("INSUFFICIENT_STOCK", 400, "재고가 부족합니다."),
-    INVALID_PRODUCT("INVALID_PRODUCT", 400, "유효하지 않은 상품입니다."),
+    INVALID_PRODUCT("INVALID_PRODUCT", 404, "유효하지 않은 상품입니다."),
+
+    INVALID_COUPON("INVALID_COUPON", 404, "유효하지 않은 쿠폰입니다."),
+    ALREADY_USED_COUPON("ALREADY_USED_COUPON", 409, "이미 사용된 쿠폰입니다."),
 
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", 500, "서버 내부 오류입니다.");
 
