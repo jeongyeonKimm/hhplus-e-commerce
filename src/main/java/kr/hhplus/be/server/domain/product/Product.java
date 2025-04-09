@@ -1,9 +1,12 @@
 package kr.hhplus.be.server.domain.product;
 
+import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
+import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_STOCK;
 
 @Getter
 public class Product {
@@ -35,5 +38,13 @@ public class Product {
                 .price(price)
                 .stock(stock)
                 .build();
+    }
+
+    public void deduct(int quantity) {
+        if (quantity > stock) {
+            throw new ApiException(INSUFFICIENT_STOCK);
+        }
+
+        this.stock -= quantity;
     }
 }
