@@ -16,6 +16,7 @@ public class Product {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @Builder
     private Product(Long id, String name, byte[] description, Integer price, Integer stock) {
         this.id = id;
         this.name = name;
@@ -27,6 +28,12 @@ public class Product {
     }
 
     public static Product create(Long id, String name, String description, Integer price, Integer stock) {
-        return new Product(id, name, description.getBytes(), price, stock);
+        return Product.builder()
+                .id(id)
+                .name(name)
+                .description(description.getBytes())
+                .price(price)
+                .stock(stock)
+                .build();
     }
 }

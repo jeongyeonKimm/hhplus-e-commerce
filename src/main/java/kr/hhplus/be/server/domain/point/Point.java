@@ -31,7 +31,11 @@ public class Point {
     }
 
     public static Point create(Long id, Long userId, Integer balance) {
-        return new Point(id, userId, balance);
+        return Point.builder()
+                .id(id)
+                .userId(userId)
+                .balance(balance)
+                .build();
     }
 
     public void charge(int amount) {
