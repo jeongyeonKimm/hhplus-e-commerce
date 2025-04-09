@@ -13,7 +13,7 @@ public enum ErrorCode {
     INSUFFICIENT_STOCK("INSUFFICIENT_STOCK", 400, "재고가 부족합니다."),
     INVALID_PRODUCT("INVALID_PRODUCT", 404, "유효하지 않은 상품입니다."),
 
-    INVALID_COUPON("INVALID_COUPON", 404, "유효하지 않은 쿠폰입니다."),
+    COUPON_NOT_OWNED("COUPON_NOT_OWNED", 404, "유저가 보유하고 있는 쿠폰이 아닙니다."),
     ALREADY_USED_COUPON("ALREADY_USED_COUPON", 409, "이미 사용된 쿠폰입니다."),
     COUPON_DATE_EXPIRED("COUPON_DATE_EXPIRED", 409, "쿠폰이 만료되었습니다."),
 
