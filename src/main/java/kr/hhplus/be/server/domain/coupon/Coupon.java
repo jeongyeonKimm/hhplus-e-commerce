@@ -20,7 +20,7 @@ public class Coupon {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Coupon(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
+    private Coupon(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
         this.id = id;
         this.title = title;
         this.discountValue = discountValue;
@@ -30,6 +30,18 @@ public class Coupon {
         this.stock = stock;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public static Coupon create(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
+        return Coupon.builder()
+                .id(id)
+                .title(title)
+                .discountValue(discountValue)
+                .discountType(discountType)
+                .startDate(startDate)
+                .endDate(endDate)
+                .stock(stock)
+                .build();
     }
 
     public int calculateFinalAmount(int originalAmount) {

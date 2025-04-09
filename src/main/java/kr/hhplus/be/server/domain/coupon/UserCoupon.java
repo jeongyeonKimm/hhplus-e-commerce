@@ -23,7 +23,7 @@ public class UserCoupon {
     private LocalDateTime updatedAt;
 
     @Builder
-    public UserCoupon(Long id, Long userId, Long couponId, Boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
+    private UserCoupon(Long id, Long userId, Long couponId, Boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
         this.id = id;
         this.userId = userId;
         this.couponId = couponId;
