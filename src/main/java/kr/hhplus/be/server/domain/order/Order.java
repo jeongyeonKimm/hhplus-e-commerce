@@ -18,13 +18,13 @@ public class Order {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Order(Long id, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount, OrderStatus status) {
+    private Order(Long id, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount) {
         this.id = id;
         this.userId = userId;
         this.userCouponId = userCouponId;
         this.isCouponApplied = isCouponApplied;
         this.totalAmount = totalAmount;
-        this.status = status;
+        this.status = OrderStatus.NOT_PAID;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
