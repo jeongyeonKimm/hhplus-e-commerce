@@ -2,19 +2,25 @@ package kr.hhplus.be.server.interfaces.api.coupon;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import kr.hhplus.be.server.application.coupon.CouponFacade;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponListResponse;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@RequestMapping("/api/v1/coupons")
+@RequiredArgsConstructor
 @RestController
-public class CouponMockController implements CouponSpec {
+public class CouponController implements CouponSpec {
 
-    @GetMapping("/api/v1/coupons")
+    private final CouponFacade couponFacade;
+
+    @GetMapping
     public ApiResponse<CouponListResponse> getCoupons(@Positive @RequestParam Long userId) {
         List<CouponResponse> coupons = List.of(
                 CouponResponse.builder()
@@ -43,8 +49,9 @@ public class CouponMockController implements CouponSpec {
         return ApiResponse.success(response);
     }
 
-    @PostMapping("/api/v1/coupons/issue")
+    @PostMapping("/issue")
     public ApiResponse<List<?>> issueCoupon(@Valid @RequestBody CouponIssueRequest request) {
+        couponFacade.issueCoupon(request.toCouponIssueCommand());
         return ApiResponse.successWithCreated(List.of());
     }
 }

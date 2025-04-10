@@ -81,10 +81,7 @@ class CouponE2ETest {
     @ParameterizedTest
     void issueCoupon_withNotPositiveUserId(Long userId) throws JsonProcessingException {
         try {
-            CouponIssueRequest request = CouponIssueRequest.builder()
-                    .userId(userId)
-                    .couponId(1L)
-                    .build();
+            CouponIssueRequest request = CouponIssueRequest.of(userId, 1L);
 
             restClient.post()
                     .uri("/issue")
@@ -101,10 +98,7 @@ class CouponE2ETest {
     @ParameterizedTest
     void issueCoupon_withNotPositiveCouponId(Long couponId) throws JsonProcessingException {
         try {
-            CouponIssueRequest request = CouponIssueRequest.builder()
-                    .userId(1L)
-                    .couponId(couponId)
-                    .build();
+            CouponIssueRequest request = CouponIssueRequest.of(1L, couponId);
 
             restClient.post()
                     .uri("/issue")
@@ -119,10 +113,7 @@ class CouponE2ETest {
     @DisplayName("POST /api/v1/coupons/issue로 양수의 유저 ID와 함께 쿠폰 발급 요청을 보내면 상태 코드 201를 응답한다.")
     @Test
     void issueCoupon_success() {
-        CouponIssueRequest request = CouponIssueRequest.builder()
-                .userId(1L)
-                .couponId(2L)
-                .build();
+        CouponIssueRequest request = CouponIssueRequest.of(1L, 2L);
 
         ApiResponse<List<?>> response = restClient.post()
                 .uri("/issue")
