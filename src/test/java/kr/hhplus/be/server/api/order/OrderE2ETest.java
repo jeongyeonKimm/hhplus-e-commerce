@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.api.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kr.hhplus.be.server.api.order.dto.request.OrderProductRequest;
-import kr.hhplus.be.server.api.order.dto.request.OrderRequest;
-import kr.hhplus.be.server.api.order.dto.response.OrderResponse;
+import kr.hhplus.be.server.interfaces.api.order.dto.request.OrderProductRequest;
+import kr.hhplus.be.server.interfaces.api.order.dto.request.OrderRequest;
+import kr.hhplus.be.server.interfaces.api.order.dto.response.OrderResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
