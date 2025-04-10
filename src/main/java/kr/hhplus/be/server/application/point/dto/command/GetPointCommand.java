@@ -7,7 +7,7 @@ public class GetPointCommand {
 
     private Long userId;
 
-    public GetPointCommand(Long userId) {
+    private GetPointCommand(Long userId) {
         this.userId = userId;
     }
 

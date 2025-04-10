@@ -16,7 +16,7 @@ public class PointService {
 
     public Point chargePoint(Long userId, Integer amount) {
         Point point = pointRepository.findPointByUserId(userId)
-                .orElseGet(() -> Point.create(generatePointId(), userId, 0));
+                .orElseGet(() -> Point.of(generatePointId(), userId, 0));
 
         point.charge(amount);
         pointRepository.savePoint(point);
@@ -29,7 +29,7 @@ public class PointService {
 
     public Point getPoint(Long userId) {
         return pointRepository.findPointByUserId(userId)
-                .orElseGet(() -> Point.create(generatePointId(), userId, 0));
+                .orElseGet(() -> Point.of(generatePointId(), userId, 0));
     }
 
     public Point usePoint(Long userId, Integer amount) {

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.point;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,6 @@ public class Point {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Builder
     private Point(Long id, Long userId, Integer balance) {
         this.id = id;
         this.userId = userId;
@@ -29,12 +27,8 @@ public class Point {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Point create(Long id, Long userId, Integer balance) {
-        return Point.builder()
-                .id(id)
-                .userId(userId)
-                .balance(balance)
-                .build();
+    public static Point of(Long id, Long userId, Integer balance) {
+        return new Point(id, userId, balance);
     }
 
     public void charge(int amount) {

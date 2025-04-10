@@ -53,7 +53,7 @@ class PointServiceTest {
         int initialPoint = 1000;
         int chargeAmount = 3000;
 
-        Point point = Point.create(2L, userId, initialPoint);
+        Point point = Point.of(2L, userId, initialPoint);
 
         given(pointRepository.findPointByUserId(userId)).willReturn(Optional.of(point));
         given(pointRepository.savePoint(any(Point.class)))
@@ -88,7 +88,7 @@ class PointServiceTest {
         int initialPoint = 3000;
         int useAmount = 1000;
 
-        Point point = Point.create(2L, userId, initialPoint);
+        Point point = Point.of(2L, userId, initialPoint);
 
         given(pointRepository.findPointByUserId(userId)).willReturn(Optional.of(point));
         given(pointRepository.savePoint(any(Point.class)))
