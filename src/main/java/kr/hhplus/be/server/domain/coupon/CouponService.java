@@ -4,6 +4,8 @@ import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @RequiredArgsConstructor
@@ -51,6 +53,10 @@ public class CouponService {
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
         return coupon.calculateFinalAmount(totalAmount);
+    }
+
+    public List<Coupon> getCoupons(Long userId) {
+        return userCouponRepository.findByUserId(userId);
     }
 
     private long generateId() {

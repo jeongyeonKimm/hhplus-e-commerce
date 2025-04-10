@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.interfaces.api.coupon.dto.request;
 
 import jakarta.validation.constraints.Positive;
-import kr.hhplus.be.server.application.coupon.dto.CouponIssueCommand;
+import kr.hhplus.be.server.application.coupon.dto.command.CouponIssueCommand;
 import lombok.Getter;
 
 @Getter
@@ -23,6 +23,6 @@ public class CouponIssueRequest {
     }
 
     public CouponIssueCommand toCouponIssueCommand() {
-        return new CouponIssueCommand(userId, couponId);
+        return CouponIssueCommand.of(userId, couponId);
     }
 }
