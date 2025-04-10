@@ -35,18 +35,6 @@ public class UserCoupon {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static UserCoupon create(Long id, Long userId, Long couponId, Boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
-        return UserCoupon.builder()
-                .id(id)
-                .userId(userId)
-                .couponId(couponId)
-                .isUsed(isUsed)
-                .couponTitle(couponTitle)
-                .issuedAt(issuedAt)
-                .expiredAt(expiredAt)
-                .build();
-    }
-
     public void redeem() {
         if (this.isUsed) {
             throw new ApiException(ALREADY_USED_COUPON);
