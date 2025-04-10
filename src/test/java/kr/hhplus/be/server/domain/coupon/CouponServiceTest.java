@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.COUPON_NOT_OWNED;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_USER_COUPON;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
@@ -27,11 +28,12 @@ class CouponServiceTest {
     @Test
     void redeemCoupon_throwCouponNotOwnedException_whenUserNotOwnedCoupon() {
         long userCouponId = 1L;
+        long userId = 2L;
         given(userCouponRepository.findById(userCouponId)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> couponService.redeemCoupon(userCouponId))
+        assertThatThrownBy(() -> couponService.redeemCoupon(userId, userCouponId))
                 .isInstanceOf(ApiException.class)
-                .hasMessage(COUPON_NOT_OWNED.getMessage());
+                .hasMessage(INVALID_USER_COUPON.getMessage());
     }
 
 }

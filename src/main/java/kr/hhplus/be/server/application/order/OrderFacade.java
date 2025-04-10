@@ -25,7 +25,7 @@ public class OrderFacade {
             productService.deductStock(productInfo.getProductId(), productInfo.getQuantity());
         }
 
-        boolean isCouponApplied = couponService.redeemCoupon(command.getUserCouponId());
+        boolean isCouponApplied = couponService.redeemCoupon(command.getUserId(), command.getUserCouponId());
 
         int totalAmount = orderProducts.calculateTotalAmount();
         int finalAmount = couponService.calculateFinalAmount(command.getUserCouponId(), totalAmount);
