@@ -18,6 +18,7 @@ public class OrderFacade {
     private final ProductService productService;
     private final CouponService couponService;
     private final OrderService orderService;
+    private long sequence = 1L;
 
     public OrderResult order(OrderCreateCommand command) {
         OrderProductList orderProducts = command.getOrderProducts();
@@ -30,7 +31,11 @@ public class OrderFacade {
         int totalAmount = orderProducts.calculateTotalAmount();
         int finalAmount = couponService.calculateFinalAmount(command.getUserCouponId(), totalAmount);
 
-        Order order = orderService.createOrder(command.toOrder(isCouponApplied, finalAmount), orderProducts.toOrderProducts());
+        Order order = orderService.createOrder(command.toOrder(generateId(), isCouponApplied, finalAmount), orderProducts.toOrderProducts());
         return OrderResult.from(order);
+    }
+
+    private long generateId() {
+        return sequence++;
     }
 }

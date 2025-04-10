@@ -41,12 +41,8 @@ public class OrderRequest {
             infos.add(request.toOrderProductInfo());
         }
 
-        OrderProductList orderProductList = OrderProductList.create(infos);
+        OrderProductList orderProductList = OrderProductList.of(infos);
 
-        return OrderCreateCommand.builder()
-                .userId(userId)
-                .userCouponId(userCouponId)
-                .orderProducts(orderProductList)
-                .build();
+        return OrderCreateCommand.of(userId, userCouponId, orderProductList);
     }
 }

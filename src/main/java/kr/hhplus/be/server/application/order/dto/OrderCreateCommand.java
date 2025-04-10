@@ -11,19 +11,17 @@ public class OrderCreateCommand {
     private Long userCouponId;
     private OrderProductList orderProducts;
 
-    @Builder
     private OrderCreateCommand(Long userId, Long userCouponId, OrderProductList orderProducts) {
         this.userId = userId;
         this.userCouponId = userCouponId;
         this.orderProducts = orderProducts;
     }
 
-    public Order toOrder(boolean isCouponApplied, int finalAmount) {
-        return Order.builder()
-                .userId(userId)
-                .userCouponId(userCouponId)
-                .isCouponApplied(isCouponApplied)
-                .totalAmount(finalAmount)
-                .build();
+    public static OrderCreateCommand of(Long userId, Long userCouponId, OrderProductList orderProducts) {
+        return new OrderCreateCommand(userId, userCouponId, orderProducts);
+    }
+
+    public Order toOrder(Long id, boolean isCouponApplied, int finalAmount) {
+        return Order.of(id, userId, userCouponId, isCouponApplied, finalAmount);
     }
 }
