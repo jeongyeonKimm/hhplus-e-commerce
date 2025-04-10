@@ -14,32 +14,31 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderProductRepository orderProductRepository;
 
     public Order createOrder(Order order, List<OrderProduct> orderProducts) {
-        Order savedOrder = orderRepository.save(order);
+        Order savedOrder = orderRepository.saveOrder(order);
 
         for (OrderProduct orderProduct : orderProducts) {
             orderProduct.setOrderId(savedOrder.getId());
-            orderProductRepository.save(orderProduct);
+            orderRepository.saveOrderProduct(orderProduct);
         }
 
         return savedOrder;
     }
 
     public void changeStatusToPaid(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findOrderById(orderId)
                 .orElseThrow(() -> new ApiException(INVALID_ORDER));
 
         order.changeStatus(OrderStatus.PAID);
-        orderRepository.save(order);
+        orderRepository.saveOrder(order);
     }
 
     public OrderData getOrderData(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findOrderById(orderId)
                 .orElseThrow(() -> new ApiException(INVALID_ORDER));
 
-        List<OrderProduct> orderProducts = orderProductRepository.findByOrderId(orderId);
+        List<OrderProduct> orderProducts = orderRepository.findOrderProductByOrderId(orderId);
 
         return OrderData.from(order, orderProducts);
     }
