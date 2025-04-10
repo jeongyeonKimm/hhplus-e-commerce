@@ -35,15 +35,15 @@ public class UserCoupon {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static UserCoupon create(Long id, Long userId, Long couponId, Boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
+    public static UserCoupon issue(Long id, Long userId, Coupon coupon) {
         return UserCoupon.builder()
                 .id(id)
                 .userId(userId)
-                .couponId(couponId)
-                .isUsed(isUsed)
-                .couponTitle(couponTitle)
-                .issuedAt(issuedAt)
-                .expiredAt(expiredAt)
+                .couponId(coupon.getId())
+                .isUsed(false)
+                .couponTitle(coupon.getTitle())
+                .issuedAt(LocalDate.now())
+                .expiredAt(coupon.getEndDate())
                 .build();
     }
 

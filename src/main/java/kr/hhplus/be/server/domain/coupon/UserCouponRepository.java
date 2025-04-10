@@ -6,4 +6,6 @@ public interface UserCouponRepository {
 
     void save(UserCoupon userCoupon);
     Optional<UserCoupon> findById(Long userCouponId);
+
+    Boolean existByUserIdAndCouponId(Long userId, Long couponId);
 }
