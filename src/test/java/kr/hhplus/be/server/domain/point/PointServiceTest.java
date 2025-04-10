@@ -15,6 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PointServiceTest {
@@ -39,6 +41,9 @@ class PointServiceTest {
 
         assertThat(point.getUserId()).isEqualTo(userId);
         assertThat(point.getBalance()).isEqualTo(chargeAmount);
+
+        verify(pointRepository, times(1)).findByUserId(userId);
+        verify(pointRepository, times(1)).save(any(Point.class));
     }
 
     @DisplayName("포인트 충전이 처음이 아닌 경우 포인트가 기존에 보유 중인 포인트에 누적이 된다.")
@@ -59,6 +64,9 @@ class PointServiceTest {
         int expectedPoint = initialPoint + chargeAmount;
         assertThat(chargedPoint.getUserId()).isEqualTo(userId);
         assertThat(chargedPoint.getBalance()).isEqualTo(expectedPoint);
+
+        verify(pointRepository, times(1)).findByUserId(userId);
+        verify(pointRepository, times(1)).save(any(Point.class));
     }
 
     @DisplayName("포인트가 존재하지 않으면 포인트 사용에 실패한다.")
@@ -91,5 +99,8 @@ class PointServiceTest {
         int expectedPoint = initialPoint - useAmount;
         assertThat(chargedPoint.getUserId()).isEqualTo(userId);
         assertThat(chargedPoint.getBalance()).isEqualTo(expectedPoint);
+
+        verify(pointRepository, times(1)).findByUserId(userId);
+        verify(pointRepository, times(1)).save(any(Point.class));
     }
 }

@@ -53,5 +53,7 @@ class ProductServiceTest {
                         tuple(1L, "iPhone 15", 1_000_000, 100),
                         tuple(2L, "iPad Gen5", 1_000_000, 200)
                 );
+
+        verify(productRepository, times(1)).findAll();
     }
 }
