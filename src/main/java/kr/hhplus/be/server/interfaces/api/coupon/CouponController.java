@@ -8,11 +8,9 @@ import kr.hhplus.be.server.application.coupon.dto.command.CouponGetCommand;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.request.CouponIssueRequest;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponListResponse;
-import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RequestMapping("/api/v1/coupons")
