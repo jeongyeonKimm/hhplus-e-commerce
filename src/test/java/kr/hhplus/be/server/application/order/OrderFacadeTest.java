@@ -6,7 +6,6 @@ import kr.hhplus.be.server.application.order.dto.OrderProductList;
 import kr.hhplus.be.server.application.order.dto.OrderResult;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.order.Order;
-import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.product.ProductService;
 import org.junit.jupiter.api.DisplayName;

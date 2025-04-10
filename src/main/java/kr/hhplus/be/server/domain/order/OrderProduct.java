@@ -37,10 +37,6 @@ public class OrderProduct {
     }
 
     public OrderProductData toData() {
-        return OrderProductData.builder()
-                .productId(productId)
-                .amount(amount)
-                .quantity(quantity)
-                .build();
+        return OrderProductData.of(productId, amount, getQuantity());
     }
 }
