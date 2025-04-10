@@ -1,8 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.application.external.dto.OrderProductData;
-import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

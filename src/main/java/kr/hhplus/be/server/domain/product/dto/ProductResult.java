@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.product.dto;
 
 import kr.hhplus.be.server.domain.product.Product;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -12,7 +11,6 @@ public class ProductResult {
     private Integer price;
     private Integer stock;
 
-    @Builder
     private ProductResult(Long id, String name, Integer price, Integer stock) {
         this.id = id;
         this.name = name;
@@ -21,11 +19,11 @@ public class ProductResult {
     }
 
     public static ProductResult from(Product product) {
-        return ProductResult.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .stock(product.getStock())
-                .build();
+        return new ProductResult(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getStock()
+        );
     }
 }

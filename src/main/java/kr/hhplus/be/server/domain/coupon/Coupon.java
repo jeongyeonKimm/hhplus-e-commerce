@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.coupon;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -19,7 +18,6 @@ public class Coupon {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Builder
     private Coupon(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
         this.id = id;
         this.title = title;
@@ -30,6 +28,10 @@ public class Coupon {
         this.stock = stock;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public static Coupon of(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
+        return new Coupon(id, title, discountValue, discountType, startDate, endDate, stock);
     }
 
     public int calculateFinalAmount(int originalAmount) {

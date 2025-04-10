@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,15 +47,15 @@ class CouponServiceTest {
         long userId = 2L;
         long couponId = 3L;
 
-        UserCoupon userCoupon = UserCoupon.builder()
-                .id(userCouponId)
-                .userId(4L)
-                .couponId(couponId)
-                .isUsed(false)
-                .couponTitle("할인 쿠폰")
-                .issuedAt(LocalDate.of(2025, 4, 1))
-                .expiredAt(LocalDate.of(2025, 4, 30))
-                .build();
+        UserCoupon userCoupon = UserCoupon.of(
+                userCouponId,
+                100L,
+                couponId,
+                false,
+                "할인 쿠폰",
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30)
+        );
 
         given(userCouponRepository.findById(userCouponId)).willReturn(Optional.of(userCoupon));
 
@@ -72,15 +71,15 @@ class CouponServiceTest {
         long userId = 2L;
         long couponId = 3L;
 
-        UserCoupon userCoupon = UserCoupon.builder()
-                .id(userCouponId)
-                .userId(userId)
-                .couponId(couponId)
-                .isUsed(false)
-                .couponTitle("할인 쿠폰")
-                .issuedAt(LocalDate.of(2025, 4, 1))
-                .expiredAt(LocalDate.of(2025, 4, 30))
-                .build();
+        UserCoupon userCoupon = UserCoupon.of(
+                userCouponId,
+                userId,
+                couponId,
+                false,
+                "할인 쿠폰",
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30)
+        );
 
         given(userCouponRepository.findById(userCouponId)).willReturn(Optional.of(userCoupon));
 
