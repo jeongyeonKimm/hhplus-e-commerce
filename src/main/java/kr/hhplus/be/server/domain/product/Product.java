@@ -30,16 +30,6 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Product create(Long id, String name, String description, Integer price, Integer stock) {
-        return Product.builder()
-                .id(id)
-                .name(name)
-                .description(description.getBytes())
-                .price(price)
-                .stock(stock)
-                .build();
-    }
-
     public void deduct(int quantity) {
         if (quantity > stock) {
             throw new ApiException(INSUFFICIENT_STOCK);

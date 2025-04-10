@@ -18,7 +18,13 @@ class ProductTest {
         int stock = 100;
         int orderQuantity = 50;
 
-        Product product = Product.create(1L, "iPhone 15", "Apple iPhone15", 1_000_000, stock);
+        Product product = Product.builder()
+                .id(1L)
+                .name("iPhone 15")
+                .description("Apple iPhone15".getBytes())
+                .price(1_000_000)
+                .stock(stock)
+                .build();
 
         product.deduct(orderQuantity);
 
@@ -32,7 +38,13 @@ class ProductTest {
     void deduct_shouldThrowInsufficientStockException_whenOrderExceededStock(int orderQuantity) {
         int stock = 100;
 
-        Product product = Product.create(1L, "iPhone 15", "Apple iPhone15", 1_000_000, stock);
+        Product product = Product.builder()
+                .id(1L)
+                .name("iPhone 15")
+                .description("Apple iPhone15".getBytes())
+                .price(1_000_000)
+                .stock(stock)
+                .build();
 
         assertThatThrownBy(() -> product.deduct(orderQuantity))
                 .isInstanceOf(ApiException.class)

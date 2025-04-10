@@ -26,8 +26,20 @@ class ProductServiceTest {
     @Test
     void getProduct() {
         List<Product> products = List.of(
-                Product.create(1L, "iPhone 13", "Apple iPhone 13", 1_000_000, 100),
-                Product.create(2L, "iPad Gen5", "Apple iPad Gen5", 1_500_000, 200)
+                Product.builder()
+                        .id(1L)
+                        .name("iPhone 15")
+                        .description("Apple iPhone15".getBytes())
+                        .price(1_000_000)
+                        .stock(100)
+                        .build(),
+                Product.builder()
+                        .id(2L)
+                        .name("iPad Gen5")
+                        .description("Apple iPad Gen5".getBytes())
+                        .price(1_000_000)
+                        .stock(200)
+                        .build()
         );
 
         given(productRepository.findAll()).willReturn(products);
@@ -38,8 +50,8 @@ class ProductServiceTest {
         assertThat(result)
                 .extracting("id", "name", "price", "stock")
                 .containsExactlyInAnyOrder(
-                        tuple(1L, "iPhone 13", 1_000_000, 100),
-                        tuple(2L, "iPad Gen5", 1_500_000, 200)
+                        tuple(1L, "iPhone 15", 1_000_000, 100),
+                        tuple(2L, "iPad Gen5", 1_000_000, 200)
                 );
     }
 }

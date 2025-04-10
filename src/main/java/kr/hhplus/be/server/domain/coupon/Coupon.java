@@ -32,18 +32,6 @@ public class Coupon {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Coupon create(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
-        return Coupon.builder()
-                .id(id)
-                .title(title)
-                .discountValue(discountValue)
-                .discountType(discountType)
-                .startDate(startDate)
-                .endDate(endDate)
-                .stock(stock)
-                .build();
-    }
-
     public int calculateFinalAmount(int originalAmount) {
         int discountAmount = calculateDiscountAmount(originalAmount);
         return Math.max(0, originalAmount - discountAmount);
