@@ -2,6 +2,7 @@ package kr.hhplus.be.server.interfaces.api.point;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import kr.hhplus.be.server.application.payment.PaymentFacade;
 import kr.hhplus.be.server.application.point.PointFacade;
 import kr.hhplus.be.server.application.point.dto.command.GetPointCommand;
 import kr.hhplus.be.server.application.point.dto.result.PointResult;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class PointController implements PointSpec {
 
     private final PointFacade pointFacade;
+    private final PaymentFacade paymentFacade;
 
     @PostMapping("/charge")
     public ApiResponse<PointResponse> chargePoint(@Valid @RequestBody PointChargeRequest request) {
@@ -34,6 +36,7 @@ public class PointController implements PointSpec {
 
     @PostMapping("/use")
     public ApiResponse<PointResponse> usePoint(@Valid @RequestBody PointUseRequest request) {
+        paymentFacade.payment(request.toPaymentCommand());
         return ApiResponse.successWithNoContent();
     }
 }

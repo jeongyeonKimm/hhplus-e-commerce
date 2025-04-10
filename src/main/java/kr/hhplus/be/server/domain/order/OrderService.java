@@ -42,4 +42,9 @@ public class OrderService {
 
         return OrderData.from(order, orderProducts);
     }
+
+    public Order getOrder(Long orderId) {
+        return orderRepository.findOrderById(orderId)
+                .orElseThrow(() -> new ApiException(INVALID_ORDER));
+    }
 }
