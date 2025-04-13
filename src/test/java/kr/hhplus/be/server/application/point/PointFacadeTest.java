@@ -31,10 +31,10 @@ class PointFacadeTest {
     @Test
     void charge() {
         long userId = 1L;
-        int chargeAmount = 5000;
+        long chargeAmount = 5000L;
         ChargePointCommand command = ChargePointCommand.of(userId, chargeAmount);
 
-        Point point = Point.of(2L, userId, 10000);
+        Point point = Point.of(2L, userId, 10000L);
         given(pointService.chargePoint(userId, chargeAmount)).willReturn(point);
 
         PointResult result = pointFacade.charge(command);
@@ -51,7 +51,7 @@ class PointFacadeTest {
         long userId = 1L;
         GetPointCommand command = GetPointCommand.of(userId);
 
-        Point point = Point.of(2L, userId, 10000);
+        Point point = Point.of(2L, userId, 10000L);
         given(pointService.getPoint(userId)).willReturn(point);
 
         PointResult result = pointFacade.getPoint(command);
@@ -66,10 +66,10 @@ class PointFacadeTest {
     @Test
     void use() {
         long userId = 1L;
-        int useAmount = 5000;
+        long useAmount = 5000;
         UsePointCommand command = UsePointCommand.of(userId, useAmount);
 
-        Point point = Point.of(2L, userId, 10000);
+        Point point = Point.of(2L, userId, 10000L);
         given(pointService.usePoint(userId, useAmount)).willReturn(point);
 
         PointResult result = pointFacade.use(command);

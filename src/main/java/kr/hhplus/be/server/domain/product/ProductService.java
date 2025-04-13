@@ -22,11 +22,8 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public void deductStock(long productId, int quantity) {
-        Product product = productRepository.findById(productId)
+    public Product getProduct(Long productId) {
+        return productRepository.findById(productId)
                 .orElseThrow(() -> new ApiException(INVALID_PRODUCT));
-
-        product.deduct(quantity);
-        productRepository.save(product);
     }
 }

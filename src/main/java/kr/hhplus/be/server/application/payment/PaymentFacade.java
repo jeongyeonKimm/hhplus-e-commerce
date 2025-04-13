@@ -19,8 +19,9 @@ public class PaymentFacade {
 
     public void payment(PaymentCommand command) {
         Order order = orderService.getOrder(command.getOrderId());
+
         pointService.usePoint(order.getUserId(), order.getTotalAmount());
-        orderService.changeStatusToPaid(command.getOrderId());
+        orderService.changeStatusToPaid(order);
 
         OrderData orderData = orderService.getOrderData(command.getOrderId());
         dataPlatformSender.send(orderData);

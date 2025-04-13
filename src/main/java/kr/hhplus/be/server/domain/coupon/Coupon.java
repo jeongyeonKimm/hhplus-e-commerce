@@ -13,15 +13,15 @@ public class Coupon {
 
     private Long id;
     private String title;
-    private Integer discountValue;
+    private Long discountValue;
     private DiscountType discountType;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer stock;
+    private Long stock;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private Coupon(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
+    private Coupon(Long id, String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
         this.id = id;
         this.title = title;
         this.discountValue = discountValue;
@@ -33,21 +33,16 @@ public class Coupon {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Coupon of(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
+    public static Coupon of(Long id, String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
         return new Coupon(id, title, discountValue, discountType, startDate, endDate, stock);
     }
 
-    public int calculateFinalAmount(int originalAmount) {
-        int discountAmount = calculateDiscountAmount(originalAmount);
-        return Math.max(0, originalAmount - discountAmount);
-    }
-
-    public int calculateDiscountAmount(int originalAmount) {
+    public Long getDiscountAmount(Long totalAmount) {
         if (this.discountType == DiscountType.RATE) {
-            return originalAmount * discountValue / 100;
+            return totalAmount * discountValue / 100;
         }
 
-        return discountValue;
+        return Math.min(discountValue, totalAmount);
     }
 
     public void deduct() {
@@ -56,5 +51,9 @@ public class Coupon {
         }
 
         this.stock -= 1;
+    }
+
+    public boolean isExpired() {
+        return this.endDate.isBefore(LocalDate.now());
     }
 }

@@ -12,11 +12,11 @@ public class CouponResponse {
     private Long id;
     private String title;
     private DiscountType discountType;
-    private Integer discountValue;
+    private Long discountValue;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private CouponResponse(Long id, String title, DiscountType discountType, Integer discountValue, LocalDate startDate, LocalDate endDate) {
+    private CouponResponse(Long id, String title, DiscountType discountType, Long discountValue, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.title = title;
         this.discountType = discountType;

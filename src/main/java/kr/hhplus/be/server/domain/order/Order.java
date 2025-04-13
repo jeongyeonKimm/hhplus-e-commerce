@@ -1,8 +1,17 @@
 package kr.hhplus.be.server.domain.order;
 
+import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.coupon.UserCoupon;
+import kr.hhplus.be.server.domain.product.Product;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static kr.hhplus.be.server.common.exception.ErrorCode.*;
+import static kr.hhplus.be.server.domain.order.OrderStatus.NOT_PAID;
+import static kr.hhplus.be.server.domain.order.OrderStatus.PAID;
 
 @Getter
 public class Order {
@@ -11,27 +20,52 @@ public class Order {
     private Long userId;
     private Long userCouponId;
     private Boolean isCouponApplied;
-    private Integer totalAmount;
+    private Long totalAmount;
     private OrderStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private final List<OrderProduct> orderProducts = new ArrayList<>();
 
-    private Order(Long id, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount) {
-        this.id = id;
+    private Order(Long userId) {
         this.userId = userId;
-        this.userCouponId = userCouponId;
-        this.isCouponApplied = isCouponApplied;
-        this.totalAmount = totalAmount;
-        this.status = OrderStatus.NOT_PAID;
+        this.isCouponApplied = false;
+        this.status = NOT_PAID;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Order of(Long id, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount) {
-        return new Order(id, userId, userCouponId, isCouponApplied, totalAmount);
+    public static Order of(Long userId) {
+        return new Order(userId);
     }
 
-    public void changeStatus(OrderStatus status) {
-        this.status = status;
+    public void addProduct(Product product, Long quantity) {
+        product.deduct(quantity);
+
+        OrderProduct orderProduct = OrderProduct.of(product, quantity);
+        this.orderProducts.add(orderProduct);
+        this.totalAmount += orderProduct.getTotalPrice();
+    }
+
+    public void applyCoupon(UserCoupon userCoupon) {
+        if (this.isCouponApplied) {
+            throw new ApiException(COUPON_ALREADY_APPLIED);
+        }
+
+        if (!userCoupon.isAvailable()) {
+            throw new ApiException(INVALID_COUPON);
+        }
+
+        this.userCouponId = userCoupon.getId();
+        this.totalAmount -= userCoupon.getDiscountAmount(this.totalAmount);
+        this.isCouponApplied = true;
+        userCoupon.markUsed();
+    }
+
+    public void pay() {
+        if (this.status != NOT_PAID) {
+            throw new ApiException(ORDER_PAYMENT_INVALID_STATE);
+        }
+
+        this.status = PAID;
     }
 }

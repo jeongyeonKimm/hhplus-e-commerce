@@ -7,9 +7,9 @@ import lombok.Getter;
 public class PointResult {
 
     private Long userId;
-    private Integer balance;
+    private Long balance;
 
-    private PointResult(Long userId, Integer balance) {
+    private PointResult(Long userId, Long balance) {
         this.userId = userId;
         this.balance = balance;
     }

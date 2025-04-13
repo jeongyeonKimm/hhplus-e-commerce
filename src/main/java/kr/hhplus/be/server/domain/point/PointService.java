@@ -14,9 +14,9 @@ public class PointService {
     private long pointSequence = 1L;
     private long pointHistorySequence = 1L;
 
-    public Point chargePoint(Long userId, Integer amount) {
+    public Point chargePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserId(userId)
-                .orElseGet(() -> Point.of(generatePointId(), userId, 0));
+                .orElseGet(() -> Point.of(generatePointId(), userId, 0L));
 
         point.charge(amount);
         pointRepository.savePoint(point);
@@ -29,10 +29,10 @@ public class PointService {
 
     public Point getPoint(Long userId) {
         return pointRepository.findPointByUserId(userId)
-                .orElseGet(() -> Point.of(generatePointId(), userId, 0));
+                .orElseGet(() -> Point.of(generatePointId(), userId, 0L));
     }
 
-    public Point usePoint(Long userId, Integer amount) {
+    public Point usePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserId(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 

@@ -10,7 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,15 +31,15 @@ class ProductServiceTest {
                         1L,
                         "iPhone 15",
                         "Apple iPhone15".getBytes(),
-                        1_000_000,
-                        100
+                        1_000_000L,
+                        100L
                 ),
                 Product.of(
                         2L,
                         "iPad Gen5",
                         "Apple iPad Gen5".getBytes(),
-                        1_000_000,
-                        200
+                        1_000_000L,
+                        200L
                 )
         );
 
@@ -50,8 +51,8 @@ class ProductServiceTest {
         assertThat(result)
                 .extracting("id", "name", "price", "stock")
                 .containsExactlyInAnyOrder(
-                        tuple(1L, "iPhone 15", 1_000_000, 100),
-                        tuple(2L, "iPad Gen5", 1_000_000, 200)
+                        tuple(1L, "iPhone 15", 1_000_000L, 100L),
+                        tuple(2L, "iPad Gen5", 1_000_000L, 200L)
                 );
 
         verify(productRepository, times(1)).findAll();

@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
-import kr.hhplus.be.server.application.order.dto.OrderProductList;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -41,8 +40,6 @@ public class OrderRequest {
             infos.add(request.toOrderProductInfo());
         }
 
-        OrderProductList orderProductList = OrderProductList.of(infos);
-
-        return OrderCreateCommand.of(userId, userCouponId, orderProductList);
+        return OrderCreateCommand.of(userId, userCouponId, infos);
     }
 }

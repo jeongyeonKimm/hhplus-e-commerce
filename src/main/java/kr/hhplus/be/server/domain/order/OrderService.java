@@ -2,35 +2,45 @@ package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.application.external.dto.OrderData;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.coupon.UserCoupon;
+import kr.hhplus.be.server.domain.product.Product;
+import kr.hhplus.be.server.domain.use.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_USER;
 
 @RequiredArgsConstructor
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserService userService;
 
-    public Order createOrder(Order order, List<OrderProduct> orderProducts) {
-        Order savedOrder = orderRepository.saveOrder(order);
-
-        for (OrderProduct orderProduct : orderProducts) {
-            orderProduct.setOrderId(savedOrder.getId());
-            orderRepository.saveOrderProduct(orderProduct);
+    public Order createOrder(Long userId) {
+        if (!userService.exists(userId)) {
+            throw new ApiException(INVALID_USER);
         }
-
-        return savedOrder;
+        return Order.of(userId);
     }
 
-    public void changeStatusToPaid(Long orderId) {
-        Order order = orderRepository.findOrderById(orderId)
-                .orElseThrow(() -> new ApiException(INVALID_ORDER));
+    public void saveOrder(Order order) {
+        orderRepository.saveOrder(order);
+    }
 
-        order.changeStatus(OrderStatus.PAID);
+    public void addProduct(Order order, Product product, Long quantity) {
+        order.addProduct(product, quantity);
+    }
+
+    public void applyCoupon(Order order, UserCoupon userCoupon) {
+        order.applyCoupon(userCoupon);
+    }
+
+    public void changeStatusToPaid(Order order) {
+        order.pay();
         orderRepository.saveOrder(order);
     }
 

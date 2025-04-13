@@ -6,14 +6,14 @@ import lombok.Getter;
 public class UsePointCommand {
 
     private Long userId;
-    private Integer useAmount;
+    private Long useAmount;
 
-    private UsePointCommand(Long userId, Integer useAmount) {
+    private UsePointCommand(Long userId, Long useAmount) {
         this.userId = userId;
         this.useAmount = useAmount;
     }
 
-    public static UsePointCommand of(long userId, int useAmount) {
+    public static UsePointCommand of(Long userId, Long useAmount) {
         return new UsePointCommand(userId, useAmount);
     }
 }

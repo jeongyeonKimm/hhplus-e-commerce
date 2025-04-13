@@ -1,26 +1,21 @@
 package kr.hhplus.be.server.application.order.dto;
 
-import kr.hhplus.be.server.domain.order.OrderProduct;
 import lombok.Getter;
 
 @Getter
 public class OrderProductInfo {
 
     private Long productId;
-    private Integer amount;
-    private Integer quantity;
+    private Long price;
+    private Long quantity;
 
-    private OrderProductInfo(Long productId, Integer amount, Integer quantity) {
+    private OrderProductInfo(Long productId, Long price, Long quantity) {
         this.productId = productId;
-        this.amount = amount;
+        this.price = price;
         this.quantity = quantity;
     }
 
-    public static OrderProductInfo of(Long productId, Integer amount, Integer quantity) {
-        return new OrderProductInfo(productId, amount, quantity);
-    }
-
-    public OrderProduct toOrderProduct() {
-        return OrderProduct.of(null, null, productId, amount, quantity);
+    public static OrderProductInfo of(Long productId, Long price, Long quantity) {
+        return new OrderProductInfo(productId, price, quantity);
     }
 }

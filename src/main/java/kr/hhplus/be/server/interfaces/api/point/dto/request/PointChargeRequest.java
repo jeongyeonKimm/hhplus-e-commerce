@@ -18,10 +18,10 @@ public class PointChargeRequest {
     @Positive
     @Max(value = 1000000)
     @Schema(description = "충전 금액")
-    private Integer chargeAmount;
+    private Long chargeAmount;
 
     @Builder
-    private PointChargeRequest(Long userId, Integer chargeAmount) {
+    private PointChargeRequest(Long userId, Long chargeAmount) {
         this.userId = userId;
         this.chargeAmount = chargeAmount;
     }

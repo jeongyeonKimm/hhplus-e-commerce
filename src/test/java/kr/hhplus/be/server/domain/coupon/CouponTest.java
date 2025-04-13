@@ -7,68 +7,68 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_COUPON_STOCK;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CouponTest {
 
     @DisplayName("정률 할인의 경우 주어진 할인 비율만큼 할인한다.")
     @Test
     void calculateFinalAmount_RATE_success() {
-        int originalAmount = 1_000_000;
+        long totalAmount = 1_000_000L;
         Coupon coupon = Coupon.of(
                 1L,
                 "회원가입 할인 쿠폰",
-                10,
+                10L,
                 DiscountType.RATE,
                 LocalDate.of(2025, 4, 1),
                 LocalDate.of(2025, 4, 30),
-                100
+                100L
         );
 
-        int finalAmount = coupon.calculateFinalAmount(originalAmount);
+        long discountedAmount = coupon.getDiscountAmount(totalAmount);
 
-        int discountAmount = originalAmount * coupon.getDiscountValue() / 100;
-        int expectedAmount = originalAmount - discountAmount;
-        assertThat(finalAmount).isEqualTo(expectedAmount);
+        long expectedAmount = totalAmount * coupon.getDiscountValue() / 100;
+        assertThat(discountedAmount).isEqualTo(expectedAmount);
     }
 
-    @DisplayName("정액 할인의 경우 origianlAmount가 할인 값 이하이면 originalAmount에서 할인 금액을 뺀 값을 반환한다.")
+    @DisplayName("정액 할인의 경우 totalAmount가 할인 값 이하이면 저장된 할인 값을 반환한다.")
     @Test
     void calculateFinalAmount_AMOUNT_whenOriginalAmountIsLessThanOrEqualDiscountValue() {
-        int originalAmount = 50_000;
+        long totalAmount = 50000L;
         Coupon coupon = Coupon.of(
                 1L,
                 "회원가입 할인 쿠폰",
-                10000,
+                10000L,
                 DiscountType.AMOUNT,
                 LocalDate.of(2025, 4, 1),
                 LocalDate.of(2025, 4, 30),
-                100
+                100L
         );
 
-        int finalAmount = coupon.calculateFinalAmount(originalAmount);
+        long finalAmount = coupon.getDiscountAmount(totalAmount);
 
-        int expectedAmount = originalAmount - coupon.getDiscountValue();
+        long expectedAmount = coupon.getDiscountValue();
         assertThat(finalAmount).isEqualTo(expectedAmount);
     }
 
-    @DisplayName("정액 할인의 경우 할인 값이 origianlAmount를 초과하면 0을 반환한다.")
+    @DisplayName("정액 할인의 경우 할인 값이 totalAmount를 초과하면 totalAmount를 반환한다.")
     @Test
     void calculateFinalAmount_AMOUNT_whenOriginalAmountIsMoreThanDiscountValue() {
-        int originalAmount = 50_000;
+        long totalAmount = 50000L;
         Coupon coupon = Coupon.of(
                 1L,
                 "회원가입 할인 쿠폰",
-                60_000,
+                60000L,
                 DiscountType.AMOUNT,
                 LocalDate.of(2025, 4, 1),
                 LocalDate.of(2025, 4, 30),
-                100
+                100L
         );
 
-        int finalAmount = coupon.calculateFinalAmount(originalAmount);
+        long discountedAmount = coupon.getDiscountAmount(totalAmount);
 
-        assertThat(finalAmount).isEqualTo(0);
+        assertThat(discountedAmount).isEqualTo(totalAmount);
     }
 
     @DisplayName("쿠폰 수량이 0 이하인 경우 쿠폰 재고 차감이 불가하다.")
@@ -77,11 +77,11 @@ class CouponTest {
         Coupon coupon = Coupon.of(
                 1L,
                 "회원가입 할인 쿠폰",
-                60_000,
+                60000L,
                 DiscountType.AMOUNT,
                 LocalDate.of(2025, 4, 1),
                 LocalDate.of(2025, 4, 30),
-                0
+                0L
         );
 
         assertThatThrownBy(coupon::deduct)
@@ -92,11 +92,11 @@ class CouponTest {
     @DisplayName("쿠폰 수량이 0 보다 많은 경우 쿠폰 재고가 차감된다.")
     @Test
     void deduct() {
-        int initialStock = 10;
+        long initialStock = 10L;
         Coupon coupon = Coupon.of(
                 1L,
                 "회원가입 할인 쿠폰",
-                60_000,
+                60000L,
                 DiscountType.AMOUNT,
                 LocalDate.of(2025, 4, 1),
                 LocalDate.of(2025, 4, 30),
@@ -105,7 +105,7 @@ class CouponTest {
 
         coupon.deduct();
 
-        int expectedStock = initialStock - 1;
+        long expectedStock = initialStock - 1;
         assertThat(coupon.getStock()).isEqualTo(expectedStock);
     }
 }

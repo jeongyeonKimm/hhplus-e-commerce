@@ -12,10 +12,10 @@ public class OrderData {
     private Long userId;
     private Long userCouponId;
     private Boolean isCouponApplied;
-    private Integer totalAmount;
+    private Long totalAmount;
     private List<OrderProductData> orderProducts;
 
-    private OrderData(Long orderId, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount, List<OrderProductData> orderProducts) {
+    private OrderData(Long orderId, Long userId, Long userCouponId, Boolean isCouponApplied, Long totalAmount, List<OrderProductData> orderProducts) {
         this.orderId = orderId;
         this.userId = userId;
         this.userCouponId = userCouponId;
@@ -24,7 +24,7 @@ public class OrderData {
         this.orderProducts = orderProducts;
     }
 
-    public static OrderData of(Long orderId, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount, List<OrderProductData> orderProducts) {
+    public static OrderData of(Long orderId, Long userId, Long userCouponId, Boolean isCouponApplied, Long totalAmount, List<OrderProductData> orderProducts) {
         return new OrderData(orderId, userId, userCouponId, isCouponApplied, totalAmount, orderProducts);
     }
 

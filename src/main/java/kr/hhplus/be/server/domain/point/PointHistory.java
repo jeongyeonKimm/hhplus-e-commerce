@@ -4,11 +4,11 @@ public class PointHistory {
 
     private Long id;
     private Long pointId;
-    private Integer amount;
-    private Integer balance;
+    private Long amount;
+    private Long balance;
     private TransactionType type;
 
-    public PointHistory(Long id, Long pointId, Integer amount, Integer balance, TransactionType type) {
+    public PointHistory(Long id, Long pointId, Long amount, Long balance, TransactionType type) {
         this.id = id;
         this.pointId = pointId;
         this.amount = amount;
@@ -16,11 +16,11 @@ public class PointHistory {
         this.type = type;
     }
 
-    public static PointHistory charge(Long id, Long pointId, Integer amount, Integer balance) {
+    public static PointHistory charge(Long id, Long pointId, Long amount, Long balance) {
         return new PointHistory(id, pointId, amount, balance, TransactionType.CHARGE);
     }
 
-    public static PointHistory use(Long id, Long pointId, Integer amount, Integer balance) {
+    public static PointHistory use(Long id, Long pointId, Long amount, Long balance) {
         return new PointHistory(id, pointId, amount, balance, TransactionType.USE);
     }
 }

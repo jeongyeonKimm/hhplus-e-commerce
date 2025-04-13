@@ -2,14 +2,17 @@ package kr.hhplus.be.server.application.order;
 
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
-import kr.hhplus.be.server.application.order.dto.OrderProductList;
 import kr.hhplus.be.server.application.order.dto.OrderResult;
 import kr.hhplus.be.server.domain.coupon.CouponService;
+import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderService;
+import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -18,24 +21,22 @@ public class OrderFacade {
     private final ProductService productService;
     private final CouponService couponService;
     private final OrderService orderService;
-    private long sequence = 1L;
 
     public OrderResult order(OrderCreateCommand command) {
-        OrderProductList orderProducts = command.getOrderProducts();
-        for (OrderProductInfo productInfo : orderProducts.getProductInfos()) {
-            productService.deductStock(productInfo.getProductId(), productInfo.getQuantity());
+        Order order = orderService.createOrder(command.getUserId());
+
+        List<OrderProductInfo> productInfos = command.getProductInfos();
+        for (OrderProductInfo productInfo : productInfos) {
+            Product product = productService.getProduct(productInfo.getProductId());
+            orderService.addProduct(order, product, productInfo.getQuantity());
         }
 
-        boolean isCouponApplied = couponService.redeemCoupon(command.getUserId(), command.getUserCouponId());
+        if (command.getUserCouponId() != null) {
+            UserCoupon userCoupon = couponService.getUserCoupon(command.getUserId());
+            orderService.applyCoupon(order, userCoupon);
+        }
 
-        int totalAmount = orderProducts.calculateTotalAmount();
-        int finalAmount = couponService.calculateFinalAmount(command.getUserCouponId(), totalAmount);
-
-        Order order = orderService.createOrder(command.toOrder(generateId(), isCouponApplied, finalAmount), orderProducts.toOrderProducts());
+        orderService.saveOrder(order);
         return OrderResult.from(order);
-    }
-
-    private long generateId() {
-        return sequence++;
     }
 }

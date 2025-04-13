@@ -15,11 +15,11 @@ public class Point {
 
     private Long id;
     private Long userId;
-    private Integer balance;
+    private Long balance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private Point(Long id, Long userId, Integer balance) {
+    private Point(Long id, Long userId, Long balance) {
         this.id = id;
         this.userId = userId;
         this.balance = balance;
@@ -27,11 +27,11 @@ public class Point {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static Point of(Long id, Long userId, Integer balance) {
+    public static Point of(Long id, Long userId, Long balance) {
         return new Point(id, userId, balance);
     }
 
-    public void charge(int amount) {
+    public void charge(Long amount) {
         if (amount <= 0) {
             throw new ApiException(INVALID_CHARGE_AMOUNT);
         }
@@ -40,7 +40,7 @@ public class Point {
             throw new ApiException(INVALID_CHARGE_AMOUNT);
         }
 
-        int newAmount = this.balance + amount;
+        long newAmount = this.balance + amount;
         if (newAmount > MAX_TOTAL_CHARGE_AMOUNT) {
             throw new ApiException(CHARGE_AMOUNT_EXCEEDS_LIMIT);
         }
@@ -48,7 +48,7 @@ public class Point {
         this.balance += amount;
     }
 
-    public void use(int amount) {
+    public void use(Long amount) {
         if (amount <= 0) {
             throw new ApiException(INVALID_USE_AMOUNT);
         }

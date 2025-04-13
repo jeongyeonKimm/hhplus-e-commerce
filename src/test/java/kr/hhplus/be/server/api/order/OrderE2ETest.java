@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.api.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.order.dto.request.OrderProductRequest;
 import kr.hhplus.be.server.interfaces.api.order.dto.request.OrderRequest;
 import kr.hhplus.be.server.interfaces.api.order.dto.response.OrderResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class OrderE2ETest {
         try {
             OrderProductRequest orderProduct = OrderProductRequest.builder()
                     .productId(1L)
-                    .quantity(1)
+                    .quantity(1L)
                     .build();
 
             OrderRequest request = OrderRequest.builder()
@@ -69,7 +69,7 @@ class OrderE2ETest {
         try {
             OrderProductRequest orderProduct = OrderProductRequest.builder()
                     .productId(1L)
-                    .quantity(1)
+                    .quantity(1L)
                     .build();
 
             OrderRequest request = OrderRequest.builder()
@@ -113,7 +113,7 @@ class OrderE2ETest {
         try {
             OrderProductRequest orderProduct = OrderProductRequest.builder()
                     .productId(productId)
-                    .quantity(1)
+                    .quantity(1L)
                     .build();
 
             OrderRequest request = OrderRequest.builder()
@@ -132,9 +132,9 @@ class OrderE2ETest {
     }
 
     @DisplayName("POST /api/v1/orders로 1보다 작은 주문 상품 수량이 들어오면 상태 코드 400을 응답한다.")
-    @ValueSource(ints = {0, -100})
+    @ValueSource(longs = {0, -100})
     @ParameterizedTest
-    void createOrder_withLessThanOneQuantity(Integer quantity) throws JsonProcessingException {
+    void createOrder_withLessThanOneQuantity(Long quantity) throws JsonProcessingException {
         try {
             OrderProductRequest orderProduct = OrderProductRequest.builder()
                     .productId(1L)
@@ -161,7 +161,7 @@ class OrderE2ETest {
     void createOrder_success() throws JsonProcessingException {
         OrderProductRequest orderProduct = OrderProductRequest.builder()
                 .productId(1L)
-                .quantity(10)
+                .quantity(10L)
                 .build();
 
         OrderRequest request = OrderRequest.builder()

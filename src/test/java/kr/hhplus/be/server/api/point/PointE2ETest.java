@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.api.point;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
-import kr.hhplus.be.server.common.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class PointE2ETest {
         try {
             PointChargeRequest request = PointChargeRequest.builder()
                     .userId(userId)
-                    .chargeAmount(1000)
+                    .chargeAmount(1000L)
                     .build();
 
             restClient.post()
@@ -56,9 +56,9 @@ class PointE2ETest {
     }
 
     @DisplayName("POST /api/v1/points/charge로 양수가 아닌 충전 금액이 들어오면 상태 코드 400을 응답한다.")
-    @ValueSource(ints = {0, -1000})
+    @ValueSource(longs = {0, -1000})
     @ParameterizedTest
-    void chargePoint_withNotPositiveChargeAmount(Integer chargeAmount) throws JsonProcessingException {
+    void chargePoint_withNotPositiveChargeAmount(Long chargeAmount) throws JsonProcessingException {
         try {
             PointChargeRequest request = PointChargeRequest.builder()
                     .userId(1L)
@@ -76,9 +76,9 @@ class PointE2ETest {
     }
 
     @DisplayName("POST /api/v1/points/charge로 1000000을 넘는 충전 금액이 들어오면 상태 코드 400을 응답한다.")
-    @ValueSource(ints = {1000001, 2000000})
+    @ValueSource(longs = {1000001, 2000000})
     @ParameterizedTest
-    void chargePoint_withExceededChargeAmount(Integer chargeAmount) throws JsonProcessingException {
+    void chargePoint_withExceededChargeAmount(Long chargeAmount) throws JsonProcessingException {
         try {
             PointChargeRequest request = PointChargeRequest.builder()
                     .userId(1L)
@@ -100,7 +100,7 @@ class PointE2ETest {
     void chargePoint_success() {
         PointChargeRequest request = PointChargeRequest.builder()
                 .userId(1L)
-                .chargeAmount(10000)
+                .chargeAmount(10000L)
                 .build();
 
         ApiResponse<PointResponse> response = restClient.post()
