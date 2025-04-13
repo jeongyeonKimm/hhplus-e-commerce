@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.api.point;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kr.hhplus.be.server.api.point.dto.request.PointChargeRequest;
-import kr.hhplus.be.server.api.point.dto.request.PointUseRequest;
-import kr.hhplus.be.server.api.point.dto.response.PointResponse;
+import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
+import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
+import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -159,9 +159,7 @@ class PointE2ETest {
     @ParameterizedTest
     void usePoint_withNotPositiveOrderId(Long orderId) throws JsonProcessingException {
         try {
-            PointUseRequest request = PointUseRequest.builder()
-                    .orderId(orderId)
-                    .build();
+            PointUseRequest request = PointUseRequest.of(orderId);
 
             restClient.post()
                     .uri("/use")
@@ -176,9 +174,7 @@ class PointE2ETest {
     @DisplayName("POST /api/v1/points/use로 양수의 주문 아이디와 함께 포인트 사용 요청을 보내면 상태 코드 204과 조회된 유저 포인트를 응답한다.")
     @Test
     void usePoint_success() {
-        PointUseRequest request = PointUseRequest.builder()
-                .orderId(1L)
-                .build();
+        PointUseRequest request = PointUseRequest.of(1L);
 
         ApiResponse<PointResponse> response = restClient.post()
                 .uri("/use")

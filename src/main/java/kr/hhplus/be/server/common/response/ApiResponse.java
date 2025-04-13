@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Map;
-
 @Schema(description = "공통 응답 포맷")
 @Getter
 public class ApiResponse<T> {
@@ -16,9 +14,6 @@ public class ApiResponse<T> {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, String> validation;
 
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()

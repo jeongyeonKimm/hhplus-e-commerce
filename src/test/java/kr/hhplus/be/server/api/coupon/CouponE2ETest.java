@@ -1,9 +1,8 @@
 package kr.hhplus.be.server.api.coupon;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kr.hhplus.be.server.api.coupon.dto.request.CouponIssueRequest;
-import kr.hhplus.be.server.api.coupon.dto.response.CouponListResponse;
-import kr.hhplus.be.server.api.coupon.dto.response.CouponResponse;
+import kr.hhplus.be.server.interfaces.api.coupon.dto.request.CouponIssueRequest;
+import kr.hhplus.be.server.interfaces.api.coupon.dto.response.CouponListResponse;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
