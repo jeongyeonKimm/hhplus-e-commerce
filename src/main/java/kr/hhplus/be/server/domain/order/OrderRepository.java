@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +13,6 @@ public interface OrderRepository {
     void saveOrderProduct(OrderProduct orderProduct);
 
     List<OrderProduct> findOrderProductByOrderId(Long orderId);
+
+    List<Order> findByStatusAndCreatedBefore(LocalDate threshold);
 }

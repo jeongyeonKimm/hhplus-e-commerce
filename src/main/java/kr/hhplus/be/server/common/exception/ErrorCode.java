@@ -13,10 +13,12 @@ public enum ErrorCode {
     INVALID_USE_AMOUNT("INVALID_USE_AMOUNT", 400, "유효하지 않은 사용 금액입니다."),
     CHARGE_AMOUNT_EXCEEDS_LIMIT("CHARGE_AMOUNT_EXCEEDS_LIMIT", 400,"최대 누적 충전 금액을 초과하였습니다."),
     POINT_NOT_EXIST("POINT_NOT_EXIST", 404, "포인트가 존재하지 않습니다."),
+    INVALID_RESTORE_AMOUNT("INVALID_RESTORE_AMOUNT", 400, "복원되는 포인트는 0 이하일 수 없습니다."),
 
     INSUFFICIENT_STOCK("INSUFFICIENT_STOCK", 400, "재고가 부족합니다."),
     INVALID_PRODUCT("INVALID_PRODUCT", 404, "유효하지 않은 상품입니다."),
     EMPTY_ORDER_PRODUCTS("EMPTY_ORDER_PRODUCTS", 400, "주문 상품은 비어있을 수 없습니다."),
+    INVALID_RESTORE_STOCK("INVALID_RESTORE_STOCK", 400, "재고 복원 수량이 0 이하일 수 없습니다."),
 
     COUPON_NOT_OWNED("COUPON_NOT_OWNED", 404, "유저가 보유하고 있는 쿠폰이 아닙니다."),
     ALREADY_USED_COUPON("ALREADY_USED_COUPON", 409, "이미 사용된 쿠폰입니다."),

@@ -59,4 +59,12 @@ public class Point {
 
         this.balance -= amount;
     }
+
+    public void restore(Long restoreAmount) {
+        if (restoreAmount <= 0) {
+            throw new ApiException(INVALID_RESTORE_AMOUNT);
+        }
+
+        this.balance += restoreAmount;
+    }
 }

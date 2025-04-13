@@ -42,4 +42,8 @@ public class OrderProduct {
     public Long getTotalPrice() {
         return this.price * this.quantity;
     }
+
+    public void restoreStock(Product product) {
+        product.restore(this.quantity);
+    }
 }

@@ -8,10 +8,10 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
-import static kr.hhplus.be.server.domain.order.OrderStatus.NOT_PAID;
-import static kr.hhplus.be.server.domain.order.OrderStatus.PAID;
+import static kr.hhplus.be.server.domain.order.OrderStatus.*;
 
 @Getter
 public class Order {
@@ -67,5 +67,26 @@ public class Order {
         }
 
         this.status = PAID;
+    }
+
+    public void expired(List<Product> products) {
+        for (OrderProduct orderProduct : orderProducts) {
+            findProduct(products, orderProduct)
+                    .ifPresent(orderProduct::restoreStock);;
+        }
+
+        this.status = EXPIRED;
+    }
+
+    public List<Long> getProductIds() {
+        return orderProducts.stream()
+                .map(OrderProduct::getProductId)
+                .toList();
+    }
+
+    private Optional<Product> findProduct(List<Product> products, OrderProduct orderProduct) {
+        return products.stream()
+                .filter(p -> p.getId() == orderProduct.getProductId())
+                .findFirst();
     }
 }

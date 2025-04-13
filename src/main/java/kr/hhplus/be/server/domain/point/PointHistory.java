@@ -16,11 +16,7 @@ public class PointHistory {
         this.type = type;
     }
 
-    public static PointHistory charge(Long id, Long pointId, Long amount, Long balance) {
-        return new PointHistory(id, pointId, amount, balance, TransactionType.CHARGE);
-    }
-
-    public static PointHistory use(Long id, Long pointId, Long amount, Long balance) {
-        return new PointHistory(id, pointId, amount, balance, TransactionType.USE);
+    public static PointHistory saveHistory(Long id, Long pointId, Long amount, Long balance, TransactionType type) {
+        return new PointHistory(id, pointId, amount, balance, type);
     }
 }

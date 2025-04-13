@@ -45,6 +45,14 @@ public class CouponService {
                 .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
     }
 
+    public void rollbackCoupon(Long userCouponId) {
+        UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
+                .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
+
+        userCoupon.rollback();
+        userCouponRepository.save(userCoupon);
+    }
+
     private long generateId() {
         return sequence++;
     }

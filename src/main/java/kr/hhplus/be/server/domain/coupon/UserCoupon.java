@@ -54,4 +54,8 @@ public class UserCoupon {
     public boolean isAvailable() {
         return !this.isUsed && !this.coupon.isExpired();
     }
+
+    public void rollback() {
+        this.isUsed = false;
+    }
 }

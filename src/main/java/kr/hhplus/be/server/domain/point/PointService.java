@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.POINT_NOT_EXIST;
+import static kr.hhplus.be.server.domain.point.TransactionType.*;
 
 @RequiredArgsConstructor
 @Service
@@ -21,7 +22,7 @@ public class PointService {
         point.charge(amount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.charge(generatePointHistoryId(), point.getId(), amount, point.getBalance());
+        PointHistory history = PointHistory.saveHistory(generatePointHistoryId(), point.getId(), amount, point.getBalance(), CHARGE);
         pointRepository.savePointHistory(history);
 
         return point;
@@ -39,10 +40,21 @@ public class PointService {
         point.use(amount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.use(generatePointHistoryId(), point.getId(), amount, point.getBalance());
+        PointHistory history = PointHistory.saveHistory(generatePointHistoryId(), point.getId(), amount, point.getBalance(), USE);
         pointRepository.savePointHistory(history);
 
         return point;
+    }
+
+    public void rollbackPoint(Long userId, Long totalAmount) {
+        Point point = pointRepository.findPointByUserId(userId)
+                .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
+
+        point.restore(totalAmount);
+        pointRepository.savePoint(point);
+
+        PointHistory history = PointHistory.saveHistory(generatePointHistoryId(), point.getId(), totalAmount, point.getBalance(), ROLLBACK);
+        pointRepository.savePointHistory(history);
     }
 
     private Long generatePointId() {
