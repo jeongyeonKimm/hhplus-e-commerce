@@ -15,7 +15,7 @@ public class OrderProductList {
         this.productInfos = productInfos;
     }
 
-    public static OrderProductList create(List<OrderProductInfo> productInfos) {
+    public static OrderProductList of(List<OrderProductInfo> productInfos) {
         return new OrderProductList(productInfos);
     }
 

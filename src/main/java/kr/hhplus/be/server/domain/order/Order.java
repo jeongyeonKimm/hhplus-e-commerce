@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.order;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,6 @@ public class Order {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Builder
     private Order(Long id, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount) {
         this.id = id;
         this.userId = userId;
@@ -27,6 +25,10 @@ public class Order {
         this.status = OrderStatus.NOT_PAID;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public static Order of(Long id, Long userId, Long userCouponId, Boolean isCouponApplied, Integer totalAmount) {
+        return new Order(id, userId, userCouponId, isCouponApplied, totalAmount);
     }
 
     public void changeStatus(OrderStatus status) {

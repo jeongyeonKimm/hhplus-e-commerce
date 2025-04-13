@@ -16,7 +16,7 @@ class PointTest {
     @ParameterizedTest
     @ValueSource(ints = {0, -1000})
     void charge_shouldThrowInvalidChargeAmountException_whenChargeAmountIsZeroOrNegative(Integer chargeAmount) {
-        Point point = Point.create(1L, 2L, 1000);
+        Point point = Point.of(1L, 2L, 1000);
 
         assertThatThrownBy(() -> point.charge(chargeAmount))
                 .isInstanceOf(ApiException.class)
@@ -27,7 +27,7 @@ class PointTest {
     @ParameterizedTest
     @ValueSource(ints = {1_000_001, 2_000_000})
     void charge_shouldThrowInvalidChargeAmountException_whenChargeAmountIsExceeded(Integer chargeAmount) {
-        Point point = Point.create(1L, 2L, 1000);
+        Point point = Point.of(1L, 2L, 1000);
 
         assertThatThrownBy(() -> point.charge(chargeAmount))
                 .isInstanceOf(ApiException.class)
@@ -41,7 +41,7 @@ class PointTest {
         int initialAmount = 4_500_000;
         int chargeAmount = 600_000;
 
-        Point point = Point.create(1L, 2L, initialAmount);
+        Point point = Point.of(1L, 2L, initialAmount);
 
         assertThatThrownBy(() -> point.charge(chargeAmount))
                 .isInstanceOf(ApiException.class)
@@ -54,7 +54,7 @@ class PointTest {
         int initialAmount = 3_000_000;
         int chargeAmount = 500_000;
 
-        Point point = Point.create(1L, 2L, initialAmount);
+        Point point = Point.of(1L, 2L, initialAmount);
 
         point.charge(chargeAmount);
 
@@ -65,7 +65,7 @@ class PointTest {
     @DisplayName("사용하려는 금액이 잔액보다 많으면 포인트 사용에 실패한다.")
     @Test
     void use_shouldThrowInvalidUseAmountException_whenUseAmountIsMoreThanBalance() {
-        Point point = Point.create(1L, 2L, 1000);
+        Point point = Point.of(1L, 2L, 1000);
 
         assertThatThrownBy(() -> point.use(2000))
                 .isInstanceOf(ApiException.class)
@@ -76,7 +76,7 @@ class PointTest {
     @ValueSource(ints = {0, -1000})
     @ParameterizedTest
     void use_shouldThrowInvalidUseAmountException_whenUseAmountIsZeroOrNegative(int useAmount) {
-        Point point = Point.create(1L, 2L, 1000);
+        Point point = Point.of(1L, 2L, 1000);
 
         assertThatThrownBy(() -> point.use(useAmount))
                 .isInstanceOf(ApiException.class)
@@ -89,7 +89,7 @@ class PointTest {
         int initialAmount = 3_000_000;
         int useAmount = 1_000_000;
 
-        Point point = Point.create(1L, 2L, initialAmount);
+        Point point = Point.of(1L, 2L, initialAmount);
 
         point.use(useAmount);
 

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.product;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,6 @@ public class Product {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Builder
     private Product(Long id, String name, byte[] description, Integer price, Integer stock) {
         this.id = id;
         this.name = name;
@@ -28,6 +26,10 @@ public class Product {
         this.stock = stock;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public static Product of(Long id, String name, byte[] description, Integer price, Integer stock) {
+        return new Product(id, name, description, price, stock);
     }
 
     public void deduct(int quantity) {

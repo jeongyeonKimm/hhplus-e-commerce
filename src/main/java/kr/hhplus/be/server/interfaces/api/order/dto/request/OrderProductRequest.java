@@ -22,9 +22,6 @@ public class OrderProductRequest {
     }
 
     public OrderProductInfo toOrderProductInfo() {
-        return OrderProductInfo.builder()
-                .productId(productId)
-                .quantity(quantity)
-                .build();
+        return OrderProductInfo.of(productId, null, quantity);
     }
 }

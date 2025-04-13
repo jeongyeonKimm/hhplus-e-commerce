@@ -16,15 +16,15 @@ class CouponTest {
     @Test
     void calculateFinalAmount_RATE_success() {
         int originalAmount = 1_000_000;
-        Coupon coupon = Coupon.builder()
-                .id(1L)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(10)
-                .discountType(DiscountType.RATE)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(100)
-                .build();
+        Coupon coupon = Coupon.of(
+                1L,
+                "회원가입 할인 쿠폰",
+                10,
+                DiscountType.RATE,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                100
+        );
 
         int finalAmount = coupon.calculateFinalAmount(originalAmount);
 
@@ -37,15 +37,15 @@ class CouponTest {
     @Test
     void calculateFinalAmount_AMOUNT_whenOriginalAmountIsLessThanOrEqualDiscountValue() {
         int originalAmount = 50_000;
-        Coupon coupon = Coupon.builder()
-                .id(1L)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(10_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(100)
-                .build();
+        Coupon coupon = Coupon.of(
+                1L,
+                "회원가입 할인 쿠폰",
+                10000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                100
+        );
 
         int finalAmount = coupon.calculateFinalAmount(originalAmount);
 
@@ -57,15 +57,15 @@ class CouponTest {
     @Test
     void calculateFinalAmount_AMOUNT_whenOriginalAmountIsMoreThanDiscountValue() {
         int originalAmount = 50_000;
-        Coupon coupon = Coupon.builder()
-                .id(1L)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(60_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(100)
-                .build();
+        Coupon coupon = Coupon.of(
+                1L,
+                "회원가입 할인 쿠폰",
+                60000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                100
+        );
 
         int finalAmount = coupon.calculateFinalAmount(originalAmount);
 

@@ -21,6 +21,7 @@ public enum ErrorCode {
     INVALID_COUPON("INVALID_COUPON", 404, "존재하지 않는 쿠폰입니다."),
     INSUFFICIENT_COUPON_STOCK("INSUFFICIENT_COUPON", 409, "쿠폰이 모두 소진되었습니다."),
     COUPON_ALREADY_ISSUED("COUPON_ALREADY_ISSUED", 409, "이미 발급 받은 쿠폰입니다."),
+    INVALID_USER_COUPON("INVALID_USER_COUPON", 404, "유효하지 않은 사용자 쿠폰입니다."),
 
     INVALID_ORDER("INVALID_ORDER", 404, "유효하지 않은 주문입니다."),
 

@@ -36,13 +36,18 @@ public class CouponService {
         userCouponRepository.save(userCoupon);
     }
 
-    public boolean redeemCoupon(Long userCouponId) {
+    public boolean redeemCoupon(Long userId, Long userCouponId) {
         UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
-                .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
+                .orElseThrow(() -> new ApiException(INVALID_USER_COUPON));
+
+        if (!userCoupon.getUserId().equals(userId)) {
+            throw new ApiException(COUPON_NOT_OWNED);
+        }
 
         userCoupon.redeem();
         userCouponRepository.save(userCoupon);
-        return true;
+
+        return userCoupon.getIsUsed();
     }
 
     public int calculateFinalAmount(Long userCouponId, int totalAmount) {

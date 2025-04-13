@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.application.external.dto.OrderProductData;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,6 @@ public class OrderProduct {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Builder
     private OrderProduct(Long id, Long orderId, Long productId, Integer amount, Integer quantity) {
         this.id = id;
         this.orderId = orderId;
@@ -28,15 +26,15 @@ public class OrderProduct {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public static OrderProduct of(Long id, Long orderId, Long productId, Integer amount, Integer quantity) {
+        return new OrderProduct(id, orderId, productId, amount, quantity);
+    }
+
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
     public OrderProductData toData() {
-        return OrderProductData.builder()
-                .productId(productId)
-                .amount(amount)
-                .quantity(quantity)
-                .build();
+        return OrderProductData.of(productId, amount, getQuantity());
     }
 }

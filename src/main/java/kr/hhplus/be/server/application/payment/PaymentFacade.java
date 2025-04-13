@@ -3,6 +3,7 @@ package kr.hhplus.be.server.application.payment;
 import kr.hhplus.be.server.application.external.DataPlatformSender;
 import kr.hhplus.be.server.application.external.dto.OrderData;
 import kr.hhplus.be.server.application.payment.dto.PaymentCommand;
+import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.point.PointService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,8 @@ public class PaymentFacade {
     private final DataPlatformSender dataPlatformSender;
 
     public void payment(PaymentCommand command) {
-        pointService.usePoint(command.getUserId(), command.getUseAmount());
+        Order order = orderService.getOrder(command.getOrderId());
+        pointService.usePoint(order.getUserId(), order.getTotalAmount());
         orderService.changeStatusToPaid(command.getOrderId());
 
         OrderData orderData = orderService.getOrderData(command.getOrderId());

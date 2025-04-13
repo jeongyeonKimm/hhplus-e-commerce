@@ -27,9 +27,6 @@ public class PointChargeRequest {
     }
 
     public ChargePointCommand toChargeCommand() {
-        return ChargePointCommand.builder()
-                .userId(userId)
-                .chargeAmount(chargeAmount)
-                .build();
+        return ChargePointCommand.of(userId, chargeAmount);
     }
 }

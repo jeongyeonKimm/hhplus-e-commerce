@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -22,7 +21,6 @@ public class UserCoupon {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Builder
     private UserCoupon(Long id, Long userId, Long couponId, Boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
         this.id = id;
         this.userId = userId;
@@ -35,16 +33,8 @@ public class UserCoupon {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static UserCoupon issue(Long id, Long userId, Coupon coupon) {
-        return UserCoupon.builder()
-                .id(id)
-                .userId(userId)
-                .couponId(coupon.getId())
-                .isUsed(false)
-                .couponTitle(coupon.getTitle())
-                .issuedAt(LocalDate.now())
-                .expiredAt(coupon.getEndDate())
-                .build();
+    public static UserCoupon of(long id, long userId, long couponId, boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
+        return new UserCoupon(id, userId, couponId, isUsed, couponTitle, issuedAt, expiredAt);
     }
 
     public void redeem() {
