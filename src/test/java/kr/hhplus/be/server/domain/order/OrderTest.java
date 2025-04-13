@@ -8,14 +8,18 @@ import kr.hhplus.be.server.domain.product.Product;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.instancio.Select.field;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 class OrderTest {
 
@@ -127,6 +131,27 @@ class OrderTest {
         order.pay();
 
         assertThat(order.getStatus()).isEqualTo(OrderStatus.PAID);
+    }
+
+    @DisplayName("만료된 주문은 상태를 EXPIRED로 바꾸고 재고를 복원한다.")
+    @Test
+    void expired_success() {
+        long productId = 1L;
+        Product product = Instancio.of(Product.class)
+                .set(field("id"), productId)
+                .create();
+
+        OrderProduct orderProduct = mock(OrderProduct.class);
+        given(orderProduct.getProductId()).willReturn(productId);
+
+        Order order = Instancio.of(Order.class)
+                .set(field("orderProducts"), List.of(orderProduct))
+                .create();
+
+        order.expired(List.of(product));
+
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.EXPIRED);
+        verify(orderProduct, times(1)).restoreStock(product);
     }
 
 }

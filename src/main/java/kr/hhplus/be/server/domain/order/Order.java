@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
@@ -72,7 +73,7 @@ public class Order {
     public void expired(List<Product> products) {
         for (OrderProduct orderProduct : orderProducts) {
             findProduct(products, orderProduct)
-                    .ifPresent(orderProduct::restoreStock);;
+                    .ifPresent(orderProduct::restoreStock);
         }
 
         this.status = EXPIRED;
@@ -86,7 +87,7 @@ public class Order {
 
     private Optional<Product> findProduct(List<Product> products, OrderProduct orderProduct) {
         return products.stream()
-                .filter(p -> p.getId() == orderProduct.getProductId())
+                .filter(p -> p.getId().equals(orderProduct.getProductId()))
                 .findFirst();
     }
 }

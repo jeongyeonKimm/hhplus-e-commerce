@@ -5,8 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_STOCK;
-import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_RESTORE_STOCK;
+import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Getter
 public class Product {
@@ -43,7 +42,7 @@ public class Product {
 
     public void restore(Long quantity) {
         if (quantity <= 0) {
-            throw new ApiException(INVALID_RESTORE_STOCK);
+            throw new ApiException(INVALID_RESTORE_QUANTITY);
         }
         this.stock += quantity;
     }

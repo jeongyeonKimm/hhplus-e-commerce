@@ -18,7 +18,7 @@ public enum ErrorCode {
     INSUFFICIENT_STOCK("INSUFFICIENT_STOCK", 400, "재고가 부족합니다."),
     INVALID_PRODUCT("INVALID_PRODUCT", 404, "유효하지 않은 상품입니다."),
     EMPTY_ORDER_PRODUCTS("EMPTY_ORDER_PRODUCTS", 400, "주문 상품은 비어있을 수 없습니다."),
-    INVALID_RESTORE_STOCK("INVALID_RESTORE_STOCK", 400, "재고 복원 수량이 0 이하일 수 없습니다."),
+    INVALID_RESTORE_QUANTITY("INVALID_RESTORE_QUANTITY", 400, "재고 복원 수량이 0 이하일 수 없습니다."),
 
     COUPON_NOT_OWNED("COUPON_NOT_OWNED", 404, "유저가 보유하고 있는 쿠폰이 아닙니다."),
     ALREADY_USED_COUPON("ALREADY_USED_COUPON", 409, "이미 사용된 쿠폰입니다."),
