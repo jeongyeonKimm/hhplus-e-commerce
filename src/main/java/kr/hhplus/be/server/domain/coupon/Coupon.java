@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_COUPON_STOCK;
+
 @Getter
 public class Coupon {
 
@@ -45,5 +47,13 @@ public class Coupon {
         }
 
         return discountValue;
+    }
+
+    public void deduct() {
+        if (this.stock <= 0) {
+            throw new ApiException(INSUFFICIENT_COUPON_STOCK);
+        }
+
+        this.stock -= 1;
     }
 }
