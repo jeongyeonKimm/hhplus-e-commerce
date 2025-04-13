@@ -4,6 +4,7 @@ import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
@@ -32,7 +33,15 @@ public class CouponService {
         coupon.deduct();
         couponRepository.save(coupon);
 
-        UserCoupon userCoupon = UserCoupon.issue(generateId(), userId, coupon);
+        UserCoupon userCoupon = UserCoupon.of(
+                generateId(),
+                userId,
+                coupon.getId(),
+                false,
+                coupon.getTitle(),
+                LocalDate.now(),
+                coupon.getEndDate()
+        );
         userCouponRepository.save(userCoupon);
     }
 

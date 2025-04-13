@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.Getter;
 
 import java.time.LocalDate;

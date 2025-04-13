@@ -86,15 +86,15 @@ class CouponServiceTest {
         long userId = 1L;
         long couponId = 2L;
 
-        Coupon coupon = Coupon.builder()
-                .id(couponId)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(60_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(0)
-                .build();
+        Coupon coupon = Coupon.of(
+                couponId,
+                "회원가입 할인 쿠폰",
+                60_000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                0
+        );
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
 
@@ -109,15 +109,15 @@ class CouponServiceTest {
         long userId = 1L;
         long couponId = 2L;
 
-        Coupon coupon = Coupon.builder()
-                .id(couponId)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(60_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(10)
-                .build();
+        Coupon coupon = Coupon.of(
+                couponId,
+                "회원가입 할인 쿠폰",
+                60_000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                10
+        );
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
         given(userCouponRepository.existByUserIdAndCouponId(userId, couponId)).willReturn(true);
@@ -133,15 +133,15 @@ class CouponServiceTest {
         long userId = 1L;
         long couponId = 2L;
 
-        Coupon coupon = Coupon.builder()
-                .id(couponId)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(60_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(10)
-                .build();
+        Coupon coupon = Coupon.of(
+                couponId,
+                "회원가입 할인 쿠폰",
+                60_000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                10
+        );
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
         given(userCouponRepository.existByUserIdAndCouponId(userId, couponId)).willReturn(false);

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +59,7 @@ class CouponTest {
         Coupon coupon = Coupon.of(
                 1L,
                 "회원가입 할인 쿠폰",
-                60000,
+                60_000,
                 DiscountType.AMOUNT,
                 LocalDate.of(2025, 4, 1),
                 LocalDate.of(2025, 4, 30),
@@ -75,15 +74,15 @@ class CouponTest {
     @DisplayName("쿠폰 수량이 0 이하인 경우 쿠폰 재고 차감이 불가하다.")
     @Test
     void deduct_throwInsufficientCouponStock_whenInsufficientCouponStock() {
-        Coupon coupon = Coupon.builder()
-                .id(1L)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(60_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(0)
-                .build();
+        Coupon coupon = Coupon.of(
+                1L,
+                "회원가입 할인 쿠폰",
+                60_000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                0
+        );
 
         assertThatThrownBy(coupon::deduct)
                 .isInstanceOf(ApiException.class)
@@ -94,15 +93,15 @@ class CouponTest {
     @Test
     void deduct() {
         int initialStock = 10;
-        Coupon coupon = Coupon.builder()
-                .id(1L)
-                .title("회원가입 할인 쿠폰")
-                .discountValue(60_000)
-                .discountType(DiscountType.AMOUNT)
-                .startDate(LocalDate.of(2025, 4, 1))
-                .endDate(LocalDate.of(2025, 4, 30))
-                .stock(initialStock)
-                .build();
+        Coupon coupon = Coupon.of(
+                1L,
+                "회원가입 할인 쿠폰",
+                60_000,
+                DiscountType.AMOUNT,
+                LocalDate.of(2025, 4, 1),
+                LocalDate.of(2025, 4, 30),
+                initialStock
+        );
 
         coupon.deduct();
 
