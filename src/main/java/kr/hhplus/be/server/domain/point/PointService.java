@@ -12,17 +12,15 @@ import static kr.hhplus.be.server.domain.point.TransactionType.*;
 public class PointService {
 
     private final PointRepository pointRepository;
-    private long pointSequence = 1L;
-    private long pointHistorySequence = 1L;
 
     public Point chargePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserId(userId)
-                .orElseGet(() -> Point.of(generatePointId(), userId, 0L));
+                .orElseGet(() -> Point.of(userId, 0L));
 
         point.charge(amount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.saveHistory(generatePointHistoryId(), point.getId(), amount, point.getBalance(), CHARGE);
+        PointHistory history = PointHistory.saveHistory(point, amount, CHARGE);
         pointRepository.savePointHistory(history);
 
         return point;
@@ -30,7 +28,7 @@ public class PointService {
 
     public Point getPoint(Long userId) {
         return pointRepository.findPointByUserId(userId)
-                .orElseGet(() -> Point.of(generatePointId(), userId, 0L));
+                .orElseGet(() -> Point.of(userId, 0L));
     }
 
     public Point usePoint(Long userId, Long amount) {
@@ -40,7 +38,7 @@ public class PointService {
         point.use(amount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.saveHistory(generatePointHistoryId(), point.getId(), amount, point.getBalance(), USE);
+        PointHistory history = PointHistory.saveHistory(point, amount, USE);
         pointRepository.savePointHistory(history);
 
         return point;
@@ -53,15 +51,8 @@ public class PointService {
         point.restore(totalAmount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.saveHistory(generatePointHistoryId(), point.getId(), totalAmount, point.getBalance(), ROLLBACK);
+        PointHistory history = PointHistory.saveHistory(point, totalAmount, ROLLBACK);
         pointRepository.savePointHistory(history);
     }
 
-    private Long generatePointId() {
-        return pointSequence++;
-    }
-
-    private Long generatePointHistoryId() {
-        return pointHistorySequence++;
-    }
 }

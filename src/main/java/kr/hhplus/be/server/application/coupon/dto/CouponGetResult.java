@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.application.coupon.dto;
 
-import kr.hhplus.be.server.domain.coupon.Coupon;
+import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import lombok.Getter;
 
 import java.util.List;
@@ -9,14 +9,14 @@ import java.util.List;
 public class CouponGetResult {
 
     private Long userId;
-    private List<Coupon> coupons;
+    private List<UserCoupon> userCoupons;
 
-    private CouponGetResult(Long userId, List<Coupon> coupons) {
+    private CouponGetResult(Long userId, List<UserCoupon> userCoupons) {
         this.userId = userId;
-        this.coupons = coupons;
+        this.userCoupons = userCoupons;
     }
 
-    public static CouponGetResult from(Long userId, List<Coupon> coupons) {
-        return new CouponGetResult(userId, coupons);
+    public static CouponGetResult from(Long userId, List<UserCoupon> userCoupons) {
+        return new CouponGetResult(userId, userCoupons);
     }
 }

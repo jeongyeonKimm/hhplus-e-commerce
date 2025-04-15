@@ -1,31 +1,41 @@
 package kr.hhplus.be.server.domain.bestseller;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class BestSeller {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class BestSeller extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long productId;
-    private String title;
-    private byte[] description;
-    private int price;
-    private int stock;
-    private Long sales;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private BestSeller(Long id, Long productId, String title, byte[] description, int price, int stock, Long sales) {
-        this.id = id;
+    private Long productId;
+
+    private String title;
+
+    private byte[] description;
+
+    private Long price;
+
+    private Long stock;
+
+    private Long sales;
+
+    private BestSeller(Long productId, String title, byte[] description, Long price, Long stock, Long sales) {
         this.productId = productId;
         this.title = title;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.sales = sales;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 }

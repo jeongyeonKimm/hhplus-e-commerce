@@ -17,7 +17,6 @@ class CouponTest {
     void calculateFinalAmount_RATE_success() {
         long totalAmount = 1_000_000L;
         Coupon coupon = Coupon.of(
-                1L,
                 "회원가입 할인 쿠폰",
                 10L,
                 DiscountType.RATE,
@@ -37,7 +36,6 @@ class CouponTest {
     void calculateFinalAmount_AMOUNT_whenOriginalAmountIsLessThanOrEqualDiscountValue() {
         long totalAmount = 50000L;
         Coupon coupon = Coupon.of(
-                1L,
                 "회원가입 할인 쿠폰",
                 10000L,
                 DiscountType.AMOUNT,
@@ -57,7 +55,6 @@ class CouponTest {
     void calculateFinalAmount_AMOUNT_whenOriginalAmountIsMoreThanDiscountValue() {
         long totalAmount = 50000L;
         Coupon coupon = Coupon.of(
-                1L,
                 "회원가입 할인 쿠폰",
                 60000L,
                 DiscountType.AMOUNT,
@@ -75,7 +72,6 @@ class CouponTest {
     @Test
     void deduct_throwInsufficientCouponStock_whenInsufficientCouponStock() {
         Coupon coupon = Coupon.of(
-                1L,
                 "회원가입 할인 쿠폰",
                 60000L,
                 DiscountType.AMOUNT,
@@ -94,7 +90,6 @@ class CouponTest {
     void deduct() {
         long initialStock = 10L;
         Coupon coupon = Coupon.of(
-                1L,
                 "회원가입 할인 쿠폰",
                 60000L,
                 DiscountType.AMOUNT,

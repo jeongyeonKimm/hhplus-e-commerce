@@ -49,7 +49,6 @@ class CouponServiceTest {
         long couponId = 2L;
 
         Coupon coupon = Coupon.of(
-                couponId,
                 "회원가입 할인 쿠폰",
                 60_000L,
                 DiscountType.AMOUNT,
@@ -72,7 +71,6 @@ class CouponServiceTest {
         long couponId = 2L;
 
         Coupon coupon = Coupon.of(
-                couponId,
                 "회원가입 할인 쿠폰",
                 60_000L,
                 DiscountType.AMOUNT,
@@ -82,7 +80,7 @@ class CouponServiceTest {
         );
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
-        given(userCouponRepository.existByUserIdAndCouponId(userId, couponId)).willReturn(true);
+        given(userCouponRepository.existsByUserIdAndCouponId(userId, couponId)).willReturn(true);
 
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(ApiException.class)
@@ -96,7 +94,6 @@ class CouponServiceTest {
         long couponId = 2L;
 
         Coupon coupon = Coupon.of(
-                couponId,
                 "회원가입 할인 쿠폰",
                 60_000L,
                 DiscountType.AMOUNT,
@@ -106,12 +103,12 @@ class CouponServiceTest {
         );
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
-        given(userCouponRepository.existByUserIdAndCouponId(userId, couponId)).willReturn(false);
+        given(userCouponRepository.existsByUserIdAndCouponId(userId, couponId)).willReturn(false);
 
         couponService.issueCoupon(userId, couponId);
 
         verify(couponRepository, times(1)).findById(couponId);
-        verify(userCouponRepository, times(1)).existByUserIdAndCouponId(userId, couponId);
+        verify(userCouponRepository, times(1)).existsByUserIdAndCouponId(userId, couponId);
     }
 
 }

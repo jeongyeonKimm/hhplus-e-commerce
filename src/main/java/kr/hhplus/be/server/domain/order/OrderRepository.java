@@ -14,5 +14,7 @@ public interface OrderRepository {
 
     List<OrderProduct> findOrderProductByOrderId(Long orderId);
 
-    List<Order> findByStatusAndCreatedBefore(LocalDate threshold);
+    List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDate createdBefore);
+
+    void saveAllOrderProducts(List<OrderProduct> orderProducts);
 }

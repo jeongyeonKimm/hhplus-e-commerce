@@ -31,8 +31,9 @@ public class OrderFacade {
             orderService.addProduct(order, product, productInfo.getQuantity());
         }
 
+
         if (command.getUserCouponId() != null) {
-            UserCoupon userCoupon = couponService.getUserCoupon(command.getUserId());
+            UserCoupon userCoupon = couponService.getUserCoupon(command.getUserCouponId());
             orderService.applyCoupon(order, userCoupon);
         }
 

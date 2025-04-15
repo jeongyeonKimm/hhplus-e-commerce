@@ -1,34 +1,40 @@
 package kr.hhplus.be.server.domain.point;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Getter
-public class Point {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class Point extends BaseEntity {
 
     private static final int MAX_TOTAL_CHARGE_AMOUNT = 5_000_000;
     private static final int MAX_CHARGE_AMOUNT_PER_TRANSACTION = 1_000_000;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
-    private Long balance;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private Point(Long id, Long userId, Long balance) {
-        this.id = id;
+    private Long userId;
+
+    private Long balance;
+
+    private Point(Long userId, Long balance) {
         this.userId = userId;
         this.balance = balance;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public static Point of(Long id, Long userId, Long balance) {
-        return new Point(id, userId, balance);
+    public static Point of(Long userId, Long balance) {
+        return new Point(userId, balance);
     }
 
     public void charge(Long amount) {

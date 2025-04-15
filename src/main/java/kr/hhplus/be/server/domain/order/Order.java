@@ -1,38 +1,50 @@
 package kr.hhplus.be.server.domain.order;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.BaseEntity;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import kr.hhplus.be.server.domain.product.Product;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 import static kr.hhplus.be.server.domain.order.OrderStatus.*;
 
 @Getter
-public class Order {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "orders")
+@Entity
+public class Order extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long userId;
+
     private Long userCouponId;
+
     private Boolean isCouponApplied;
+
     private Long totalAmount;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    @Transient
     private final List<OrderProduct> orderProducts = new ArrayList<>();
 
     private Order(Long userId) {
         this.userId = userId;
         this.isCouponApplied = false;
+        this.totalAmount = 0L;
         this.status = NOT_PAID;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
     public static Order of(Long userId) {
@@ -42,7 +54,7 @@ public class Order {
     public void addProduct(Product product, Long quantity) {
         product.deduct(quantity);
 
-        OrderProduct orderProduct = OrderProduct.of(product, quantity);
+        OrderProduct orderProduct = OrderProduct.of(this, product, quantity);
         this.orderProducts.add(orderProduct);
         this.totalAmount += orderProduct.getTotalPrice();
     }

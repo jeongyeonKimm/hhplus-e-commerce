@@ -1,40 +1,49 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_COUPON_STOCK;
 
 @Getter
-public class Coupon {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class Coupon extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private Long discountValue;
-    private DiscountType discountType;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Long stock;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private Coupon(Long id, String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
-        this.id = id;
+    private String title;
+
+    private Long discountValue;
+
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    private Long stock;
+
+    private Coupon(String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
         this.title = title;
         this.discountValue = discountValue;
         this.discountType = discountType;
         this.startDate = startDate;
         this.endDate = endDate;
         this.stock = stock;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public static Coupon of(Long id, String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
-        return new Coupon(id, title, discountValue, discountType, startDate, endDate, stock);
+    public static Coupon of(String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
+        return new Coupon(title, discountValue, discountType, startDate, endDate, stock);
     }
 
     public Long getDiscountAmount(Long totalAmount) {

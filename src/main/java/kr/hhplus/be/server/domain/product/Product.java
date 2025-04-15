@@ -1,35 +1,43 @@
 package kr.hhplus.be.server.domain.product;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Getter
-public class Product {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class Product extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private byte[] description;
-    private Long price;
-    private Long stock;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private Product(Long id, String name, byte[] description, Long price, Long stock) {
-        this.id = id;
+    private String name;
+
+    private byte[] description;
+
+    private Long price;
+
+    private Long stock;
+
+    private Product(String name, byte[] description, Long price, Long stock) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public static Product of(Long id, String name, byte[] description, Long price, Long stock) {
-        return new Product(id, name, description, price, stock);
+    public static Product of(String name, byte[] description, Long price, Long stock) {
+        return new Product(name, description, price, stock);
     }
 
     public void deduct(Long quantity) {

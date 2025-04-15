@@ -53,14 +53,14 @@ class OrderFacadeTest {
         OrderCreateCommand command = OrderCreateCommand.of(userId, userCouponId, productInfos);
 
         Order order = Order.of(userId);
-        Product product1 = Product.of(3L, "iPhone 13", "Apple iPhone 13".getBytes(), 1_000_000L, 100L);
-        Product product2 = Product.of(4L, "iPhone 15", "Apple iPhone 15".getBytes(), 1_500_000L, 100L);
-        UserCoupon userCoupon = UserCoupon.of(userId, userId, couponId);
+        Product product1 = Product.of("iPhone 13", "Apple iPhone 13".getBytes(), 1_000_000L, 100L);
+        Product product2 = Product.of("iPhone 15", "Apple iPhone 15".getBytes(), 1_500_000L, 100L);
+        UserCoupon userCoupon = UserCoupon.of(userId, couponId);
 
         given(orderService.createOrder(userId)).willReturn(order);
         given(productService.getProduct(3L)).willReturn(product1);
         given(productService.getProduct(4L)).willReturn(product2);
-        given(couponService.getUserCoupon(userId)).willReturn(userCoupon);
+        given(couponService.getUserCoupon(userCouponId)).willReturn(userCoupon);
 
         OrderResult result = orderFacade.order(command);
 
@@ -71,7 +71,7 @@ class OrderFacadeTest {
         verify(productService, times(1)).getProduct(4L);
         verify(orderService, times(1)).addProduct(order, product1, 2L);
         verify(orderService, times(1)).addProduct(order, product2, 1L);
-        verify(couponService, times(1)).getUserCoupon(userId);
+        verify(couponService, times(1)).getUserCoupon(userCouponId);
         verify(orderService, times(1)).applyCoupon(order, userCoupon);
     }
 }

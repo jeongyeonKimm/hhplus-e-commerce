@@ -1,34 +1,47 @@
 package kr.hhplus.be.server.domain.order;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import kr.hhplus.be.server.application.external.dto.OrderProductData;
+import kr.hhplus.be.server.domain.BaseEntity;
 import kr.hhplus.be.server.domain.product.Product;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class OrderProduct {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class OrderProduct extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long orderId;
 
     private Long productId;
-    private Long price;
-    private Long quantity;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private OrderProduct(Long productId, Long price, Long quantity) {
+    private Long price;
+
+    private Long quantity;
+
+    private OrderProduct(Long productId, Long orderId, Long price, Long quantity) {
         this.productId = productId;
+        this.orderId = orderId;
         this.price = price;
         this.quantity = quantity;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public static OrderProduct of(Long productId, Long price, Long quantity) {
-        return new OrderProduct(productId, price, quantity);
+    public static OrderProduct of(Long productId, Long orderId, Long price, Long quantity) {
+        return new OrderProduct(productId, orderId, price, quantity);
     }
 
-    public static OrderProduct of(Product product, Long quantity) {
+    public static OrderProduct of(Order order, Product product, Long quantity) {
         return new OrderProduct(
+                order.getId(),
                 product.getId(),
                 product.getPrice(),
                 quantity

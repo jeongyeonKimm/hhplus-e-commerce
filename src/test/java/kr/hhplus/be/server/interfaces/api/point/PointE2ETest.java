@@ -1,7 +1,15 @@
-package kr.hhplus.be.server.api.point;
+package kr.hhplus.be.server.interfaces.api.point;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.hhplus.be.server.common.response.ApiResponse;
+import kr.hhplus.be.server.domain.order.Order;
+import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.domain.point.Point;
+import kr.hhplus.be.server.domain.point.PointRepository;
+import kr.hhplus.be.server.domain.product.Product;
+import kr.hhplus.be.server.domain.product.ProductRepository;
+import kr.hhplus.be.server.domain.user.User;
+import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointUseRequest;
 import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
@@ -10,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,6 +35,18 @@ class PointE2ETest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PointRepository pointRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void setUp() {
@@ -98,9 +119,14 @@ class PointE2ETest {
     @DisplayName("POST /api/v1/points/charge로 양수의 유저 ID, 1~1000000 범위의 충전 금액과함께 포인트 충전 요청을 보내면 상태 코드 200과 조회된 유저 포인트를 응답한다.")
     @Test
     void chargePoint_success() {
+        long balance = 10000L;
+        long chargeAmount = 10000L;
+        User user = userRepository.save(User.of());
+        pointRepository.savePoint(Point.of(user.getId(), balance));
+
         PointChargeRequest request = PointChargeRequest.builder()
-                .userId(1L)
-                .chargeAmount(10000L)
+                .userId(user.getId())
+                .chargeAmount(chargeAmount)
                 .build();
 
         ApiResponse<PointResponse> response = restClient.post()
@@ -110,11 +136,12 @@ class PointE2ETest {
                 .toEntity(new ParameterizedTypeReference<ApiResponse<PointResponse>>() {})
                 .getBody();
 
+        long expected = balance + chargeAmount;
         assertThat(response.getCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getData()).isNotNull();
         assertThat(response.getData())
                 .extracting("userId", "balance")
-                .contains(1L, 11000);
+                .contains(user.getId(), expected);
     }
 
     @DisplayName("GET /api/v1/points?userId={userId}로 양수가 아닌 유저 ID가 들어오면 상태 코드 400을 응답한다.")
@@ -137,11 +164,13 @@ class PointE2ETest {
     @DisplayName("GET /api/v1/points?userId={userId}로 양수의 유저 ID와 함께 포인트 조회 요청을 보내면 상태 코드 200과 조회된 유저 포인트를 응답한다.")
     @Test
     void getPoint_success() {
-        Long userId = 1L;
+        long balance = 10000L;
+        User user = userRepository.save(User.of());
+        pointRepository.savePoint(Point.of(user.getId(), balance));
 
         ApiResponse<PointResponse> response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("userId", userId)
+                        .queryParam("userId", user.getId())
                         .build())
                 .retrieve()
                 .toEntity(new ParameterizedTypeReference<ApiResponse<PointResponse>>() {})
@@ -151,7 +180,7 @@ class PointE2ETest {
         assertThat(response.getData()).isNotNull();
         assertThat(response.getData())
                 .extracting("userId", "balance")
-                .contains(userId, 2000);
+                .contains(user.getId(), balance);
     }
 
     @DisplayName("POST /api/v1/points/use로 음수의 주문 ID가 들어오면 상태 코드 400을 응답한다.")
@@ -174,7 +203,17 @@ class PointE2ETest {
     @DisplayName("POST /api/v1/points/use로 양수의 주문 아이디와 함께 포인트 사용 요청을 보내면 상태 코드 204과 조회된 유저 포인트를 응답한다.")
     @Test
     void usePoint_success() {
-        PointUseRequest request = PointUseRequest.of(1L);
+        User user = userRepository.save(User.of());
+        pointRepository.savePoint(Point.of(user.getId(), 10000L));
+
+        Product product = productRepository.save(Product.of("123", "1234123123".getBytes(), 1000L, 100L));
+        Order order = orderRepository.saveOrder(Order.of(user.getId()));
+        order.addProduct(product, 1L);
+
+        orderRepository.saveOrder(order);
+        orderRepository.saveAllOrderProducts(order.getOrderProducts());
+
+        PointUseRequest request = PointUseRequest.of(order.getId());
 
         ApiResponse<PointResponse> response = restClient.post()
                 .uri("/use")

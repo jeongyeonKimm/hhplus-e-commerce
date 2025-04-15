@@ -22,7 +22,6 @@ class ProductTest {
         long orderQuantity = 50L;
 
         Product product = Product.of(
-                1L,
                 "iPhone 15",
                 "Apple iPhone15".getBytes(),
                 1_000_000L,
@@ -42,7 +41,6 @@ class ProductTest {
         long stock = 100;
 
         Product product = Product.of(
-                1L,
                 "iPhone 15",
                 "Apple iPhone15".getBytes(),
                 1_000_000L,

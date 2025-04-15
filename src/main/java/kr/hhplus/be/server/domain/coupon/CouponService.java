@@ -14,7 +14,6 @@ public class CouponService {
 
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
-    private long sequence = 1L;
 
     public void issueCoupon(Long userId, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
@@ -24,7 +23,7 @@ public class CouponService {
             throw new ApiException(INSUFFICIENT_COUPON_STOCK);
         }
 
-        boolean alreadyIssued = userCouponRepository.existByUserIdAndCouponId(userId, couponId);
+        boolean alreadyIssued = userCouponRepository.existsByUserIdAndCouponId(userId, couponId);
         if (alreadyIssued) {
             throw new ApiException(COUPON_ALREADY_ISSUED);
         }
@@ -32,17 +31,31 @@ public class CouponService {
         coupon.deduct();
         couponRepository.save(coupon);
 
-        UserCoupon userCoupon = UserCoupon.of(generateId(), userId, coupon.getId());
+        UserCoupon userCoupon = UserCoupon.of(userId, coupon.getId());
         userCouponRepository.save(userCoupon);
     }
 
-    public List<Coupon> getCoupons(Long userId) {
-        return userCouponRepository.findByUserId(userId);
+    public List<UserCoupon> getCoupons(Long userId) {
+        List<UserCoupon> userCoupons = userCouponRepository.findByUserId(userId);
+
+        for (UserCoupon userCoupon : userCoupons) {
+            Coupon coupon = couponRepository.findById(userCoupon.getCouponId())
+                    .orElseThrow(() -> new ApiException(INVALID_COUPON));
+            userCoupon.setCoupon(coupon);
+        }
+
+        return userCoupons;
     }
 
     public UserCoupon getUserCoupon(Long userCouponId) {
-        return userCouponRepository.findById(userCouponId)
+        UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
+
+        Coupon coupon = couponRepository.findById(userCoupon.getCouponId())
+                .orElseThrow(() -> new ApiException(INVALID_COUPON));
+
+        userCoupon.setCoupon(coupon);
+        return userCoupon;
     }
 
     public void rollbackCoupon(Long userCouponId) {
@@ -51,9 +64,5 @@ public class CouponService {
 
         userCoupon.rollback();
         userCouponRepository.save(userCoupon);
-    }
-
-    private long generateId() {
-        return sequence++;
     }
 }

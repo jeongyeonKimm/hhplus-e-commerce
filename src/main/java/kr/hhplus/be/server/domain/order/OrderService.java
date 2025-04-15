@@ -6,9 +6,8 @@ import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import kr.hhplus.be.server.domain.point.PointService;
 import kr.hhplus.be.server.domain.product.Product;
-import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.product.ProductService;
-import kr.hhplus.be.server.domain.use.UserService;
+import kr.hhplus.be.server.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,10 +41,14 @@ public class OrderService {
 
     public void addProduct(Order order, Product product, Long quantity) {
         order.addProduct(product, quantity);
+
+        orderRepository.saveOrder(order);
+        orderRepository.saveAllOrderProducts(order.getOrderProducts());
     }
 
     public void applyCoupon(Order order, UserCoupon userCoupon) {
         order.applyCoupon(userCoupon);
+        orderRepository.saveOrder(order);
     }
 
     public void changeStatusToPaid(Order order) {
@@ -69,7 +72,7 @@ public class OrderService {
 
     public List<Order> getUnpaidOrdersExceed(Duration duration) {
         LocalDate threshold = LocalDate.now().minus(duration);
-        return orderRepository.findByStatusAndCreatedBefore(threshold);
+        return orderRepository.findByStatusAndCreatedAtBefore(OrderStatus.NOT_PAID, threshold);
     }
 
     public void expireOrder(Order order) {

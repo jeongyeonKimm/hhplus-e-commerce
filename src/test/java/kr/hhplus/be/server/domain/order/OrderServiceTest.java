@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import kr.hhplus.be.server.domain.use.UserService;
+import kr.hhplus.be.server.domain.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

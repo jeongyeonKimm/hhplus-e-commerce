@@ -7,15 +7,13 @@ import lombok.Getter;
 @Getter
 public class BestProductResponse {
 
-    private Long id;
     private String name;
-    private Integer price;
-    private Integer stock;
+    private Long price;
+    private Long stock;
     private Long sales;
 
     @Builder
-    private BestProductResponse(Long id, String name, Integer price, Integer stock, Long sales) {
-        this.id = id;
+    private BestProductResponse(String name, Long price, Long stock, Long sales) {
         this.name = name;
         this.price = price;
         this.stock = stock;
@@ -24,7 +22,6 @@ public class BestProductResponse {
 
     public static BestProductResponse from(BestSeller bestSeller) {
         return new BestProductResponse(
-                bestSeller.getId(),
                 bestSeller.getTitle(),
                 bestSeller.getPrice(),
                 bestSeller.getStock(),
