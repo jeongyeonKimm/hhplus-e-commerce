@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
@@ -40,11 +43,15 @@ public class CouponService {
 
     public List<UserCoupon> getCoupons(Long userId) {
         List<UserCoupon> userCoupons = userCouponRepository.findByUserId(userId);
+        List<Long> couponIds = userCoupons.stream()
+                .map(UserCoupon::getCouponId)
+                .toList();
+
+        Map<Long, Coupon> couponMap = couponRepository.findAllById(couponIds).stream()
+                .collect(Collectors.toMap(Coupon::getId, Function.identity()));
 
         for (UserCoupon userCoupon : userCoupons) {
-            Coupon coupon = couponRepository.findById(userCoupon.getCouponId())
-                    .orElseThrow(() -> new ApiException(INVALID_COUPON));
-            userCoupon.setCoupon(coupon);
+            userCoupon.setCoupon(couponMap.get(userCoupon.getCouponId()));
         }
 
         return userCoupons;
