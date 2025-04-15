@@ -8,6 +8,7 @@ import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.point.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
@@ -17,6 +18,7 @@ public class PaymentFacade {
     private final OrderService orderService;
     private final DataPlatformSender dataPlatformSender;
 
+    @Transactional
     public void payment(PaymentCommand command) {
         Order order = orderService.getOrder(command.getOrderId());
 

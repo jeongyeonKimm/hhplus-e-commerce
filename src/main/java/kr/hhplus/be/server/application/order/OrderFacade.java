@@ -11,6 +11,7 @@ import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class OrderFacade {
     private final CouponService couponService;
     private final OrderService orderService;
 
+    @Transactional
     public OrderResult order(OrderCreateCommand command) {
         Order order = orderService.createOrder(command.getUserId());
 
