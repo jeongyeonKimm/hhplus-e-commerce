@@ -11,11 +11,11 @@ import lombok.Getter;
 @Getter
 public class PointChargeRequest {
 
-    @Positive
+    @Positive(message = "사용자 ID는 양수입니다.")
     @Schema(description = "사용자 ID")
     private Long userId;
 
-    @Positive
+    @Positive(message = "충전 금액은 양수입니다.")
     @Max(value = 1000000)
     @Schema(description = "충전 금액")
     private Long chargeAmount;

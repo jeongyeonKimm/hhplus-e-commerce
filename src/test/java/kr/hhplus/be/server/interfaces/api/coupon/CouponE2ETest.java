@@ -28,24 +28,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CouponE2ETest {
 
     RestClient restClient;
 
-    @Autowired
-    private TestRestTemplate testRestTemplate;
-
     @Autowired private CouponRepository couponRepository;
 
     @Autowired private UserCouponRepository userCouponRepository;
 
     @Autowired private UserRepository userRepository;
-
-    @Autowired private CouponFacade couponFacade;
 
     @LocalServerPort
     private int port;
@@ -62,16 +56,14 @@ class CouponE2ETest {
     @ValueSource(longs = {0L, -1000L})
     @ParameterizedTest
     void getCoupons_withNotPositiveUserId(Long userId) throws JsonProcessingException {
-        try {
-            restClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .queryParam("userId", userId)
-                            .build())
-                    .retrieve()
-                    .toEntity(new ParameterizedTypeReference<>() {});
-        } catch (HttpClientErrorException e) {
-            assertThat(e.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        }
+        assertThatThrownBy(() -> restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("userId", userId)
+                        .build())
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<>() {})
+        )
+                .isInstanceOf(HttpClientErrorException.class);
     }
 
     @DisplayName("GET /api/v1/coupons?userId={userId}로 양수의 유저 ID와 함께 쿠폰 조회 요청을 보내면 상태 코드 200과 조회된 유저 쿠폰을 응답한다.")
@@ -102,8 +94,6 @@ class CouponE2ETest {
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
 
-        System.out.println(response);
-
         CouponListResponse data = response.getData();
         assertThat(data.getUserId()).isEqualTo(user.getId());
         assertThat(data.getCoupons())
@@ -118,34 +108,30 @@ class CouponE2ETest {
     @ValueSource(longs = {0L, -1000L})
     @ParameterizedTest
     void issueCoupon_withNotPositiveUserId(Long userId) {
-        try {
-            CouponIssueRequest request = CouponIssueRequest.of(userId, 1L);
+        CouponIssueRequest request = CouponIssueRequest.of(userId, 1L);
 
-            restClient.post()
-                    .uri("/issue")
-                    .body(request)
-                    .retrieve()
-                    .toEntity(new ParameterizedTypeReference<>() {});
-        } catch (HttpClientErrorException e) {
-            assertThat(e.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        }
+        assertThatThrownBy(() -> restClient.post()
+                .uri("/issue")
+                .body(request)
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<>() {})
+        )
+                .isInstanceOf(HttpClientErrorException.class);
     }
 
     @DisplayName("GET /api/v1/coupons/issue로 양수가 아닌 쿠폰 아이디가 들어오면 상태 코드 400을 응답한다.")
     @ValueSource(longs = {0L, -1000L})
     @ParameterizedTest
     void issueCoupon_withNotPositiveCouponId(Long couponId) {
-        try {
-            CouponIssueRequest request = CouponIssueRequest.of(1L, couponId);
+        CouponIssueRequest request = CouponIssueRequest.of(1L, couponId);
 
-            restClient.post()
-                    .uri("/issue")
-                    .body(request)
-                    .retrieve()
-                    .toEntity(new ParameterizedTypeReference<>() {});
-        } catch (HttpClientErrorException e) {
-            assertThat(e.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        }
+        assertThatThrownBy(() -> restClient.post()
+                .uri("/issue")
+                .body(request)
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<>() {})
+        )
+                .isInstanceOf(HttpClientErrorException.class);
     }
 
     @DisplayName("POST /api/v1/coupons/issue로 양수의 유저 ID와 함께 쿠폰 발급 요청을 보내면 상태 코드 201를 응답한다.")
