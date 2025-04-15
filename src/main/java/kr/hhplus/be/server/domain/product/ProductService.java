@@ -4,12 +4,14 @@ import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.product.dto.ProductResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_PRODUCT;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class ProductService {

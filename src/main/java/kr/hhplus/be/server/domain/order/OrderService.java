@@ -10,6 +10,7 @@ import kr.hhplus.be.server.domain.product.ProductService;
 import kr.hhplus.be.server.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.util.List;
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_USER;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class OrderService {
@@ -28,6 +30,7 @@ public class OrderService {
     private final ProductService productService;
     private final CouponService couponService;
 
+    @Transactional
     public Order createOrder(Long userId) {
         if (!userService.exists(userId)) {
             throw new ApiException(INVALID_USER);
@@ -35,10 +38,12 @@ public class OrderService {
         return Order.of(userId);
     }
 
+    @Transactional
     public void saveOrder(Order order) {
         orderRepository.saveOrder(order);
     }
 
+    @Transactional
     public void addProduct(Order order, Product product, Long quantity) {
         order.addProduct(product, quantity);
 
@@ -46,11 +51,13 @@ public class OrderService {
         orderRepository.saveAllOrderProducts(order.getOrderProducts());
     }
 
+    @Transactional
     public void applyCoupon(Order order, UserCoupon userCoupon) {
         order.applyCoupon(userCoupon);
         orderRepository.saveOrder(order);
     }
 
+    @Transactional
     public void changeStatusToPaid(Order order) {
         order.pay();
         orderRepository.saveOrder(order);
@@ -75,6 +82,7 @@ public class OrderService {
         return orderRepository.findByStatusAndCreatedAtBefore(OrderStatus.NOT_PAID, threshold);
     }
 
+    @Transactional
     public void expireOrder(Order order) {
         List<Product> products = productService.getAllProductsByIds(order.getProductIds());
         order.expired(products);
