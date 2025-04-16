@@ -4,10 +4,10 @@ import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderJpaRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDate before);
+    List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime before);
 }

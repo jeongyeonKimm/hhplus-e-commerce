@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.domain.product;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.BaseEntity;
 import lombok.AccessLevel;
@@ -14,6 +11,7 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "product")
 @Entity
 public class Product extends BaseEntity {
 

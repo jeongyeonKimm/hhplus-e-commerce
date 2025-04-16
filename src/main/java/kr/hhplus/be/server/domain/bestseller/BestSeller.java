@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.domain.bestseller;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "best_seller")
 @Entity
 public class BestSeller extends BaseEntity {
 

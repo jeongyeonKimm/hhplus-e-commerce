@@ -7,7 +7,7 @@ import kr.hhplus.be.server.domain.order.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDate before) {
+    public List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime before) {
         return orderJpaRepository.findByStatusAndCreatedAtBefore(status, before);
     }
 

@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.application.external.dto.OrderProductData;
 import kr.hhplus.be.server.domain.BaseEntity;
 import kr.hhplus.be.server.domain.product.Product;
@@ -13,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "order_product")
 @Entity
 public class OrderProduct extends BaseEntity {
 

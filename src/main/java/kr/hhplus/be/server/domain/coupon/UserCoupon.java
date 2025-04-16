@@ -14,6 +14,7 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_COUPON;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "user_coupon")
 @Entity
 public class UserCoupon {
 

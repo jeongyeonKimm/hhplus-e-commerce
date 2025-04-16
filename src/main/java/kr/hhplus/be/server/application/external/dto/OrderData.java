@@ -2,10 +2,12 @@ package kr.hhplus.be.server.application.external.dto;
 
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderProduct;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class OrderData {
 
     private Long orderId;

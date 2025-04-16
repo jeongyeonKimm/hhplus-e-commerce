@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ public interface OrderRepository {
 
     List<OrderProduct> findOrderProductByOrderId(Long orderId);
 
-    List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDate createdBefore);
+    List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime createdBefore);
 
     void saveAllOrderProducts(List<OrderProduct> orderProducts);
 }

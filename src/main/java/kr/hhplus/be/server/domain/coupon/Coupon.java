@@ -13,6 +13,7 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_COUPON
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "coupon")
 @Entity
 public class Coupon extends BaseEntity {
 

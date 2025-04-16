@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
@@ -78,7 +79,7 @@ public class OrderService {
     }
 
     public List<Order> getUnpaidOrdersExceed(Duration duration) {
-        LocalDate threshold = LocalDate.now().minus(duration);
+        LocalDateTime threshold = LocalDateTime.now().minus(duration);
         return orderRepository.findByStatusAndCreatedAtBefore(OrderStatus.NOT_PAID, threshold);
     }
 
