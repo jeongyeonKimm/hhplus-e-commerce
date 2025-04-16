@@ -14,6 +14,10 @@ public class BestSellerGetResult {
         this.bestSellers = bestSellers;
     }
 
+    public static BestSellerGetResult of(List<BestSeller> bestSellers) {
+        return new BestSellerGetResult(bestSellers);
+    }
+
     public static BestSellerGetResult from(List<BestSeller> bestSellers) {
         return new BestSellerGetResult(bestSellers);
     }
