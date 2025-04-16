@@ -61,10 +61,7 @@ class PointE2ETest {
     @ValueSource(longs = {0L, -1000L})
     @ParameterizedTest
     void chargePoint_withNotPositiveUserId(Long userId) {
-        PointChargeRequest request = PointChargeRequest.builder()
-                .userId(userId)
-                .chargeAmount(1000L)
-                .build();
+        PointChargeRequest request = PointChargeRequest.of(userId, 1000L);
 
         assertThatThrownBy(() -> restClient.post()
                 .uri("/charge")
@@ -80,11 +77,7 @@ class PointE2ETest {
     @ValueSource(longs = {0, -1000})
     @ParameterizedTest
     void chargePoint_withNotPositiveChargeAmount(Long chargeAmount) {
-        PointChargeRequest request = PointChargeRequest.builder()
-                .userId(1L)
-                .chargeAmount(chargeAmount)
-                .build();
-
+        PointChargeRequest request = PointChargeRequest.of(1L, chargeAmount);
         assertThatThrownBy(() -> restClient.post()
                 .uri("/charge")
                 .body(request)
@@ -98,10 +91,7 @@ class PointE2ETest {
     @ValueSource(longs = {1000001, 2000000})
     @ParameterizedTest
     void chargePoint_withExceededChargeAmount(Long chargeAmount) {
-        PointChargeRequest request = PointChargeRequest.builder()
-                .userId(1L)
-                .chargeAmount(chargeAmount)
-                .build();
+        PointChargeRequest request = PointChargeRequest.of(1L, chargeAmount);
 
         assertThatThrownBy(() -> restClient.post()
                 .uri("/charge")
@@ -121,10 +111,7 @@ class PointE2ETest {
         User user = userRepository.save(User.of());
         pointRepository.savePoint(Point.of(user.getId(), balance));
 
-        PointChargeRequest request = PointChargeRequest.builder()
-                .userId(user.getId())
-                .chargeAmount(chargeAmount)
-                .build();
+        PointChargeRequest request = PointChargeRequest.of(user.getId(), chargeAmount);
 
         ApiResponse<PointResponse> response = restClient.post()
                 .uri("/charge")

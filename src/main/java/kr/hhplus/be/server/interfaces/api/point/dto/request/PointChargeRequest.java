@@ -20,10 +20,13 @@ public class PointChargeRequest {
     @Schema(description = "충전 금액")
     private Long chargeAmount;
 
-    @Builder
     private PointChargeRequest(Long userId, Long chargeAmount) {
         this.userId = userId;
         this.chargeAmount = chargeAmount;
+    }
+
+    public static PointChargeRequest of(Long userId, Long chargeAmount) {
+        return new PointChargeRequest(userId, chargeAmount);
     }
 
     public ChargePointCommand toChargeCommand() {
