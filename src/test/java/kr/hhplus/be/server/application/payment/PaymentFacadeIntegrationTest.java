@@ -1,11 +1,16 @@
-package kr.hhplus.be.server.application.order;
+package kr.hhplus.be.server.application.payment;
 
+import kr.hhplus.be.server.application.order.OrderFacade;
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
 import kr.hhplus.be.server.application.order.dto.OrderResult;
+import kr.hhplus.be.server.application.payment.dto.PaymentCommand;
 import kr.hhplus.be.server.domain.coupon.*;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.domain.order.OrderStatus;
+import kr.hhplus.be.server.domain.point.Point;
+import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.user.User;
@@ -24,16 +29,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class OrderFacadeIntegrationTest extends IntegrationTestSupport {
+class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
+
+    @Autowired
+    private PaymentFacade paymentFacade;
 
     @Autowired
     private OrderFacade orderFacade;
 
     @Autowired
-    private OrderRepository orderRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private PointRepository pointRepository;
 
     @Autowired
     private CouponRepository couponRepository;
@@ -44,10 +52,15 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private ProductRepository productRepository;
 
-    @DisplayName("주문을 하면 주문 상품들의 재고 차감, 쿠폰 적용을 한다.")
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @DisplayName("결제를 하면 주문 금액을 포인트에서 차감, 주문 상태를 PAID로 변환한 뒤, 주문 이력을 외부 데이터 플랫폼에 전송한다.")
     @Test
-    void order() {
+    void payment() {
+        long initialBalance = 20000L;
         User user = userRepository.save(User.of());
+        Point point = pointRepository.savePoint(Point.of(user.getId(), initialBalance));
         Coupon coupon = couponRepository.save(Coupon.of(
                 "coupon1",
                 1000L,
@@ -67,13 +80,17 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
                 OrderProductInfo.of(product3.getId(), product1.getPrice(), 3L)
         );
 
-        OrderCreateCommand command = OrderCreateCommand.of(user.getId(), userCoupon.getId(), productInfos);
+        OrderCreateCommand orderCreateCommand = OrderCreateCommand.of(user.getId(), userCoupon.getId(), productInfos);
+        OrderResult result = orderFacade.order(orderCreateCommand);
 
-        OrderResult result = orderFacade.order(command);
+        PaymentCommand paymentCommand = PaymentCommand.of(result.getOrderId());
 
-        assertThat(result.getOrderId()).isNotNull();
+        paymentFacade.payment(paymentCommand);
+
+        Point usedPoint = pointRepository.findPointByUserId(user.getId()).get();
+        assertThat(usedPoint.getBalance()).isEqualTo(7000L);
 
         Order order = orderRepository.findOrderById(result.getOrderId()).get();
-        assertThat(order.getTotalAmount()).isEqualTo(13000L);
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.PAID);
     }
 }
