@@ -55,7 +55,7 @@ class BestSellerControllerIntegrationTest {
                 BestSeller.of(product5, 100L)
         );
 
-        BestSellerGetResult result = BestSellerGetResult.of(bestSellers);
+        BestSellerGetResult result = BestSellerGetResult.from(bestSellers);
         given(bestSellerFacade.getBestSellers()).willReturn(result);
 
         mockMvc.perform(get("/api/v1/bestsellers"))
