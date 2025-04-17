@@ -29,13 +29,13 @@ class ProductServiceTest {
         List<Product> products = List.of(
                 Product.of(
                         "iPhone 15",
-                        "Apple iPhone15".getBytes(),
+                        "Apple iPhone15",
                         1_000_000L,
                         100L
                 ),
                 Product.of(
                         "iPad Gen5",
-                        "Apple iPad Gen5".getBytes(),
+                        "Apple iPad Gen5",
                         1_000_000L,
                         200L
                 )

@@ -187,7 +187,7 @@ class PointE2ETest {
         User user = userRepository.save(User.of());
         pointRepository.savePoint(Point.of(user.getId(), 10000L));
 
-        Product product = productRepository.save(Product.of("123", "1234123123".getBytes(), 1000L, 100L));
+        Product product = productRepository.save(Product.of("123", "1234123123", 1000L, 100L));
         Order order = orderRepository.saveOrder(Order.of(user.getId()));
         order.addProduct(product, 1L);
 

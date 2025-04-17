@@ -21,20 +21,20 @@ public class Product extends BaseEntity {
 
     private String name;
 
-    private byte[] description;
+    private String description;
 
     private Long price;
 
     private Long stock;
 
-    private Product(String name, byte[] description, Long price, Long stock) {
+    private Product(String name, String description, Long price, Long stock) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
     }
 
-    public static Product of(String name, byte[] description, Long price, Long stock) {
+    public static Product of(String name, String description, Long price, Long stock) {
         return new Product(name, description, price, stock);
     }
 

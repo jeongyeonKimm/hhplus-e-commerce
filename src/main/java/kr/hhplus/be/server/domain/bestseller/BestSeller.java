@@ -21,7 +21,7 @@ public class BestSeller extends BaseEntity {
 
     private String title;
 
-    private byte[] description;
+    private String description;
 
     private Long price;
 
@@ -29,7 +29,7 @@ public class BestSeller extends BaseEntity {
 
     private Long sales;
 
-    private BestSeller(Long productId, String title, byte[] description, Long price, Long stock, Long sales) {
+    private BestSeller(Long productId, String title, String description, Long price, Long stock, Long sales) {
         this.productId = productId;
         this.title = title;
         this.description = description;
