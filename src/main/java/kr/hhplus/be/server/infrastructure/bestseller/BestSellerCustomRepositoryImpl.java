@@ -15,9 +15,15 @@ public class BestSellerCustomRepositoryImpl implements BestSellerCustomRepositor
     @Override
     public List<BestSeller> getBestSellers() {
         QBestSeller bestSeller = QBestSeller.bestSeller;
-        return jpaQueryFactory.selectFrom(bestSeller)
-                .orderBy(bestSeller.sales.desc())
+        List<Long> top5ProductIds = jpaQueryFactory.select(bestSeller.productId)
+                .from(bestSeller)
+                .groupBy(bestSeller.productId)
+                .orderBy(bestSeller.sales.sum().desc())
                 .limit(5)
+                .fetch();
+
+        return jpaQueryFactory.selectFrom(bestSeller)
+                .where(bestSeller.productId.in(top5ProductIds))
                 .fetch();
     }
 }
