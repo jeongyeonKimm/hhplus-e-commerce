@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
@@ -18,6 +19,7 @@ public class OrderExpireScheduler {
     private final OrderService orderService;
 
     @Scheduled(fixedDelay = 60_000)
+    @Transactional
     public void expireUnpaidOrders() {
         List<Order> unpaidOrders = orderService.getUnpaidOrdersExceed(Duration.ofMinutes(5));
 

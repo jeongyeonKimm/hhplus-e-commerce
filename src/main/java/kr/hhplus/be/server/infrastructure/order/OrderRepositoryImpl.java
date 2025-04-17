@@ -34,7 +34,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<OrderProduct> findOrderProductByOrderId(Long orderId) {
+    public List<OrderProduct> findOrderProductsByOrderId(Long orderId) {
         return orderProductJpaRepository.findByOrderId(orderId);
     }
 
@@ -46,5 +46,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public void saveAllOrderProducts(List<OrderProduct> orderProducts) {
         orderProductJpaRepository.saveAll(orderProducts);
+    }
+
+    @Override
+    public List<Order> findPaidOrdersBetween(LocalDateTime start, LocalDateTime end) {
+        return orderJpaRepository.findPaidOrdersBetween(start, end)
+                .stream()
+                .toList();
     }
 }

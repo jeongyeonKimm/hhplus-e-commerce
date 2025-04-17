@@ -38,7 +38,7 @@ public class Order extends BaseEntity {
     private OrderStatus status;
 
     @Transient
-    private final List<OrderProduct> orderProducts = new ArrayList<>();
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
     private Order(Long userId) {
         this.userId = userId;
@@ -101,5 +101,13 @@ public class Order extends BaseEntity {
         return products.stream()
                 .filter(p -> p.getId().equals(orderProduct.getProductId()))
                 .findFirst();
+    }
+
+    public void insertOrderProducts(List<OrderProduct> orderProducts) {
+        if (orderProducts == null) {
+            throw new ApiException(INVALID_ORDER_PRODUCTS);
+        }
+
+        this.orderProducts = orderProducts;
     }
 }

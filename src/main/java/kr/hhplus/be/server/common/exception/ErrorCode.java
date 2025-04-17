@@ -31,6 +31,9 @@ public enum ErrorCode {
     INVALID_ORDER("INVALID_ORDER", 404, "유효하지 않은 주문입니다."),
     ORDER_PAYMENT_INVALID_STATE("ORDER_PAYMENT_INVALID_STATE", 400, "결제가 불가능한 상태입니다."),
     COUPON_ALREADY_APPLIED("COUPON_ALREADY_APPLIED", 400, "이미 쿠폰이 적용된 주문입니다."),
+    INVALID_ORDER_PRODUCTS("INVALID_ORDER_PRODUCTS", 400, "주문 상품은 null일 수 없습니다."),
+
+    INVALID_DATE_TIME("INVALID_DATE_TIME", 400, "유효하지 않은 날짜입니다."),
 
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", 500, "서버 내부 오류입니다.");
 

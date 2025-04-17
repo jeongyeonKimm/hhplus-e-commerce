@@ -13,12 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
-import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_USER;
+import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -68,7 +66,7 @@ public class OrderService {
         Order order = orderRepository.findOrderById(orderId)
                 .orElseThrow(() -> new ApiException(INVALID_ORDER));
 
-        List<OrderProduct> orderProducts = orderRepository.findOrderProductByOrderId(orderId);
+        List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(orderId);
 
         return OrderData.from(order, orderProducts);
     }
@@ -95,5 +93,18 @@ public class OrderService {
         }
 
         orderRepository.saveOrder(order);
+    }
+
+    public List<Order> findPaidOrdersBetween(LocalDateTime start, LocalDateTime end) {
+        if (start == null || end == null) {
+            throw new ApiException(INVALID_DATE_TIME);
+        }
+        return orderRepository.findPaidOrdersBetween(start, end)
+                .stream()
+                .peek(order -> {
+                    List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
+                    order.insertOrderProducts(orderProducts);
+                })
+                .toList();
     }
 }
