@@ -82,6 +82,7 @@ CREATE INDEX idx_best_seller_product_created_sales
     ON best_seller(product_id, created_at, sales);
 ```
 
+- [10회 실행 평균] 인덱스 설정 전(189.8ms) -> 인덱스 설정 후(22.2ms) : 88.3% 향상
 - `SUM(product_sales)`은 `GROUP BY` 이후에 계산되기 때문에 정렬하려면 그룹 결과를 메모리에 적재 필요 -> filesort 발생
 - 이는 정렬하는 그룹이 수천 개만 되어도 부담이 커짐
 - 따라서 한번 조회된 인기 상품을 **cache table**에 저장하여 조회 성능 향상 필요
