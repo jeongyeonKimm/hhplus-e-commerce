@@ -1,8 +1,9 @@
 package kr.hhplus.be.server.infrastructure.bestseller;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.QBestSeller;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerSummaryResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -13,17 +14,24 @@ public class BestSellerCustomRepositoryImpl implements BestSellerCustomRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<BestSeller> getBestSellers() {
+    public List<BestSellerSummaryResponse> getBestSellers() {
         QBestSeller bestSeller = QBestSeller.bestSeller;
-        List<Long> top5ProductIds = jpaQueryFactory.select(bestSeller.productId)
+
+        return jpaQueryFactory.select(
+                        Projections.constructor(
+                                BestSellerSummaryResponse.class,
+                                bestSeller.productId,
+                                bestSeller.title.max(),
+                                bestSeller.description.max(),
+                                bestSeller.price.max(),
+                                bestSeller.stock.max(),
+                                bestSeller.sales.sum()
+                        )
+                )
                 .from(bestSeller)
                 .groupBy(bestSeller.productId)
                 .orderBy(bestSeller.sales.sum().desc())
                 .limit(5)
-                .fetch();
-
-        return jpaQueryFactory.selectFrom(bestSeller)
-                .where(bestSeller.productId.in(top5ProductIds))
                 .fetch();
     }
 }

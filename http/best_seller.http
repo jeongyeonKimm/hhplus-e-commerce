@@ -1,0 +1,4 @@
+### 인기 상품 조회
+GET localhost:8080/api/v1/bestsellers
+Accept: application/json
+
