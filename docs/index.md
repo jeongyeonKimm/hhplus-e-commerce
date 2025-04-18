@@ -69,6 +69,35 @@ LIMIT 5;
 - 스케줄러를 통해 매일 새벽 3일이 지난 데이터 삭제
 - 인기 상품 목록 조회 시 1시간씩의 판매량을 상품별로 집계하여 판매량 상위 5개의 상품 정보와 최근 3일 판매량 조회
 
+#### 테스트 환경
+- MySQL 8.0
+- 약 7000건의 인기 상품 데이터
+
+#### 인덱스 적용 전
+```sql
+-> Limit: 5 row(s)  (actual time=6.51..6.51 rows=5 loops=1)
+    -> Sort: total_sales DESC, limit input to 5 row(s) per chunk  (actual time=6.5..6.5 rows=5 loops=1)
+        -> Table scan on <temporary>  (actual time=5.48..5.95 rows=4492 loops=1)
+            -> Aggregate using temporary table  (actual time=5.48..5.48 rows=4492 loops=1)
+                -> Table scan on best_seller  (cost=698 rows=6978) (actual time=0.0819..1.67 rows=7000 loops=1)
+```
+- best_seller 테이블 풀스캔
+- 집계를 위해 임시 테이블 사용 -> 디스크 I/O 발생 가능
+- 정렬도 임시 테이블 기반으로 진행하여 속도 느려짐
+
+#### 인덱스 적용 후
+```sql
+-> Limit: 5 row(s)  (actual time=7.66..7.67 rows=5 loops=1)
+    -> Sort: total_sales DESC, limit input to 5 row(s) per chunk  (actual time=7.66..7.66 rows=5 loops=1)
+        -> Stream results  (cost=1395 rows=4492) (actual time=0.161..7.05 rows=4492 loops=1)
+            -> Group aggregate: max(best_seller.title), max(best_seller.`description`), max(best_seller.price), max(best_seller.stock), sum(best_seller.sales)  (cost=1395 rows=4492) (actual time=0.157..6.12 rows=4492 loops=1)
+                -> Index scan on best_seller using idx_best_seller_product_created_sales  (cost=709 rows=6852) (actual time=0.149..4.19 rows=7000 loops=1)
+```
+
+- 테이블 인덱스를 통한 스캔(풀스캔이지만 정렬된 상태로 읽음 가능)
+- 집계는 메모리 기반 Group aggregate -> 성능 향상
+- 정렬도 스트림 처리로 진행하여 효율적
+
 #### 병목 포인트
 
 - `created_at >= NOW() - INTERVAL 3 DAY` 인덱스를 타지 못할 때
@@ -82,7 +111,7 @@ CREATE INDEX idx_best_seller_product_created_sales
     ON best_seller(product_id, created_at, sales);
 ```
 
-- [10회 실행 평균] 인덱스 설정 전(189.8ms) -> 인덱스 설정 후(22.2ms) : 88.3% 향상
+- 인덱스를 설정하고 성능 개선 가능성은 확보되었으나, 실행시간이 줄어들지는 않음
 - `SUM(product_sales)`은 `GROUP BY` 이후에 계산되기 때문에 정렬하려면 그룹 결과를 메모리에 적재 필요 -> filesort 발생
 - 이는 정렬하는 그룹이 수천 개만 되어도 부담이 커짐
 - 따라서 한번 조회된 인기 상품을 **cache table**에 저장하여 조회 성능 향상 필요
@@ -95,6 +124,10 @@ CREATE INDEX idx_best_seller_product_created_sales
 SELECT *
 FROM product
 ```
+
+#### 테스트 환경
+- MySQL 8.0
+- 10,000건의 상품 데이터
 
 #### 병목 포인트
 - Full Scan 대상
@@ -114,6 +147,10 @@ FROM user_coupon
 WHERE user_id = ?
 ```
 
+#### 테스트 환경
+- MySQL 8.0
+- 300,000건의 사용자 쿠폰 데이터
+
 #### 해결 방법
 
 - `user_id`에 인덱스 설정
@@ -131,6 +168,10 @@ FROM product
 WHERE product_id = ?
 ```
 
+#### 테스트 환경
+- MySQL 8.0
+- 10,000건의 상품 데이터
+
 #### 해결 방법
 
 - `product_id`는 PK이기 때문에 인덱스를 따로 설정할 필요 없음
@@ -144,6 +185,11 @@ SELECT *
 FROM point
 WHERE user_id = ?
 ```
+
+#### 테스트 환경
+- MySQL 8.0
+- 1유저당 1포인트
+- 100,000건의 포인트 데이터
 
 #### 해결 방법
 
@@ -161,6 +207,10 @@ SELECT *
 FROM order
 WHERE order_id = ?
 ```
+
+#### 테스트 환경
+- MySQL 8.0
+- 1,000,000건의 주문 데이터
 
 #### 해결 방법
 
