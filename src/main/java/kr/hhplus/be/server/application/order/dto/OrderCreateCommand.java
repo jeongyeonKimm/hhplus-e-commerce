@@ -1,27 +1,23 @@
 package kr.hhplus.be.server.application.order.dto;
 
-import kr.hhplus.be.server.domain.order.Order;
-import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class OrderCreateCommand {
 
     private Long userId;
     private Long userCouponId;
-    private OrderProductList orderProducts;
+    private List<OrderProductInfo> productInfos;
 
-    private OrderCreateCommand(Long userId, Long userCouponId, OrderProductList orderProducts) {
+    private OrderCreateCommand(Long userId, Long userCouponId, List<OrderProductInfo> productInfos) {
         this.userId = userId;
         this.userCouponId = userCouponId;
-        this.orderProducts = orderProducts;
+        this.productInfos = productInfos;
     }
 
-    public static OrderCreateCommand of(Long userId, Long userCouponId, OrderProductList orderProducts) {
-        return new OrderCreateCommand(userId, userCouponId, orderProducts);
-    }
-
-    public Order toOrder(Long id, boolean isCouponApplied, int finalAmount) {
-        return Order.of(id, userId, userCouponId, isCouponApplied, finalAmount);
+    public static OrderCreateCommand of(Long userId, Long userCouponId, List<OrderProductInfo> productInfos) {
+        return new OrderCreateCommand(userId, userCouponId, productInfos);
     }
 }
