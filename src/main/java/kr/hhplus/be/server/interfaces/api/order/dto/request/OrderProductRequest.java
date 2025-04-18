@@ -13,12 +13,15 @@ public class OrderProductRequest {
     private Long productId;
 
     @Min(value = 1)
-    private Integer quantity;
+    private Long quantity;
 
-    @Builder
-    private OrderProductRequest(Long productId, Integer quantity) {
+    private OrderProductRequest(Long productId, Long quantity) {
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public static OrderProductRequest of(Long productId, Long quantity) {
+        return new OrderProductRequest(productId, quantity);
     }
 
     public OrderProductInfo toOrderProductInfo() {

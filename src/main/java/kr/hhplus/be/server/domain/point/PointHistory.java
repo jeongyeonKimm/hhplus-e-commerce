@@ -1,26 +1,38 @@
 package kr.hhplus.be.server.domain.point;
 
-public class PointHistory {
+import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "point_history")
+@Entity
+public class PointHistory extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long pointId;
-    private Integer amount;
-    private Integer balance;
+
+    private Long amount;
+
+    private Long balance;
+
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    public PointHistory(Long id, Long pointId, Integer amount, Integer balance, TransactionType type) {
-        this.id = id;
+    public PointHistory(Long pointId, Long amount, Long balance, TransactionType type) {
         this.pointId = pointId;
         this.amount = amount;
         this.balance = balance;
         this.type = type;
     }
 
-    public static PointHistory charge(Long id, Long pointId, Integer amount, Integer balance) {
-        return new PointHistory(id, pointId, amount, balance, TransactionType.CHARGE);
-    }
-
-    public static PointHistory use(Long id, Long pointId, Integer amount, Integer balance) {
-        return new PointHistory(id, pointId, amount, balance, TransactionType.USE);
+    public static PointHistory saveHistory(Point point, Long amount, TransactionType type) {
+        return new PointHistory(point.getId(), amount, point.getBalance(), type);
     }
 }

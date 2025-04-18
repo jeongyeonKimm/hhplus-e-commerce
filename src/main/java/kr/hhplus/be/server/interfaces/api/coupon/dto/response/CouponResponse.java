@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.interfaces.api.coupon.dto.response;
 
-import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.DiscountType;
+import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -12,11 +12,11 @@ public class CouponResponse {
     private Long id;
     private String title;
     private DiscountType discountType;
-    private Integer discountValue;
+    private Long discountValue;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private CouponResponse(Long id, String title, DiscountType discountType, Integer discountValue, LocalDate startDate, LocalDate endDate) {
+    private CouponResponse(Long id, String title, DiscountType discountType, Long discountValue, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.title = title;
         this.discountType = discountType;
@@ -25,14 +25,14 @@ public class CouponResponse {
         this.endDate = endDate;
     }
 
-    public static CouponResponse of(Coupon coupon) {
+    public static CouponResponse of(UserCoupon userCoupon) {
         return new CouponResponse(
-                coupon.getId(),
-                coupon.getTitle(),
-                coupon.getDiscountType(),
-                coupon.getDiscountValue(),
-                coupon.getStartDate(),
-                coupon.getEndDate()
+                userCoupon.getId(),
+                userCoupon.getCoupon().getTitle(),
+                userCoupon.getCoupon().getDiscountType(),
+                userCoupon.getCoupon().getDiscountValue(),
+                userCoupon.getCoupon().getStartDate(),
+                userCoupon.getCoupon().getEndDate()
         );
     }
 }
