@@ -8,6 +8,7 @@ import kr.hhplus.be.server.domain.order.OrderStatus;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
+import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.instancio.Select.field;
 
 @SpringBootTest
-public class PaymentConcurrencyTest {
+public class PaymentConcurrencyTest extends IntegrationTestSupport {
 
     @Autowired
     private PaymentFacade paymentFacade;
