@@ -3,7 +3,6 @@ package kr.hhplus.be.server.application.coupon;
 import kr.hhplus.be.server.application.coupon.dto.CouponGetResult;
 import kr.hhplus.be.server.application.coupon.dto.command.CouponGetCommand;
 import kr.hhplus.be.server.application.coupon.dto.command.CouponIssueCommand;
-import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import lombok.RequiredArgsConstructor;

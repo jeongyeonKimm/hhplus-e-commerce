@@ -16,8 +16,7 @@ public class CouponRepositoryImpl implements CouponRepository {
 
     @Override
     public Coupon save(Coupon coupon) {
-        couponJpaRepository.save(coupon);
-        return coupon;
+        return couponJpaRepository.save(coupon);
     }
 
     @Override
@@ -28,5 +27,10 @@ public class CouponRepositoryImpl implements CouponRepository {
     @Override
     public List<Coupon> findAllById(List<Long> couponIds) {
         return couponJpaRepository.findAllById(couponIds);
+    }
+
+    @Override
+    public Optional<Coupon> findByIdWithLock(Long id) {
+        return couponJpaRepository.findByIdWithLock(id);
     }
 }
