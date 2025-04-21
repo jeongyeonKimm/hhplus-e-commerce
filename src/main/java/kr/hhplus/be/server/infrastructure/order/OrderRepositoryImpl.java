@@ -54,4 +54,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .stream()
                 .toList();
     }
+
+    @Override
+    public List<Order> findAllOrders() {
+        return orderJpaRepository.findAll();
+    }
 }

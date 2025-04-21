@@ -151,7 +151,7 @@ class OrderE2ETest {
     @Test
     void createOrder_success() {
         Coupon coupon = couponRepository.save(Coupon.of("coupon", 1000L, DiscountType.AMOUNT, LocalDate.now(), LocalDate.now().plusMonths(1), 100L));
-        Product product = productRepository.save(Product.of("123", "1234123123".getBytes(), 1000L, 100L));
+        Product product = productRepository.save(Product.of("123", "1234123123", 1000L, 100L));
         User user = userRepository.save(User.of());
         UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
 

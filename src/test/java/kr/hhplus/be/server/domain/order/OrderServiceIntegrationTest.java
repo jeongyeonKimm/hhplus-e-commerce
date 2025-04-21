@@ -63,7 +63,7 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         User user = userRepository.save(User.of());
         Order order = orderService.createOrder(user.getId());
         long price = 10000L;
-        Product product = productRepository.save(Product.of("product1", "sample product".getBytes(), price, 100L));
+        Product product = productRepository.save(Product.of("product1", "sample product", price, 100L));
 
         long quantity = 10L;
         orderService.addProduct(order, product, quantity);
@@ -77,7 +77,7 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
     void applyCoupon() {
         long price = 10000L;
         User user = userRepository.save(User.of());
-        Product product = productRepository.save(Product.of("product1", "sample product".getBytes(), price, 100L));
+        Product product = productRepository.save(Product.of("product1", "sample product", price, 100L));
 
         Order order = orderService.createOrder(user.getId());
         long quantity = 10L;
@@ -142,11 +142,11 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         Point point = pointRepository.savePoint(Point.of(user.getId(), balance));
         Order order = orderService.createOrder(user.getId());
 
-        Product product1 = productRepository.save(Product.of("product1", "sample product".getBytes(), 1000L, 100L));
+        Product product1 = productRepository.save(Product.of("product1", "sample product", 1000L, 100L));
         orderService.addProduct(order, product1, 1L);
-        Product product2 = productRepository.save(Product.of("product2", "sample product".getBytes(), 2000L, 100L));
+        Product product2 = productRepository.save(Product.of("product2", "sample product", 2000L, 100L));
         orderService.addProduct(order, product2, 1L);
-        Product product3 = productRepository.save(Product.of("product3", "sample product".getBytes(), 3000L, 100L));
+        Product product3 = productRepository.save(Product.of("product3", "sample product", 3000L, 100L));
         orderService.addProduct(order, product3, 1L);
 
         orderService.expireOrder(order);

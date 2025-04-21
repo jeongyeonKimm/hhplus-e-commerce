@@ -19,4 +19,6 @@ public interface OrderRepository {
     void saveAllOrderProducts(List<OrderProduct> orderProducts);
 
     List<Order> findPaidOrdersBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Order> findAllOrders();
 }

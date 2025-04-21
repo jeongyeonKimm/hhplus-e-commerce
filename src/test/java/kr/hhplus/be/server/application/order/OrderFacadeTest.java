@@ -53,8 +53,8 @@ class OrderFacadeTest {
         OrderCreateCommand command = OrderCreateCommand.of(userId, userCouponId, productInfos);
 
         Order order = Order.of(userId);
-        Product product1 = Product.of("iPhone 13", "Apple iPhone 13".getBytes(), 1_000_000L, 100L);
-        Product product2 = Product.of("iPhone 15", "Apple iPhone 15".getBytes(), 1_500_000L, 100L);
+        Product product1 = Product.of("iPhone 13", "Apple iPhone 13", 1_000_000L, 100L);
+        Product product2 = Product.of("iPhone 15", "Apple iPhone 15", 1_500_000L, 100L);
         UserCoupon userCoupon = UserCoupon.of(userId, couponId);
 
         given(orderService.createOrder(userId)).willReturn(order);

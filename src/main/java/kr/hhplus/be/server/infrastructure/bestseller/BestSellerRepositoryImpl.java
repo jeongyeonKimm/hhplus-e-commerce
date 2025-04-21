@@ -2,6 +2,7 @@ package kr.hhplus.be.server.infrastructure.bestseller;
 
 import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.BestSellerRepository;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerSummaryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,10 @@ public class BestSellerRepositoryImpl implements BestSellerRepository {
 
     @Override
     public List<BestSeller> getBestSellers() {
-        return bestSellerJpaRepository.getBestSellers();
+        List<BestSellerSummaryResponse> top5BestSellers = bestSellerJpaRepository.getBestSellers();
+        return top5BestSellers.stream()
+                .map(BestSeller::from)
+                .toList();
     }
 
     @Override

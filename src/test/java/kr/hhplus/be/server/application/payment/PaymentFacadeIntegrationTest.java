@@ -71,9 +71,9 @@ class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
         );
         UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
 
-        Product product1 = productRepository.save(Product.of("product1", "sample product".getBytes(), 1000L, 100L));
-        Product product2 = productRepository.save(Product.of("product2", "sample product".getBytes(), 2000L, 100L));
-        Product product3 = productRepository.save(Product.of("product3", "sample product".getBytes(), 3000L, 100L));
+        Product product1 = productRepository.save(Product.of("product1", "sample product", 1000L, 100L));
+        Product product2 = productRepository.save(Product.of("product2", "sample product", 2000L, 100L));
+        Product product3 = productRepository.save(Product.of("product3", "sample product", 3000L, 100L));
         List<OrderProductInfo> productInfos = List.of(
                 OrderProductInfo.of(product1.getId(), product1.getPrice(), 1L),
                 OrderProductInfo.of(product2.getId(), product1.getPrice(), 2L),

@@ -23,7 +23,7 @@ class ProductTest {
 
         Product product = Product.of(
                 "iPhone 15",
-                "Apple iPhone15".getBytes(),
+                "Apple iPhone15",
                 1_000_000L,
                 stock
         );
@@ -42,7 +42,7 @@ class ProductTest {
 
         Product product = Product.of(
                 "iPhone 15",
-                "Apple iPhone15".getBytes(),
+                "Apple iPhone15",
                 1_000_000L,
                 stock
         );

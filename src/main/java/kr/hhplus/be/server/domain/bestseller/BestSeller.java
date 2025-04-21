@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.bestseller;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.BaseEntity;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerSummaryResponse;
 import kr.hhplus.be.server.domain.product.Product;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class BestSeller extends BaseEntity {
 
     private String title;
 
-    private byte[] description;
+    private String description;
 
     private Long price;
 
@@ -29,7 +30,7 @@ public class BestSeller extends BaseEntity {
 
     private Long sales;
 
-    private BestSeller(Long productId, String title, byte[] description, Long price, Long stock, Long sales) {
+    private BestSeller(Long productId, String title, String description, Long price, Long stock, Long sales) {
         this.productId = productId;
         this.title = title;
         this.description = description;
@@ -46,6 +47,17 @@ public class BestSeller extends BaseEntity {
                 product.getPrice(),
                 product.getStock(),
                 sales
+        );
+    }
+
+    public static BestSeller from(BestSellerSummaryResponse bs) {
+        return new BestSeller(
+                bs.getProductId(),
+                bs.getTitle(),
+                bs.getDescription(),
+                bs.getPrice(),
+                bs.getStock(),
+                bs.getTotalSales()
         );
     }
 }
