@@ -4,12 +4,14 @@ import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.product.dto.ProductResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_PRODUCT;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -22,11 +24,12 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public void deductStock(long productId, int quantity) {
-        Product product = productRepository.findById(productId)
+    public Product getProduct(Long productId) {
+        return productRepository.findById(productId)
                 .orElseThrow(() -> new ApiException(INVALID_PRODUCT));
+    }
 
-        product.deduct(quantity);
-        productRepository.save(product);
+    public List<Product> getAllProductsByIds(List<Long> productIds) {
+        return productRepository.findAllByIds(productIds);
     }
 }

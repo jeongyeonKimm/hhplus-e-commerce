@@ -3,19 +3,24 @@ package kr.hhplus.be.server.domain.coupon;
 import kr.hhplus.be.server.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CouponService {
 
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
-    private long sequence = 1L;
 
+    @Transactional
     public void issueCoupon(Long userId, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
@@ -24,7 +29,7 @@ public class CouponService {
             throw new ApiException(INSUFFICIENT_COUPON_STOCK);
         }
 
-        Boolean alreadyIssued = userCouponRepository.existByUserIdAndCouponId(userId, couponId);
+        boolean alreadyIssued = userCouponRepository.existsByUserIdAndCouponId(userId, couponId);
         if (alreadyIssued) {
             throw new ApiException(COUPON_ALREADY_ISSUED);
         }
@@ -32,39 +37,43 @@ public class CouponService {
         coupon.deduct();
         couponRepository.save(coupon);
 
-        UserCoupon userCoupon = UserCoupon.issue(generateId(), userId, coupon);
+        UserCoupon userCoupon = UserCoupon.of(userId, coupon.getId());
         userCouponRepository.save(userCoupon);
     }
 
-    public boolean redeemCoupon(Long userId, Long userCouponId) {
-        UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
-                .orElseThrow(() -> new ApiException(INVALID_USER_COUPON));
+    public List<UserCoupon> getCoupons(Long userId) {
+        List<UserCoupon> userCoupons = userCouponRepository.findByUserId(userId);
+        List<Long> couponIds = userCoupons.stream()
+                .map(UserCoupon::getCouponId)
+                .toList();
 
-        if (!userCoupon.getUserId().equals(userId)) {
-            throw new ApiException(COUPON_NOT_OWNED);
+        Map<Long, Coupon> couponMap = couponRepository.findAllById(couponIds).stream()
+                .collect(Collectors.toMap(Coupon::getId, Function.identity()));
+
+        for (UserCoupon userCoupon : userCoupons) {
+            userCoupon.setCoupon(couponMap.get(userCoupon.getCouponId()));
         }
 
-        userCoupon.redeem();
-        userCouponRepository.save(userCoupon);
-
-        return userCoupon.getIsUsed();
+        return userCoupons;
     }
 
-    public int calculateFinalAmount(Long userCouponId, int totalAmount) {
+    public UserCoupon getUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
 
         Coupon coupon = couponRepository.findById(userCoupon.getCouponId())
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
-        return coupon.calculateFinalAmount(totalAmount);
+        userCoupon.setCoupon(coupon);
+        return userCoupon;
     }
 
-    public List<Coupon> getCoupons(Long userId) {
-        return userCouponRepository.findByUserId(userId);
-    }
+    @Transactional
+    public void rollbackCoupon(Long userCouponId) {
+        UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
+                .orElseThrow(() -> new ApiException(COUPON_NOT_OWNED));
 
-    private long generateId() {
-        return sequence++;
+        userCoupon.rollback();
+        userCouponRepository.save(userCoupon);
     }
 }

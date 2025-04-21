@@ -1,51 +1,85 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.user.User;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.*;
+import static kr.hhplus.be.server.common.exception.ErrorCode.ALREADY_USED_COUPON;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_COUPON;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "user_coupon")
+@Entity
 public class UserCoupon {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
-    private Long couponId;
-    private Boolean isUsed;
-    private String couponTitle;
-    private LocalDate issuedAt;
-    private LocalDate expiredAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private UserCoupon(Long id, Long userId, Long couponId, Boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
-        this.id = id;
+    private Long userId;
+
+    private Long couponId;
+
+    private Boolean isUsed;
+
+    private LocalDate issuedAt;
+
+    @Transient
+    private Coupon coupon;
+
+    private UserCoupon(Long userId, Long couponId) {
         this.userId = userId;
         this.couponId = couponId;
-        this.isUsed = isUsed;
-        this.couponTitle = couponTitle;
-        this.issuedAt = issuedAt;
-        this.expiredAt = expiredAt;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.isUsed = false;
+        this.issuedAt = LocalDate.now();
     }
 
-    public static UserCoupon of(long id, long userId, long couponId, boolean isUsed, String couponTitle, LocalDate issuedAt, LocalDate expiredAt) {
-        return new UserCoupon(id, userId, couponId, isUsed, couponTitle, issuedAt, expiredAt);
+    private UserCoupon(User user, Coupon coupon) {
+        this.userId = user.getId();
+        this.couponId = coupon.getId();
+        this.isUsed = false;
+        this.issuedAt = LocalDate.now();
+        this.coupon = coupon;
     }
 
-    public void redeem() {
+    public static UserCoupon of(Long userId, Long couponId) {
+        return new UserCoupon(userId, couponId);
+    }
+    public static UserCoupon of(User user, Coupon coupon) {
+        return new UserCoupon(user, coupon);
+    }
+
+    public Long getDiscountAmount(Long totalAmount) {
+        if (!isAvailable()) {
+            throw new ApiException(INVALID_COUPON);
+        }
+
+        return coupon.getDiscountAmount(totalAmount);
+    }
+
+    public void markUsed() throws ApiException {
         if (this.isUsed) {
             throw new ApiException(ALREADY_USED_COUPON);
         }
 
-        if (this.expiredAt.isBefore(LocalDate.now())) {
-            throw new ApiException(COUPON_DATE_EXPIRED);
-        }
-
         this.isUsed = true;
+    }
+
+    public boolean isAvailable() {
+        return !this.isUsed && !this.coupon.isExpired();
+    }
+
+    public void rollback() {
+        this.isUsed = false;
+    }
+
+    public void setCoupon(Coupon coupon) {
+        this.coupon = coupon;
     }
 }

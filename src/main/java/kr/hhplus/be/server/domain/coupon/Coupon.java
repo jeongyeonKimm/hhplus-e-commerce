@@ -1,52 +1,58 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import jakarta.persistence.*;
+import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_COUPON_STOCK;
 
 @Getter
-public class Coupon {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "coupon")
+@Entity
+public class Coupon extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private Integer discountValue;
-    private DiscountType discountType;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Integer stock;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private Coupon(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
-        this.id = id;
+    private String title;
+
+    private Long discountValue;
+
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    private Long stock;
+
+    private Coupon(String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
         this.title = title;
         this.discountValue = discountValue;
         this.discountType = discountType;
         this.startDate = startDate;
         this.endDate = endDate;
         this.stock = stock;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public static Coupon of(Long id, String title, Integer discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Integer stock) {
-        return new Coupon(id, title, discountValue, discountType, startDate, endDate, stock);
+    public static Coupon of(String title, Long discountValue, DiscountType discountType, LocalDate startDate, LocalDate endDate, Long stock) {
+        return new Coupon(title, discountValue, discountType, startDate, endDate, stock);
     }
 
-    public int calculateFinalAmount(int originalAmount) {
-        int discountAmount = calculateDiscountAmount(originalAmount);
-        return Math.max(0, originalAmount - discountAmount);
-    }
-
-    public int calculateDiscountAmount(int originalAmount) {
+    public Long getDiscountAmount(Long totalAmount) {
         if (this.discountType == DiscountType.RATE) {
-            return originalAmount * discountValue / 100;
+            return totalAmount * discountValue / 100;
         }
 
-        return discountValue;
+        return Math.min(discountValue, totalAmount);
     }
 
     public void deduct() {
@@ -55,5 +61,9 @@ public class Coupon {
         }
 
         this.stock -= 1;
+    }
+
+    public boolean isExpired() {
+        return this.endDate.isBefore(LocalDate.now());
     }
 }

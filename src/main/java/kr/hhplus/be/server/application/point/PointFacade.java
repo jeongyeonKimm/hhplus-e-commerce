@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.application.point;
 
 import kr.hhplus.be.server.application.point.dto.command.ChargePointCommand;
+import kr.hhplus.be.server.application.point.dto.command.GetPointCommand;
 import kr.hhplus.be.server.application.point.dto.command.UsePointCommand;
 import kr.hhplus.be.server.application.point.dto.result.PointResult;
-import kr.hhplus.be.server.application.point.dto.command.GetPointCommand;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointService;
 import lombok.RequiredArgsConstructor;

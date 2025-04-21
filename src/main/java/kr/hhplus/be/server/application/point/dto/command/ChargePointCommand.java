@@ -6,14 +6,14 @@ import lombok.Getter;
 public class ChargePointCommand {
 
     private Long userId;
-    private Integer chargeAmount;
+    private Long chargeAmount;
 
-    private ChargePointCommand(Long userId, Integer chargeAmount) {
+    private ChargePointCommand(Long userId, Long chargeAmount) {
         this.userId = userId;
         this.chargeAmount = chargeAmount;
     }
 
-    public static ChargePointCommand of(long userId, int chargeAmount) {
+    public static ChargePointCommand of(Long userId, Long chargeAmount) {
         return new ChargePointCommand(userId, chargeAmount);
     }
 }

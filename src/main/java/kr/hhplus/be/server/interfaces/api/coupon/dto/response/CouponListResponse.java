@@ -2,6 +2,7 @@ package kr.hhplus.be.server.interfaces.api.coupon.dto.response;
 
 import kr.hhplus.be.server.application.coupon.dto.CouponGetResult;
 import kr.hhplus.be.server.domain.coupon.Coupon;
+import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import lombok.Getter;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class CouponListResponse {
     }
 
     public static CouponListResponse from(CouponGetResult result) {
-        List<Coupon> couponsList = result.getCoupons();
-        List<CouponResponse> coupons = couponsList.stream()
+        List<UserCoupon> userCoupons = result.getUserCoupons();
+        List<CouponResponse> coupons = userCoupons.stream()
                 .map(CouponResponse::of)
                 .toList();
 

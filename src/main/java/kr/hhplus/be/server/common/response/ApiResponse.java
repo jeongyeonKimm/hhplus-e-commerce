@@ -2,10 +2,13 @@ package kr.hhplus.be.server.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Schema(description = "공통 응답 포맷")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ApiResponse<T> {
 

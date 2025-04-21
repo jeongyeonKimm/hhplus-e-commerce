@@ -1,42 +1,55 @@
 package kr.hhplus.be.server.domain.product;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_STOCK;
+import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 
 @Getter
-public class Product {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "product")
+@Entity
+public class Product extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private byte[] description;
-    private Integer price;
-    private Integer stock;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private Product(Long id, String name, byte[] description, Integer price, Integer stock) {
-        this.id = id;
+    private String name;
+
+    private byte[] description;
+
+    private Long price;
+
+    private Long stock;
+
+    private Product(String name, byte[] description, Long price, Long stock) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
-    public static Product of(Long id, String name, byte[] description, Integer price, Integer stock) {
-        return new Product(id, name, description, price, stock);
+    public static Product of(String name, byte[] description, Long price, Long stock) {
+        return new Product(name, description, price, stock);
     }
 
-    public void deduct(int quantity) {
+    public void deduct(Long quantity) {
         if (quantity > stock) {
             throw new ApiException(INSUFFICIENT_STOCK);
         }
 
         this.stock -= quantity;
+    }
+
+    public void restore(Long quantity) {
+        if (quantity <= 0) {
+            throw new ApiException(INVALID_RESTORE_QUANTITY);
+        }
+        this.stock += quantity;
     }
 }

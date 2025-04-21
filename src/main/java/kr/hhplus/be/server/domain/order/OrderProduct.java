@@ -1,40 +1,60 @@
 package kr.hhplus.be.server.domain.order;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.application.external.dto.OrderProductData;
+import kr.hhplus.be.server.domain.BaseEntity;
+import kr.hhplus.be.server.domain.product.Product;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class OrderProduct {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "order_product")
+@Entity
+public class OrderProduct extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long orderId;
+
     private Long productId;
-    private Integer amount;
-    private Integer quantity;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    private OrderProduct(Long id, Long orderId, Long productId, Integer amount, Integer quantity) {
-        this.id = id;
-        this.orderId = orderId;
+    private Long price;
+
+    private Long quantity;
+
+    private OrderProduct(Long productId, Long orderId, Long price, Long quantity) {
         this.productId = productId;
-        this.amount = amount;
-        this.quantity = quantity;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public static OrderProduct of(Long id, Long orderId, Long productId, Integer amount, Integer quantity) {
-        return new OrderProduct(id, orderId, productId, amount, quantity);
-    }
-
-    public void setOrderId(Long orderId) {
         this.orderId = orderId;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public static OrderProduct of(Long productId, Long orderId, Long price, Long quantity) {
+        return new OrderProduct(productId, orderId, price, quantity);
+    }
+
+    public static OrderProduct of(Order order, Product product, Long quantity) {
+        return new OrderProduct(
+                order.getId(),
+                product.getId(),
+                product.getPrice(),
+                quantity
+        );
     }
 
     public OrderProductData toData() {
-        return OrderProductData.of(productId, amount, getQuantity());
+        return OrderProductData.of(productId, price, getQuantity());
+    }
+
+    public Long getTotalPrice() {
+        return this.price * this.quantity;
+    }
+
+    public void restoreStock(Product product) {
+        product.restore(this.quantity);
     }
 }

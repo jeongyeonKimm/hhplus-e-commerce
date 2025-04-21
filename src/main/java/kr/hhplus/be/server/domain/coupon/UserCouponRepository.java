@@ -5,10 +5,11 @@ import java.util.Optional;
 
 public interface UserCouponRepository {
 
-    void save(UserCoupon userCoupon);
+    UserCoupon save(UserCoupon userCoupon);
+
     Optional<UserCoupon> findById(Long userCouponId);
 
-    Boolean existByUserIdAndCouponId(Long userId, Long couponId);
+    Boolean existsByUserIdAndCouponId(Long userId, Long couponId);
 
-    List<Coupon> findByUserId(Long userId);
+    List<UserCoupon> findByUserId(Long userId);
 }
