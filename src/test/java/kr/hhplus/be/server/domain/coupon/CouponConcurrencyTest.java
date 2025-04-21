@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.coupon;
 
-import kr.hhplus.be.server.application.coupon.CouponFacade;
-import org.instancio.Instancio;
+import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class CouponConcurrencyTest {
+class CouponConcurrencyTest extends IntegrationTestSupport {
 
     @Autowired
     private CouponService couponService;

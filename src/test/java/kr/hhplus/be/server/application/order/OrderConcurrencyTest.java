@@ -2,13 +2,13 @@ package kr.hhplus.be.server.application.order;
 
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
-import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderRepository;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
+import kr.hhplus.be.server.domain.user.User;
+import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
-import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +19,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.instancio.Select.field;
 
 @SpringBootTest
 public class OrderConcurrencyTest extends IntegrationTestSupport {
@@ -35,19 +35,29 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
     @Autowired
     private OrderRepository orderRepository;
 
-    @DisplayName("여러 사용자가 동시에 같은 상품을 주문해도 상품의 재고를 초과해서 주문이 되지 않는다.")
+    @Autowired
+    private UserRepository userRepository;
+
+    @DisplayName("2명의 사용자가 재고가 1인 상품을 동시에 주문하면 1명은 주문에 성공하고 1명은 주문에 실패한다.")
     @Test
     void order_concurrently() throws InterruptedException {
-        int threadCount = 20;
-        long initialStock = 10L;
-        long productId = 2L;
+        long startTime = System.nanoTime();
+
+        int threadCount = 2;
+        long initialStock = 1L;
         long price = 1000L;
         long quantity = 1L;
 
-        Product product = Instancio.of(Product.class)
-                .set(field(Product::getStock), initialStock)
-                .create();
-        productRepository.save(product);
+        Product product = productRepository.save(Product.of(
+                "product",
+                "This is a product",
+                price,
+                initialStock)
+        );
+
+        List<User> users = IntStream.range(0, threadCount)
+                .mapToObj(i -> userRepository.save(User.of()))
+                .toList();
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -55,14 +65,13 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failCount = new AtomicInteger(0);
 
-        for (int i = 0; i < threadCount; i++) {
-            long userId = i + 1;
+        for (User user : users) {
             executor.submit(() -> {
                 try {
                     OrderCreateCommand command = OrderCreateCommand.of(
-                            userId,
+                            user.getId(),
                             null,
-                            List.of(OrderProductInfo.of(productId, price, quantity))
+                            List.of(OrderProductInfo.of(product.getId(), product.getPrice(), quantity))
                     );
                     orderFacade.order(command);
                     successCount.incrementAndGet();
@@ -75,16 +84,24 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
         }
 
         latch.await();
+        executor.shutdown();
 
-        List<Order> orders = orderRepository.findAllOrders();
+        Product deductedProduct = productRepository.findById(product.getId()).orElseThrow();
+        List<OrderProduct> orderProducts = orderRepository.findAllOrderProducts();
 
-        long totalOrderedQuantity = orders.stream()
-                .flatMap(o -> o.getOrderProducts().stream())
-                .filter(op -> op.getProductId().equals(productId))
+        long totalOrderedQuantity = orderProducts.stream()
+                .filter(op -> op.getProductId().equals(product.getId()))
                 .mapToLong(OrderProduct::getQuantity)
                 .sum();
 
-        assertThat(product.getStock()).isGreaterThanOrEqualTo(0);
+        assertThat(failCount.get()).isEqualTo(1);
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(deductedProduct.getStock()).isEqualTo(0);
         assertThat(totalOrderedQuantity).isEqualTo(initialStock);
+
+        long endTime = System.nanoTime();
+        long durationMillis = (endTime - startTime) / 1_000_000;
+
+        System.out.println("실행 시간: " + durationMillis + " ms");
     }
 }

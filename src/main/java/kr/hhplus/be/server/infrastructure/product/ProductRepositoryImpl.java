@@ -37,4 +37,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                 .filter(p -> productIds.contains(p.getId()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<Product> findByIdWithLock(Long productId) {
+        return productJpaRepository.findByIdWithLock(productId);
+    }
 }

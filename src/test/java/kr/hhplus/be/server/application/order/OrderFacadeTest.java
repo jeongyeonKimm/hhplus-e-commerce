@@ -58,8 +58,8 @@ class OrderFacadeTest {
         UserCoupon userCoupon = UserCoupon.of(userId, couponId);
 
         given(orderService.createOrder(userId)).willReturn(order);
-        given(productService.getProduct(3L)).willReturn(product1);
-        given(productService.getProduct(4L)).willReturn(product2);
+        given(productService.getProductWithLock(3L)).willReturn(product1);
+        given(productService.getProductWithLock(4L)).willReturn(product2);
         given(couponService.getUserCoupon(userCouponId)).willReturn(userCoupon);
 
         OrderResult result = orderFacade.order(command);
@@ -67,8 +67,8 @@ class OrderFacadeTest {
         assertThat(result.getOrderId()).isEqualTo(order.getId());
 
         verify(orderService, times(1)).createOrder(userId);
-        verify(productService, times(1)).getProduct(3L);
-        verify(productService, times(1)).getProduct(4L);
+        verify(productService, times(1)).getProductWithLock(3L);
+        verify(productService, times(1)).getProductWithLock(4L);
         verify(orderService, times(1)).addProduct(order, product1, 2L);
         verify(orderService, times(1)).addProduct(order, product2, 1L);
         verify(couponService, times(1)).getUserCoupon(userCouponId);

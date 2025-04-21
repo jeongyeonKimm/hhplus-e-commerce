@@ -10,7 +10,7 @@ public interface OrderRepository {
 
     Optional<Order> findOrderById(Long orderId);
 
-    void saveOrderProduct(OrderProduct orderProduct);
+    OrderProduct saveOrderProduct(OrderProduct orderProduct);
 
     List<OrderProduct> findOrderProductsByOrderId(Long orderId);
 
@@ -21,4 +21,6 @@ public interface OrderRepository {
     List<Order> findPaidOrdersBetween(LocalDateTime start, LocalDateTime end);
 
     List<Order> findAllOrders();
+
+    List<OrderProduct> findAllOrderProducts();
 }

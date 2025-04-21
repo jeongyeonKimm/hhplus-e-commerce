@@ -51,10 +51,9 @@ public class Order extends BaseEntity {
         return new Order(userId);
     }
 
-    public void addProduct(Product product, Long quantity) {
-        product.deduct(quantity);
+    public void addProduct(Product product, OrderProduct orderProduct) {
+        product.deduct(orderProduct.getQuantity());
 
-        OrderProduct orderProduct = OrderProduct.of(this, product, quantity);
         this.orderProducts.add(orderProduct);
         this.totalAmount += orderProduct.getTotalPrice();
     }

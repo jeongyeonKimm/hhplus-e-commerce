@@ -24,8 +24,8 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public Product getProduct(Long productId) {
-        return productRepository.findById(productId)
+    public Product getProductWithLock(Long productId) {
+        return productRepository.findByIdWithLock(productId)
                 .orElseThrow(() -> new ApiException(INVALID_PRODUCT));
     }
 

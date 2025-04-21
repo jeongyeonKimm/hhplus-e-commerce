@@ -39,7 +39,14 @@ class OrderTest {
                 .create();
 
         long orderQuantity = 10;
-        order.addProduct(product, orderQuantity);
+        OrderProduct orderProduct = Instancio.of(OrderProduct.class)
+                .set(field("orderId"), order.getId())
+                .set(field("productId"), product.getId())
+                .set(field("price"), product.getPrice())
+                .set(field("quantity"), orderQuantity)
+                .create();
+
+        order.addProduct(product, orderProduct);
 
         long expectedStock = initialStock - orderQuantity;
         long expectedTotalAmount = orderQuantity * price;
