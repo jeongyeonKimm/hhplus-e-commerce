@@ -27,7 +27,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final PointService pointService;
-    private final ProductService productService;
     private final CouponService couponService;
     private final ProductRepository productRepository;
 
@@ -89,7 +88,13 @@ public class OrderService {
 
     @Transactional
     public void expireOrder(Order order) {
-        List<Product> products = productService.getAllProductsByIds(order.getProductIds());
+        List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
+        List<Long> productIds = order.getProductIds(orderProducts);
+        List<Product> products = productIds.stream()
+                .map(productId -> productRepository.findByIdWithLock(productId)
+                        .orElseThrow(() -> new ApiException(INVALID_PRODUCT)))
+                .toList();
+
         order.expired(products);
 
         pointService.rollbackPoint(order.getUserId(), order.getTotalAmount());

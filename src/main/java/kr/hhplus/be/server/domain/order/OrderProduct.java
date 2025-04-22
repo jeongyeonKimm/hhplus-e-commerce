@@ -39,8 +39,8 @@ public class OrderProduct extends BaseEntity {
 
     public static OrderProduct of(Order order, Product product, Long quantity) {
         return new OrderProduct(
-                order.getId(),
                 product.getId(),
+                order.getId(),
                 product.getPrice(),
                 quantity
         );

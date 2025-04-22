@@ -90,7 +90,7 @@ public class Order extends BaseEntity {
         this.status = EXPIRED;
     }
 
-    public List<Long> getProductIds() {
+    public List<Long> getProductIds(List<OrderProduct> orderProducts) {
         return orderProducts.stream()
                 .map(OrderProduct::getProductId)
                 .toList();

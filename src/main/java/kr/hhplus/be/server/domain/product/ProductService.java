@@ -28,8 +28,4 @@ public class ProductService {
         return productRepository.findByIdWithLock(productId)
                 .orElseThrow(() -> new ApiException(INVALID_PRODUCT));
     }
-
-    public List<Product> getAllProductsByIds(List<Long> productIds) {
-        return productRepository.findAllByIds(productIds);
-    }
 }

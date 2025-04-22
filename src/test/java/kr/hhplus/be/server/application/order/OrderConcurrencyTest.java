@@ -2,8 +2,12 @@ package kr.hhplus.be.server.application.order;
 
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
+import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.domain.order.OrderService;
+import kr.hhplus.be.server.domain.point.Point;
+import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.user.User;
@@ -30,6 +34,9 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
     private OrderFacade orderFacade;
 
     @Autowired
+    private OrderService orderService;
+
+    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
@@ -37,6 +44,9 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PointRepository pointRepository;
 
     @DisplayName("2명의 사용자가 재고가 1인 상품을 동시에 주문하면 1명은 주문에 성공하고 1명은 주문에 실패한다.")
     @Test
@@ -103,5 +113,53 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
         long durationMillis = (endTime - startTime) / 1_000_000;
 
         System.out.println("실행 시간: " + durationMillis + " ms");
+    }
+
+    @DisplayName("동일한 상품에 동시에 재고 복원 요청을 했을 때 모든 요청이 반영되어야 한다.")
+    @Test
+    void expireOrder_concurrently() throws InterruptedException {
+        pointRepository.savePoint(Point.of(1L, 1_000_000L));
+        Product product = productRepository.save(Product.of(
+                "product",
+                "This is a product",
+                10000L,
+                100L)
+        );
+
+        for (int i = 0; i < 10; i++) {
+            Order order = orderRepository.saveOrder(Order.of(1L));
+
+            OrderProduct orderProduct = OrderProduct.of(order, product, 10L);
+            order.addProduct(product, orderProduct);
+
+            orderRepository.saveOrder(order);
+            orderRepository.saveOrderProduct(orderProduct);
+        }
+
+        productRepository.save(product);
+
+        List<Order> unpaidOrders = orderRepository.findAllOrders();
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(unpaidOrders.size());
+
+        for (Order order : unpaidOrders) {
+            List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
+            order.insertOrderProducts(orderProducts);
+            executor.execute(() -> {
+                try {
+                    orderService.expireOrder(order);
+                } catch (Exception e) {
+                    System.out.println("예외 발생: " + e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        Product restoredProduct = productRepository.findById(product.getId()).orElseThrow();
+        assertThat(restoredProduct.getStock()).isEqualTo(100L);
     }
 }
