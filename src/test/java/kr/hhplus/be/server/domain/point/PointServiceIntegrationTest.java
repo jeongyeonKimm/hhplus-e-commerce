@@ -51,12 +51,12 @@ class PointServiceIntegrationTest extends IntegrationTestSupport {
     void rollbackPoint() {
         long initialBalance = 3000L;
         User user = userRepository.save(User.of());
-        Point point = pointRepository.savePoint(Point.of(user.getId(), initialBalance));
+        pointRepository.savePoint(Point.of(user.getId(), initialBalance));
 
         long totalAmount = 2000L;
         pointService.rollbackPoint(user.getId(), totalAmount);
 
-        Point foundPoint = pointRepository.findPointByUserId(user.getId()).get();
+        Point foundPoint = pointRepository.findPointByUserId(user.getId()).orElseThrow();
         assertThat(foundPoint.getBalance()).isEqualTo(initialBalance + totalAmount);
     }
 }

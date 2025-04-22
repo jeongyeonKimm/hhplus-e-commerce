@@ -115,7 +115,7 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
         System.out.println("실행 시간: " + durationMillis + " ms");
     }
 
-    @DisplayName("동일한 상품에 동시에 재고 복원 요청을 했을 때 모든 요청이 반영되어야 한다.")
+    @DisplayName("동일한 상품에 동시에 재고 복원, 포인트 복원 요청을 했을 때 모든 요청이 반영되어야 한다.")
     @Test
     void expireOrder_concurrently() throws InterruptedException {
         pointRepository.savePoint(Point.of(1L, 1_000_000L));

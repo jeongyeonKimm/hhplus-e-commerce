@@ -1,11 +1,9 @@
 package kr.hhplus.be.server.domain.point;
 
 import kr.hhplus.be.server.support.IntegrationTestSupport;
-import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -13,9 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.instancio.Select.field;
 
-@SpringBootTest
 class PointConcurrencyTest extends IntegrationTestSupport {
 
     @Autowired
@@ -24,12 +20,17 @@ class PointConcurrencyTest extends IntegrationTestSupport {
     @Autowired
     private PointRepository pointRepository;
 
-    @DisplayName("한명의 사용자가 동시에 여러번 충전 요청을 하면 모두 반영되어야 한다.")
+    @DisplayName("한 명의 사용자가 동시에 여러 번 충전 요청을 하면 한 번만 반영되어야 한다.")
     @Test
     void chargePoint_concurrently() throws InterruptedException {
-        int threadCount = 10;
+        long startTime = System.nanoTime();
+
+        int threadCount = 2;
         long userId = 1L;
         long chargeAmount = 1000L;
+        long initBalance = 10000L;
+
+        pointRepository.savePoint(Point.of(userId, initBalance));
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -52,24 +53,30 @@ class PointConcurrencyTest extends IntegrationTestSupport {
 
         latch.await();
 
-        assertThat(successCount.get()).isEqualTo(threadCount);
-        assertThat(failCount.get()).isEqualTo(0);
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(failCount.get()).isEqualTo(1);
 
         Point finalPoint = pointService.getPoint(userId);
-        assertThat(finalPoint.getBalance()).isEqualTo(threadCount * chargeAmount);
+        long expectedBalance = initBalance + chargeAmount;
+        assertThat(finalPoint.getBalance()).isEqualTo(expectedBalance);
+
+        long endTime = System.nanoTime();
+        long durationMillis = (endTime - startTime) / 1_000_000;
+
+        System.out.println("실행 시간: " + durationMillis + " ms");
     }
 
-    @DisplayName("한명의 사용자가 동시에 여러번 사용 요청을 하면 모두 반영되어야 한다.")
+    @DisplayName("한 명의 사용자가 동시에 여러 번 사용 요청을 하면 한 번만 반영되어야 한다.")
     @Test
     void usePoint_concurrently() throws InterruptedException {
-        int threadCount = 10;
+        long startTime = System.nanoTime();
+
+        int threadCount = 2;
         long userId = 1L;
         long useAmount = 1000L;
+        long initBalance = 1000L;
 
-        Point point = Instancio.of(Point.class)
-                .set(field(Point::getUserId), userId)
-                .set(field(Point::getBalance), 10000L)
-                .create();
+        pointRepository.savePoint(Point.of(userId, initBalance));
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -92,10 +99,15 @@ class PointConcurrencyTest extends IntegrationTestSupport {
 
         latch.await();
 
-        assertThat(successCount.get()).isEqualTo(threadCount);
-        assertThat(failCount.get()).isEqualTo(0);
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(failCount.get()).isEqualTo(1);
 
         Point finalPoint = pointService.getPoint(userId);
         assertThat(finalPoint.getBalance()).isEqualTo(0);
+
+        long endTime = System.nanoTime();
+        long durationMillis = (endTime - startTime) / 1_000_000;
+
+        System.out.println("실행 시간: " + durationMillis + " ms");
     }
 }

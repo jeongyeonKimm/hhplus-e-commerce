@@ -17,7 +17,7 @@ public class PointService {
 
     @Transactional
     public Point chargePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserId(userId)
+        Point point = pointRepository.findPointByUserIdWithOptimisticLock(userId)
                 .orElseGet(() -> Point.of(userId, 0L));
 
         point.charge(amount);
@@ -36,7 +36,7 @@ public class PointService {
 
     @Transactional
     public Point usePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserId(userId)
+        Point point = pointRepository.findPointByUserIdWithOptimisticLock(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 
         point.use(amount);
@@ -50,7 +50,7 @@ public class PointService {
 
     @Transactional
     public void rollbackPoint(Long userId, Long totalAmount) {
-        Point point = pointRepository.findPointByUserId(userId)
+        Point point = pointRepository.findPointByUserIdWithPessimisticLock(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 
         point.restore(totalAmount);

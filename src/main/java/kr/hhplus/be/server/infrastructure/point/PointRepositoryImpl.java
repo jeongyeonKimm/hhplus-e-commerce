@@ -29,4 +29,14 @@ public class PointRepositoryImpl implements PointRepository {
     public void savePointHistory(PointHistory pointHistory) {
         pointHistoryJpaRepository.save(pointHistory);
     }
+
+    @Override
+    public Optional<Point> findPointByUserIdWithOptimisticLock(Long userId) {
+        return pointJpaRepository.findByUserIdWithOptimisticLock(userId);
+    }
+
+    @Override
+    public Optional<Point> findPointByUserIdWithPessimisticLock(Long userId) {
+        return pointJpaRepository.findByUserIdWithPessimisticLock(userId);
+    }
 }

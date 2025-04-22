@@ -33,7 +33,7 @@ class PointServiceTest {
         long userId = 1L;
         long chargeAmount = 1000L;
 
-        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.empty());
+        given(pointRepository.findPointByUserIdWithOptimisticLock(userId)).willReturn(Optional.empty());
         given(pointRepository.savePoint(any(Point.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -42,7 +42,7 @@ class PointServiceTest {
         assertThat(point.getUserId()).isEqualTo(userId);
         assertThat(point.getBalance()).isEqualTo(chargeAmount);
 
-        verify(pointRepository, times(1)).findPointByUserId(userId);
+        verify(pointRepository, times(1)).findPointByUserIdWithOptimisticLock(userId);
         verify(pointRepository, times(1)).savePoint(any(Point.class));
     }
 
@@ -55,7 +55,7 @@ class PointServiceTest {
 
         Point point = Point.of(userId, initialPoint);
 
-        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.of(point));
+        given(pointRepository.findPointByUserIdWithOptimisticLock(userId)).willReturn(Optional.of(point));
         given(pointRepository.savePoint(any(Point.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -65,7 +65,7 @@ class PointServiceTest {
         assertThat(chargedPoint.getUserId()).isEqualTo(userId);
         assertThat(chargedPoint.getBalance()).isEqualTo(expectedPoint);
 
-        verify(pointRepository, times(1)).findPointByUserId(userId);
+        verify(pointRepository, times(1)).findPointByUserIdWithOptimisticLock(userId);
         verify(pointRepository, times(1)).savePoint(any(Point.class));
     }
 
@@ -74,7 +74,7 @@ class PointServiceTest {
     void usePoint_whenNotExist() {
         long userId = 1L;
         long useAmount = 1000L;
-        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.empty());
+        given(pointRepository.findPointByUserIdWithOptimisticLock(userId)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> pointService.usePoint(userId, useAmount))
                 .isInstanceOf(ApiException.class)
@@ -90,7 +90,7 @@ class PointServiceTest {
 
         Point point = Point.of(userId, initialPoint);
 
-        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.of(point));
+        given(pointRepository.findPointByUserIdWithOptimisticLock(userId)).willReturn(Optional.of(point));
         given(pointRepository.savePoint(any(Point.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -100,7 +100,7 @@ class PointServiceTest {
         assertThat(chargedPoint.getUserId()).isEqualTo(userId);
         assertThat(chargedPoint.getBalance()).isEqualTo(expectedPoint);
 
-        verify(pointRepository, times(1)).findPointByUserId(userId);
+        verify(pointRepository, times(1)).findPointByUserIdWithOptimisticLock(userId);
         verify(pointRepository, times(1)).savePoint(any(Point.class));
     }
 }
