@@ -23,12 +23,19 @@ public class OrderExpireScheduler {
     public void expireUnpaidOrders() {
         List<Order> unpaidOrders = orderService.getUnpaidOrdersExceed(Duration.ofMinutes(5));
 
+        long successCount = 0;
+        long failCount = 0;
+
         for (Order order : unpaidOrders) {
             try {
                 orderService.expireOrder(order);
+                successCount++;
             } catch (Exception e) {
-                log.warn("[주문 만료 처리 실패] orderId = {}, message = {}", order.getId(), e.getMessage());
+                failCount++;
+                log.warn("[OrderExpireScheduler] 주문 만료 처리 실패: orderId = {}, message = {}", order.getId(), e.getMessage());
             }
         }
+
+        log.info("[OrderExpireScheduler] 주문 만료 처리 완료: 성공 {}건, 실패 {}건", successCount, failCount);
     }
 }
