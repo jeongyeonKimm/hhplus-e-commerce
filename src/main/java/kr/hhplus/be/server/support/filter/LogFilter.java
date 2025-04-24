@@ -18,11 +18,8 @@ public class LogFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        ContentCachingRequestWrapper cachingRequest = new ContentCachingRequestWrapper(httpRequest);
-        ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(httpResponse);
+        ContentCachingRequestWrapper cachingRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
+        ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper((HttpServletResponse) response);
 
         final UUID uuid = UUID.randomUUID();
         MDC.put("traceId", uuid.toString());
@@ -32,12 +29,12 @@ public class LogFilter implements Filter {
 
             String uri = cachingRequest.getRequestURI();
             String method = cachingRequest.getMethod();
-            String requestBody = new String(cachingRequest.getContentAsByteArray());
+            String requestBody = new String(cachingRequest.getContentAsByteArray(), cachingRequest.getCharacterEncoding());
 
             log.info("[REQUEST {}] {} {} body = {}", MDC.get("traceId"), method, uri, requestBody);
 
             int httpStatus = cachingResponse.getStatus();
-            String responseBody = new String(cachingResponse.getContentAsByteArray());
+            String responseBody = new String(cachingResponse.getContentAsByteArray(), cachingResponse.getCharacterEncoding());
 
             log.info("[RESPONSE {}] {} body = {}", MDC.get("traceId"), httpStatus, responseBody);
         } finally {
