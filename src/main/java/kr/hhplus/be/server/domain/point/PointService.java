@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.POINT_NOT_EXIST;
+import java.time.LocalDateTime;
+
+import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 import static kr.hhplus.be.server.domain.point.TransactionType.*;
 
 @Transactional(readOnly = true)
@@ -17,11 +19,16 @@ public class PointService {
 
     @Transactional
     public Point chargePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserIdWithOptimisticLock(userId)
+        Point point = pointRepository.findPointByUserIdWithLock(userId)
                 .orElseGet(() -> Point.of(userId, 0L));
 
         point.charge(amount);
-        pointRepository.savePoint(point);
+        Point savedPoint = pointRepository.savePoint(point);
+
+        Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(savedPoint.getId(), amount, CHARGE, LocalDateTime.now().minusSeconds(1));
+        if (isDuplicate) {
+            throw new ApiException(DUPLICATE_CHARGE);
+        }
 
         PointHistory history = PointHistory.saveHistory(point, amount, CHARGE);
         pointRepository.savePointHistory(history);
@@ -36,11 +43,16 @@ public class PointService {
 
     @Transactional
     public Point usePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserIdWithOptimisticLock(userId)
+        Point point = pointRepository.findPointByUserIdWithLock(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 
         point.use(amount);
-        pointRepository.savePoint(point);
+        Point savedPoint = pointRepository.savePoint(point);
+
+        Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(savedPoint.getId(), amount, USE, LocalDateTime.now().minusSeconds(1));
+        if (isDuplicate) {
+            throw new ApiException(DUPLICATE_USE);
+        }
 
         PointHistory history = PointHistory.saveHistory(point, amount, USE);
         pointRepository.savePointHistory(history);
@@ -50,7 +62,7 @@ public class PointService {
 
     @Transactional
     public void rollbackPoint(Long userId, Long totalAmount) {
-        Point point = pointRepository.findPointByUserIdWithPessimisticLock(userId)
+        Point point = pointRepository.findPointByUserIdWithLock(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 
         point.restore(totalAmount);

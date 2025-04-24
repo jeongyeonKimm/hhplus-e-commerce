@@ -26,9 +26,6 @@ public class Point extends BaseEntity {
 
     private Long balance;
 
-    @Version
-    private Long version;
-
     private Point(Long userId, Long balance) {
         this.userId = userId;
         this.balance = balance;
