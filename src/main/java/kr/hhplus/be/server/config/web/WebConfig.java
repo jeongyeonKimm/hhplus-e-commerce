@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.common.config;
+package kr.hhplus.be.server.config.web;
 
 import kr.hhplus.be.server.support.interceptor.AuthInterceptor;
 import lombok.RequiredArgsConstructor;

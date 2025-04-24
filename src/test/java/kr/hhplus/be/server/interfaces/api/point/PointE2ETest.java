@@ -156,8 +156,7 @@ class PointE2ETest {
                         .queryParam("userId", user.getId())
                         .build())
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<ApiResponse<PointResponse>>() {
-                })
+                .toEntity(new ParameterizedTypeReference<ApiResponse<PointResponse>>() {})
                 .getBody();
 
         assertThat(response.getCode()).isEqualTo(HttpStatus.OK.value());
