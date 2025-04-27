@@ -46,7 +46,7 @@ public class BestSellerScheduler {
             Long productId = entry.getKey();
             Long sales = entry.getValue();
 
-            Product product = productService.getProduct(productId);
+            Product product = productService.getProductWithLock(productId);
             BestSeller bestSeller = BestSeller.of(product, sales);
             bestSellerService.save(bestSeller);
         }

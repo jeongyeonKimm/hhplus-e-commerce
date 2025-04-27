@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: hhplus-test
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: test
+    password: test
+
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop

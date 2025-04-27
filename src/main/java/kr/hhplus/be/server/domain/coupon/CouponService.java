@@ -22,7 +22,7 @@ public class CouponService {
 
     @Transactional
     public void issueCoupon(Long userId, Long couponId) {
-        Coupon coupon = couponRepository.findById(couponId)
+      Coupon coupon = couponRepository.findByIdWithLock(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
         if (coupon.getStock() <= 0) {
@@ -35,7 +35,6 @@ public class CouponService {
         }
 
         coupon.deduct();
-        couponRepository.save(coupon);
 
         UserCoupon userCoupon = UserCoupon.of(userId, coupon.getId());
         userCouponRepository.save(userCoupon);

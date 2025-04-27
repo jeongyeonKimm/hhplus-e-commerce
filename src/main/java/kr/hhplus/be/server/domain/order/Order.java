@@ -51,10 +51,9 @@ public class Order extends BaseEntity {
         return new Order(userId);
     }
 
-    public void addProduct(Product product, Long quantity) {
-        product.deduct(quantity);
+    public void addProduct(Product product, OrderProduct orderProduct) {
+        product.deduct(orderProduct.getQuantity());
 
-        OrderProduct orderProduct = OrderProduct.of(this, product, quantity);
         this.orderProducts.add(orderProduct);
         this.totalAmount += orderProduct.getTotalPrice();
     }
@@ -91,7 +90,7 @@ public class Order extends BaseEntity {
         this.status = EXPIRED;
     }
 
-    public List<Long> getProductIds() {
+    public List<Long> getProductIds(List<OrderProduct> orderProducts) {
         return orderProducts.stream()
                 .map(OrderProduct::getProductId)
                 .toList();

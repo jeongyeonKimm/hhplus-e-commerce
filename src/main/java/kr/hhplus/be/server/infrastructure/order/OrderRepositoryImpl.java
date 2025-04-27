@@ -29,8 +29,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void saveOrderProduct(OrderProduct orderProduct) {
-        orderProductJpaRepository.save(orderProduct);
+    public OrderProduct saveOrderProduct(OrderProduct orderProduct) {
+        return orderProductJpaRepository.save(orderProduct);
     }
 
     @Override
@@ -58,5 +58,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findAllOrders() {
         return orderJpaRepository.findAll();
+    }
+
+    @Override
+    public List<OrderProduct> findAllOrderProducts() {
+        return orderProductJpaRepository.findAll();
     }
 }

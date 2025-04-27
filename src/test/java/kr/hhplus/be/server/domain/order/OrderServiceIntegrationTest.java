@@ -11,8 +11,6 @@ import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -21,8 +19,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
 class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
@@ -153,6 +149,7 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
         assertThat(order.getStatus()).isEqualTo(OrderStatus.EXPIRED);
         long expected = balance + product1.getPrice() + product2.getPrice() + product3.getPrice();
-        assertThat(point.getBalance()).isEqualTo(expected);
+        Point foundPoint = pointRepository.findPointByUserId(user.getId()).get();
+        assertThat(foundPoint.getBalance()).isEqualTo(expected);
     }
 }

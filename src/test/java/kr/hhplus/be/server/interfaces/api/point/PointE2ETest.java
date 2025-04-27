@@ -3,6 +3,7 @@ package kr.hhplus.be.server.interfaces.api.point;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.hhplus.be.server.common.response.ApiResponse;
 import kr.hhplus.be.server.domain.order.Order;
+import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderRepository;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointRepository;
@@ -189,7 +190,8 @@ class PointE2ETest {
 
         Product product = productRepository.save(Product.of("123", "1234123123", 1000L, 100L));
         Order order = orderRepository.saveOrder(Order.of(user.getId()));
-        order.addProduct(product, 1L);
+        OrderProduct orderProduct = OrderProduct.of(order, product, 1L);
+        order.addProduct(product, orderProduct);
 
         orderRepository.saveOrder(order);
         orderRepository.saveAllOrderProducts(order.getOrderProducts());

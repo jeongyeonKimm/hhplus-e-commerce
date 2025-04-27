@@ -6,6 +6,7 @@ import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import kr.hhplus.be.server.domain.point.PointService;
 import kr.hhplus.be.server.domain.product.Product;
+import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.product.ProductService;
 import kr.hhplus.be.server.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final PointService pointService;
-    private final ProductService productService;
     private final CouponService couponService;
+    private final ProductRepository productRepository;
 
     @Transactional
     public Order createOrder(Long userId) {
@@ -44,9 +45,13 @@ public class OrderService {
 
     @Transactional
     public void addProduct(Order order, Product product, Long quantity) {
-        order.addProduct(product, quantity);
+        if (order.getId() == null) {
+            orderRepository.saveOrder(order);
+        }
 
-        orderRepository.saveOrder(order);
+        OrderProduct orderProduct = OrderProduct.of(order, product, quantity);
+        order.addProduct(product, orderProduct);
+
         orderRepository.saveAllOrderProducts(order.getOrderProducts());
     }
 
@@ -83,7 +88,13 @@ public class OrderService {
 
     @Transactional
     public void expireOrder(Order order) {
-        List<Product> products = productService.getAllProductsByIds(order.getProductIds());
+        List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
+        List<Long> productIds = order.getProductIds(orderProducts);
+        List<Product> products = productIds.stream()
+                .map(productId -> productRepository.findByIdWithLock(productId)
+                        .orElseThrow(() -> new ApiException(INVALID_PRODUCT)))
+                .toList();
+
         order.expired(products);
 
         pointService.rollbackPoint(order.getUserId(), order.getTotalAmount());

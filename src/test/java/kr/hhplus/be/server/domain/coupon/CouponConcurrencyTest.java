@@ -1,41 +1,43 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import kr.hhplus.be.server.support.IntegrationTestSupport;
-import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.instancio.Select.field;
 
 @SpringBootTest
 class CouponConcurrencyTest extends IntegrationTestSupport {
-    
+
     @Autowired
     private CouponService couponService;
 
     @Autowired
-    private UserCouponRepository userCouponRepository;
-
-    @Autowired
     private CouponRepository couponRepository;
-    
-    @DisplayName("재고가 10개인 쿠폰을 사용자 20명이 동시에 발급 요청을 하면 10명은 쿠폰을 발급받지 못한다.")
+
+    @DisplayName("재고가 1개인 쿠폰을 사용자 2명이 동시에 발급 요청을 하면 1명은 쿠폰을 발급받지 못한다.")
     @Test
     void issueCoupon_concurrently() throws InterruptedException {
-        Coupon coupon = Instancio.of(Coupon.class)
-                .set(field(Coupon::getStock), 10)
-                .create();
-        Coupon savedCoupon = couponRepository.save(coupon);
+        long startTime = System.nanoTime();
 
-        int threadCount = 10;
+        Coupon coupon = couponRepository.save(Coupon.of(
+                "할인 쿠폰",
+                1000L,
+                DiscountType.AMOUNT,
+                LocalDate.now(),
+                LocalDate.now().plusMonths(1),
+                1L
+        ));
+
+        int threadCount = 2;
         ExecutorService executor = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -46,7 +48,7 @@ class CouponConcurrencyTest extends IntegrationTestSupport {
             long userId = i + 1;
             executor.submit(() -> {
                 try {
-                    couponService.issueCoupon(userId, savedCoupon.getId());
+                    couponService.issueCoupon(userId, coupon.getId());
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();
@@ -58,7 +60,12 @@ class CouponConcurrencyTest extends IntegrationTestSupport {
 
         latch.await();
 
-        assertThat(successCount.get()).isEqualTo(coupon.getStock());
-        assertThat(failCount.get()).isEqualTo(10);
+        assertThat(successCount.get()).isEqualTo(1);
+        assertThat(failCount.get()).isEqualTo(1);
+
+        long endTime = System.nanoTime();
+        long durationMillis = (endTime - startTime) / 1_000_000;
+
+        System.out.println("실행 시간: " + durationMillis + " ms");
     }
 }

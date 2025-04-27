@@ -14,6 +14,8 @@ public enum ErrorCode {
     CHARGE_AMOUNT_EXCEEDS_LIMIT("CHARGE_AMOUNT_EXCEEDS_LIMIT", 400,"최대 누적 충전 금액을 초과하였습니다."),
     POINT_NOT_EXIST("POINT_NOT_EXIST", 404, "포인트가 존재하지 않습니다."),
     INVALID_RESTORE_AMOUNT("INVALID_RESTORE_AMOUNT", 400, "복원되는 포인트는 0 이하일 수 없습니다."),
+    DUPLICATE_CHARGE("DUPLICATE_CHARGE", 400, "이미 충전된 요청입니다."),
+    DUPLICATE_USE("DUPLICATE_USE", 400, "이미 사용된 요청입니다."),
 
     INSUFFICIENT_STOCK("INSUFFICIENT_STOCK", 400, "재고가 부족합니다."),
     INVALID_PRODUCT("INVALID_PRODUCT", 404, "유효하지 않은 상품입니다."),

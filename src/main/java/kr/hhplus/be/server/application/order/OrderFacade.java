@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,9 +28,12 @@ public class OrderFacade {
     public OrderResult order(OrderCreateCommand command) {
         Order order = orderService.createOrder(command.getUserId());
 
-        List<OrderProductInfo> productInfos = command.getProductInfos();
+        List<OrderProductInfo> productInfos = command.getProductInfos().stream()
+                .sorted(Comparator.comparing(OrderProductInfo::getProductId))
+                .toList();
+
         for (OrderProductInfo productInfo : productInfos) {
-            Product product = productService.getProduct(productInfo.getProductId());
+            Product product = productService.getProductWithLock(productInfo.getProductId());
             orderService.addProduct(order, product, productInfo.getQuantity());
         }
 

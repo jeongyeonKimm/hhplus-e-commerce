@@ -75,8 +75,8 @@ class BestSellerSchedulerTest {
         Product product2 = Instancio.of(Product.class)
                 .set(field(Product::getId), 2L)
                 .create();
-        given(productService.getProduct(1L)).willReturn(product1);
-        given(productService.getProduct(2L)).willReturn(product2);
+        given(productService.getProductWithLock(1L)).willReturn(product1);
+        given(productService.getProductWithLock(2L)).willReturn(product2);
 
         bestSellerScheduler.calculateHourlyBestSellers();
 
@@ -88,8 +88,8 @@ class BestSellerSchedulerTest {
                 bs.getProductId().equals(2L) &&
                         bs.getSales() == 10L
         ));
-        verify(productService, times(1)).getProduct(1L);
-        verify(productService, times(1)).getProduct(2L);
+        verify(productService, times(1)).getProductWithLock(1L);
+        verify(productService, times(1)).getProductWithLock(2L);
     }
 
     @DisplayName("3일이 지난 데이터를 매일 새벽 00:05")

@@ -11,4 +11,6 @@ public interface ProductRepository {
     Optional<Product> findById(Long productId);
 
     List<Product> findAllByIds(List<Long> productIds);
+
+    Optional<Product> findByIdWithLock(Long productId);
 }

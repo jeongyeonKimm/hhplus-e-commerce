@@ -6,13 +6,9 @@ import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
 class PointServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
@@ -55,11 +51,12 @@ class PointServiceIntegrationTest extends IntegrationTestSupport {
     void rollbackPoint() {
         long initialBalance = 3000L;
         User user = userRepository.save(User.of());
-        Point point = pointRepository.savePoint(Point.of(user.getId(), initialBalance));
+        pointRepository.savePoint(Point.of(user.getId(), initialBalance));
 
         long totalAmount = 2000L;
         pointService.rollbackPoint(user.getId(), totalAmount);
 
-        assertThat(point.getBalance()).isEqualTo(initialBalance + totalAmount);
+        Point foundPoint = pointRepository.findPointByUserId(user.getId()).orElseThrow();
+        assertThat(foundPoint.getBalance()).isEqualTo(initialBalance + totalAmount);
     }
 }

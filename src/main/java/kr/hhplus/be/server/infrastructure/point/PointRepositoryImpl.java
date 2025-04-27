@@ -3,9 +3,11 @@ package kr.hhplus.be.server.infrastructure.point;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointHistory;
 import kr.hhplus.be.server.domain.point.PointRepository;
+import kr.hhplus.be.server.domain.point.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -28,5 +30,15 @@ public class PointRepositoryImpl implements PointRepository {
     @Override
     public void savePointHistory(PointHistory pointHistory) {
         pointHistoryJpaRepository.save(pointHistory);
+    }
+
+    @Override
+    public Optional<Point> findPointByUserIdWithLock(Long userId) {
+        return pointJpaRepository.findByUserIdWithPessimisticLock(userId);
+    }
+
+    @Override
+    public Boolean existsByPointIdAndAmountAndTypeAndCreatedAtAfter(Long pointId, Long amount, TransactionType type, LocalDateTime createdAt) {
+        return pointHistoryJpaRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(pointId, amount, type, createdAt);
     }
 }
