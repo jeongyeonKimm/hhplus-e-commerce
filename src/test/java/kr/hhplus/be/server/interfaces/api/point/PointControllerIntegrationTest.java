@@ -2,13 +2,11 @@ package kr.hhplus.be.server.interfaces.api.point;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.application.payment.PaymentFacade;
-import kr.hhplus.be.server.application.payment.dto.PaymentCommand;
 import kr.hhplus.be.server.application.point.PointFacade;
 import kr.hhplus.be.server.application.point.dto.command.ChargePointCommand;
 import kr.hhplus.be.server.application.point.dto.command.GetPointCommand;
 import kr.hhplus.be.server.application.point.dto.result.PointResult;
 import kr.hhplus.be.server.domain.order.Order;
-import kr.hhplus.be.server.domain.order.QOrder;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.interfaces.api.point.dto.request.PointChargeRequest;

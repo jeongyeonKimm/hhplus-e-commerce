@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.support;
+package kr.hhplus.be.server.support.dummy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

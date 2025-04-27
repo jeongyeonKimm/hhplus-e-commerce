@@ -50,6 +50,8 @@ public class BestSellerScheduler {
             BestSeller bestSeller = BestSeller.of(product, sales);
             bestSellerService.save(bestSeller);
         }
+
+        log.info("[BestSellerScheduler] 1시간 동안 주문된 상품 통계 집계 완료");
     }
 
     @Scheduled(cron = "0 5 0 * * *")
@@ -57,5 +59,6 @@ public class BestSellerScheduler {
     public void deleteOldBestSellers() {
         LocalDateTime threshold = LocalDateTime.now().minusDays(3);
         bestSellerService.deleteByCreatedAtBefore(threshold);
+        log.info("[BestSellerScheduler] 3일 지난 인기 상품 데이터 삭제 스케줄러 실행 완료");
     }
 }

@@ -29,6 +29,7 @@ public class Point extends BaseEntity {
     private Point(Long userId, Long balance) {
         this.userId = userId;
         this.balance = balance;
+        this.version = 0L;
     }
 
     public static Point of(Long userId, Long balance) {

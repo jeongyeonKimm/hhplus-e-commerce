@@ -13,7 +13,6 @@ import kr.hhplus.be.server.interfaces.api.point.dto.response.PointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-
 @RequestMapping("/api/v1/points")
 @RequiredArgsConstructor
 @RestController
