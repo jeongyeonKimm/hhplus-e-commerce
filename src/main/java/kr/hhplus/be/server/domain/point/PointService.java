@@ -22,18 +22,18 @@ public class PointService {
         Point point = pointRepository.findPointByUserIdWithLock(userId)
                 .orElseGet(() -> Point.of(userId, 0L));
 
-        point.charge(amount);
-        Point savedPoint = pointRepository.savePoint(point);
-
-        Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(savedPoint.getId(), amount, CHARGE, LocalDateTime.now().minusSeconds(1));
+        Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(point.getId(), amount, CHARGE, LocalDateTime.now().minusSeconds(1));
         if (isDuplicate) {
             throw new ApiException(DUPLICATE_CHARGE);
         }
 
-        PointHistory history = PointHistory.saveHistory(point, amount, CHARGE);
+        point.charge(amount);
+        Point savedPoint = pointRepository.savePoint(point);
+
+        PointHistory history = PointHistory.of(savedPoint, amount, CHARGE);
         pointRepository.savePointHistory(history);
 
-        return point;
+        return savedPoint;
     }
 
     public Point getPoint(Long userId) {
@@ -54,7 +54,7 @@ public class PointService {
             throw new ApiException(DUPLICATE_USE);
         }
 
-        PointHistory history = PointHistory.saveHistory(point, amount, USE);
+        PointHistory history = PointHistory.of(point, amount, USE);
         pointRepository.savePointHistory(history);
 
         return point;
@@ -68,7 +68,7 @@ public class PointService {
         point.restore(totalAmount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.saveHistory(point, totalAmount, ROLLBACK);
+        PointHistory history = PointHistory.of(point, totalAmount, ROLLBACK);
         pointRepository.savePointHistory(history);
     }
 
