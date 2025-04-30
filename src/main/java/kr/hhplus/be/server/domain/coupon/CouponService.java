@@ -1,12 +1,14 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.support.aop.lock.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -20,9 +22,15 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
+    @DistributedLock(
+            key = "'coupon:' + #couponId",
+            timeUnit = TimeUnit.MILLISECONDS,
+            waitTime = 300,
+            leaseTime = 3000
+    )
     @Transactional
     public void issueCoupon(Long userId, Long couponId) {
-      Coupon coupon = couponRepository.findByIdWithLock(couponId)
+        Coupon coupon = couponRepository.findByIdWithLock(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
         if (coupon.getStock() <= 0) {

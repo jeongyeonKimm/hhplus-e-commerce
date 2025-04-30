@@ -23,7 +23,7 @@ class CouponConcurrencyTest extends IntegrationTestSupport {
     @Autowired
     private CouponRepository couponRepository;
 
-    @DisplayName("재고가 1개인 쿠폰을 사용자 2명이 동시에 발급 요청을 하면 1명은 쿠폰을 발급받지 못한다.")
+    @DisplayName("재고가 50개인 쿠폰을 사용자 100명이 동시에 발급 요청을 하면 50명은 쿠폰 발급에 성공하고 50명은 쿠폰을 발급받지 못한다.")
     @Test
     void issueCoupon_concurrently() throws InterruptedException {
         long startTime = System.nanoTime();
@@ -34,10 +34,10 @@ class CouponConcurrencyTest extends IntegrationTestSupport {
                 DiscountType.AMOUNT,
                 LocalDate.now(),
                 LocalDate.now().plusMonths(1),
-                1L
+                50L
         ));
 
-        int threadCount = 2;
+        int threadCount = 100;
         ExecutorService executor = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -60,8 +60,11 @@ class CouponConcurrencyTest extends IntegrationTestSupport {
 
         latch.await();
 
-        assertThat(successCount.get()).isEqualTo(1);
-        assertThat(failCount.get()).isEqualTo(1);
+        assertThat(successCount.get()).isEqualTo(50);
+        assertThat(failCount.get()).isEqualTo(50);
+
+        Coupon issuedCoupon = couponRepository.findById(coupon.getId()).orElseThrow();
+        assertThat(issuedCoupon.getStock()).isEqualTo(0L);
 
         long endTime = System.nanoTime();
         long durationMillis = (endTime - startTime) / 1_000_000;
