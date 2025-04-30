@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -24,9 +23,7 @@ public class CouponService {
 
     @DistributedLock(
             key = "'coupon:' + #couponId",
-            timeUnit = TimeUnit.MILLISECONDS,
-            waitTime = 300,
-            leaseTime = 3000
+            leaseTime = 2
     )
     @Transactional
     public void issueCoupon(Long userId, Long couponId) {
