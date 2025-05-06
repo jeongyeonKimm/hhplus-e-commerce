@@ -16,5 +16,5 @@ public @interface DistributedLock {
 
     long waitTime() default 5L;
 
-    long leaseTime() default 8L;
+    long leaseTime() default 3L;
 }

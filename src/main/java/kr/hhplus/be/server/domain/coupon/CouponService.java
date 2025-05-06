@@ -21,10 +21,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
-    @DistributedLock(
-            key = "'coupon:' + #couponId",
-            leaseTime = 2
-    )
+    @DistributedLock(key = "'coupon:' + #couponId")
     @Transactional
     public void issueCoupon(Long userId, Long couponId) {
         Coupon coupon = couponRepository.findByIdWithLock(couponId)
