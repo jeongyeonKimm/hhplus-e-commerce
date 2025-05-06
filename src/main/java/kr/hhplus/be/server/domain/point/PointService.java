@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.point;
 
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.support.aop.lock.LettuceLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ public class PointService {
 
     private final PointRepository pointRepository;
 
+    @LettuceLock(key = "'user:' + #userId")
     @Transactional
     public Point chargePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserIdWithLock(userId)
@@ -41,6 +43,7 @@ public class PointService {
                 .orElseGet(() -> Point.of(userId, 0L));
     }
 
+    @LettuceLock(key = "'user:' + #userId")
     @Transactional
     public Point usePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserIdWithLock(userId)
