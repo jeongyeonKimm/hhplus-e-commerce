@@ -24,23 +24,23 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.LOCK_NOT_AVAILABLE;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
-public class DistributedLockAop {
+public class RedissonLockAop {
 
     private static final String REDISSON_LOCK_KEY_PREFIX = "Lock:";
 
     private final RedissonClient redissonClient;
 
-    @Around("@annotation(kr.hhplus.be.server.support.aop.lock.DistributedLock)")
+    @Around("@annotation(kr.hhplus.be.server.support.aop.lock.RedissonLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        DistributedLock distributedLock = method.getAnnotation(DistributedLock.class);
+        RedissonLock redissonLock = method.getAnnotation(RedissonLock.class);
 
-        String key = REDISSON_LOCK_KEY_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
+        String key = REDISSON_LOCK_KEY_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), redissonLock.key());
         RLock rLock = redissonClient.getLock(key);
 
         try {
-            boolean available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
+            boolean available = rLock.tryLock(redissonLock.waitTime(), redissonLock.leaseTime(), redissonLock.timeUnit());
             if (!available) {
                 log.info("Lock 획득 실패: {}", key);
                 throw new ApiException(LOCK_NOT_AVAILABLE);
