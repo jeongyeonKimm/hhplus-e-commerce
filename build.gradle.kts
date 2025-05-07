@@ -50,6 +50,7 @@ dependencies {
 
 	// Redis
 	implementation ("org.redisson:redisson-spring-boot-starter:3.45.1")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	testImplementation("com.redis.testcontainers:testcontainers-redis:1.6.4")
 
     // DB
