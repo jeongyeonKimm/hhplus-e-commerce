@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.bestseller;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.BaseEntity;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerSummaryResponse;
 import kr.hhplus.be.server.domain.product.Product;
 import lombok.AccessLevel;

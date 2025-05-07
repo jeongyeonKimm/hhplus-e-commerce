@@ -92,11 +92,11 @@ class BestSellerSchedulerTest {
         verify(productService, times(1)).getProductWithLock(2L);
     }
 
-    @DisplayName("3일이 지난 데이터를 매일 새벽 00:05")
+    @DisplayName("3일이 지난 데이터를 매일 새벽 00:05에 삭제한다.")
     @Test
     void deleteOldBestSellers() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expectedThreshold = now.minusDays(3);
+        LocalDateTime expectedThreshold = now.minusDays(2);
 
         // when
         bestSellerScheduler.deleteOldBestSellers();
