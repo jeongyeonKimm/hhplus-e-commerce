@@ -24,7 +24,7 @@ public class CouponService {
     @RedissonLock(key = "'coupon:' + #couponId")
     @Transactional
     public void issueCoupon(Long userId, Long couponId) {
-        Coupon coupon = couponRepository.findByIdWithLock(couponId)
+        Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
         if (coupon.getStock() <= 0) {

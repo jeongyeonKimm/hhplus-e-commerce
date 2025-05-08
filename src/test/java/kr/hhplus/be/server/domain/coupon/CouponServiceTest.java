@@ -35,7 +35,7 @@ class CouponServiceTest {
         long userId = 1L;
         long couponId = 2L;
 
-        given(couponRepository.findByIdWithLock(couponId)).willReturn(Optional.empty());
+        given(couponRepository.findById(couponId)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(ApiException.class)
@@ -57,7 +57,7 @@ class CouponServiceTest {
                 0L
         );
 
-        given(couponRepository.findByIdWithLock(couponId)).willReturn(Optional.of(coupon));
+        given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
 
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(ApiException.class)
@@ -79,7 +79,7 @@ class CouponServiceTest {
                 10L
         );
 
-        given(couponRepository.findByIdWithLock(couponId)).willReturn(Optional.of(coupon));
+        given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
         given(userCouponRepository.existsByUserIdAndCouponId(userId, couponId)).willReturn(true);
 
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
@@ -102,12 +102,12 @@ class CouponServiceTest {
                 10L
         );
 
-        given(couponRepository.findByIdWithLock(couponId)).willReturn(Optional.of(coupon));
+        given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
         given(userCouponRepository.existsByUserIdAndCouponId(userId, couponId)).willReturn(false);
 
         couponService.issueCoupon(userId, couponId);
 
-        verify(couponRepository, times(1)).findByIdWithLock(couponId);
+        verify(couponRepository, times(1)).findById(couponId);
         verify(userCouponRepository, times(1)).existsByUserIdAndCouponId(userId, couponId);
     }
 
