@@ -43,7 +43,7 @@ class PointServiceTest {
                 .set(field("balance"), chargeAmount)
                 .create();
 
-        given(pointRepository.findPointByUserIdWithLock(userId)).willReturn(Optional.empty());
+        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.empty());
         given(pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(eq(null), eq(chargeAmount), eq(CHARGE), any(LocalDateTime.class)))
                 .willReturn(false);
         given(pointRepository.savePoint(any(Point.class))).willReturn(point);
@@ -53,7 +53,7 @@ class PointServiceTest {
         assertThat(chargePoint.getUserId()).isEqualTo(userId);
         assertThat(chargePoint.getBalance()).isEqualTo(chargeAmount);
 
-        verify(pointRepository, times(1)).findPointByUserIdWithLock(userId);
+        verify(pointRepository, times(1)).findPointByUserId(userId);
         verify(pointRepository, times(1)).savePoint(any(Point.class));
         verify(pointRepository, times(1))
                 .existsByPointIdAndAmountAndTypeAndCreatedAtAfter(eq(null), eq(chargeAmount), eq(CHARGE), any(LocalDateTime.class));
@@ -68,7 +68,7 @@ class PointServiceTest {
 
         Point point = Point.of(userId, initialPoint);
 
-        given(pointRepository.findPointByUserIdWithLock(userId)).willReturn(Optional.of(point));
+        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.of(point));
         given(pointRepository.savePoint(any(Point.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -78,7 +78,7 @@ class PointServiceTest {
         assertThat(chargedPoint.getUserId()).isEqualTo(userId);
         assertThat(chargedPoint.getBalance()).isEqualTo(expectedPoint);
 
-        verify(pointRepository, times(1)).findPointByUserIdWithLock(userId);
+        verify(pointRepository, times(1)).findPointByUserId(userId);
         verify(pointRepository, times(1)).savePoint(any(Point.class));
     }
 
@@ -87,7 +87,7 @@ class PointServiceTest {
     void usePoint_whenNotExist() {
         long userId = 1L;
         long useAmount = 1000L;
-        given(pointRepository.findPointByUserIdWithLock(userId)).willReturn(Optional.empty());
+        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> pointService.usePoint(userId, useAmount))
                 .isInstanceOf(ApiException.class)
@@ -103,7 +103,7 @@ class PointServiceTest {
 
         Point point = Point.of(userId, initialPoint);
 
-        given(pointRepository.findPointByUserIdWithLock(userId)).willReturn(Optional.of(point));
+        given(pointRepository.findPointByUserId(userId)).willReturn(Optional.of(point));
         given(pointRepository.savePoint(any(Point.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -113,7 +113,7 @@ class PointServiceTest {
         assertThat(chargedPoint.getUserId()).isEqualTo(userId);
         assertThat(chargedPoint.getBalance()).isEqualTo(expectedPoint);
 
-        verify(pointRepository, times(1)).findPointByUserIdWithLock(userId);
+        verify(pointRepository, times(1)).findPointByUserId(userId);
         verify(pointRepository, times(1)).savePoint(any(Point.class));
     }
 }

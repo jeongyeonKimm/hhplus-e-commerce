@@ -21,7 +21,7 @@ public class PointService {
     @LettuceLock(key = "'user:' + #userId")
     @Transactional
     public Point chargePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserIdWithLock(userId)
+        Point point = pointRepository.findPointByUserId(userId)
                 .orElseGet(() -> Point.of(userId, 0L));
 
         Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(point.getId(), amount, CHARGE, LocalDateTime.now().minusSeconds(1));
@@ -46,7 +46,7 @@ public class PointService {
     @LettuceLock(key = "'user:' + #userId")
     @Transactional
     public Point usePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserIdWithLock(userId)
+        Point point = pointRepository.findPointByUserId(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 
         point.use(amount);
