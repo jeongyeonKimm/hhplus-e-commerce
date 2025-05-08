@@ -67,7 +67,7 @@ public class BestSellerScheduler {
     @Scheduled(cron = "0 50 23 * * *")
     public void preloadBestSellersCache() {
         BestSellerService proxy = applicationContext.getBean(BestSellerService.class);
-        proxy.getBestSellers();
+        proxy.refreshBestSellers();
         log.info("[BestSellerScheduler] 3일간 인기 상품 캐싱 완료");
     }
 }
