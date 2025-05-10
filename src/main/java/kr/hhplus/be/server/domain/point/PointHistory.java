@@ -25,14 +25,14 @@ public class PointHistory extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    public PointHistory(Long pointId, Long amount, Long balance, TransactionType type) {
+    private PointHistory(Long pointId, Long amount, Long balance, TransactionType type) {
         this.pointId = pointId;
         this.amount = amount;
         this.balance = balance;
         this.type = type;
     }
 
-    public static PointHistory saveHistory(Point point, Long amount, TransactionType type) {
+    public static PointHistory of(Point point, Long amount, TransactionType type) {
         return new PointHistory(point.getId(), amount, point.getBalance(), type);
     }
 }

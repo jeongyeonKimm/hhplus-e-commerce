@@ -44,12 +44,15 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
     @Test
     void order() {
         User user = userRepository.save(User.of());
+        LocalDate startDate = LocalDate.of(2025, 4, 1);
+        LocalDate endDate = startDate.plusYears(1);
+
         Coupon coupon = couponRepository.save(Coupon.of(
                 "coupon1",
                 1000L,
                 DiscountType.AMOUNT,
-                LocalDate.of(2025, 4, 1),
-                LocalDate.of(2025, 4, 30),
+                startDate,
+                endDate,
                 100L)
         );
         UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));

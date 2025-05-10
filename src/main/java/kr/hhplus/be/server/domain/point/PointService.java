@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.point;
 
 import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.support.aop.lock.LettuceLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,23 +18,24 @@ public class PointService {
 
     private final PointRepository pointRepository;
 
+    @LettuceLock(key = "'user:' + #userId")
     @Transactional
     public Point chargePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserIdWithLock(userId)
+        Point point = pointRepository.findPointByUserId(userId)
                 .orElseGet(() -> Point.of(userId, 0L));
 
-        point.charge(amount);
-        Point savedPoint = pointRepository.savePoint(point);
-
-        Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(savedPoint.getId(), amount, CHARGE, LocalDateTime.now().minusSeconds(1));
+        Boolean isDuplicate = pointRepository.existsByPointIdAndAmountAndTypeAndCreatedAtAfter(point.getId(), amount, CHARGE, LocalDateTime.now().minusSeconds(1));
         if (isDuplicate) {
             throw new ApiException(DUPLICATE_CHARGE);
         }
 
-        PointHistory history = PointHistory.saveHistory(point, amount, CHARGE);
+        point.charge(amount);
+        Point savedPoint = pointRepository.savePoint(point);
+
+        PointHistory history = PointHistory.of(savedPoint, amount, CHARGE);
         pointRepository.savePointHistory(history);
 
-        return point;
+        return savedPoint;
     }
 
     public Point getPoint(Long userId) {
@@ -41,9 +43,10 @@ public class PointService {
                 .orElseGet(() -> Point.of(userId, 0L));
     }
 
+    @LettuceLock(key = "'user:' + #userId")
     @Transactional
     public Point usePoint(Long userId, Long amount) {
-        Point point = pointRepository.findPointByUserIdWithLock(userId)
+        Point point = pointRepository.findPointByUserId(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));
 
         point.use(amount);
@@ -54,7 +57,7 @@ public class PointService {
             throw new ApiException(DUPLICATE_USE);
         }
 
-        PointHistory history = PointHistory.saveHistory(point, amount, USE);
+        PointHistory history = PointHistory.of(point, amount, USE);
         pointRepository.savePointHistory(history);
 
         return point;
@@ -68,7 +71,7 @@ public class PointService {
         point.restore(totalAmount);
         pointRepository.savePoint(point);
 
-        PointHistory history = PointHistory.saveHistory(point, totalAmount, ROLLBACK);
+        PointHistory history = PointHistory.of(point, totalAmount, ROLLBACK);
         pointRepository.savePointHistory(history);
     }
 
