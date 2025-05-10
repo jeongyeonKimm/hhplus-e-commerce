@@ -9,6 +9,7 @@ import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class BestSellerScheduler {
     private final OrderService orderService;
     private final ProductService productService;
     private final BestSellerService bestSellerService;
+    private final ApplicationContext applicationContext;
 
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
@@ -57,8 +59,15 @@ public class BestSellerScheduler {
     @Scheduled(cron = "0 5 0 * * *")
     @Transactional
     public void deleteOldBestSellers() {
-        LocalDateTime threshold = LocalDateTime.now().minusDays(3);
+        LocalDateTime threshold = LocalDateTime.now().minusDays(2);
         bestSellerService.deleteByCreatedAtBefore(threshold);
         log.info("[BestSellerScheduler] 3일 지난 인기 상품 데이터 삭제 스케줄러 실행 완료");
+    }
+
+    @Scheduled(cron = "0 50 23 * * *")
+    public void preloadBestSellersCache() {
+        BestSellerService proxy = applicationContext.getBean(BestSellerService.class);
+        proxy.refreshBestSellers();
+        log.info("[BestSellerScheduler] 3일간 인기 상품 캐싱 완료");
     }
 }
