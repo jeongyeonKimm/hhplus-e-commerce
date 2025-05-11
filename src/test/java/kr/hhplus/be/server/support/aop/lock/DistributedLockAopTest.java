@@ -15,14 +15,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class RedissonLockAopTest {
+class DistributedLockAopTest {
 
     @Autowired
     private TestService testService;
 
-    @DisplayName("Redisson 락 획득 요청이 동시에 100개 발생하면 모든 요청은 성공한다.")
+    @DisplayName("스핀 락 획득 요청이 동시에 100개 발생하면 모든 요청은 성공한다.")
     @Test
-    void getLettuceLock_concurrently() throws InterruptedException {
+    void getSpinLock_concurrently() throws InterruptedException {
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -32,7 +32,34 @@ class RedissonLockAopTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    String result = testService.testMethod(1L);
+                    String result = testService.testSpinLockMethod(1L);
+                    if (result.equals("success")) {
+                        successCount.incrementAndGet();
+                    }
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        assertThat(successCount.get()).isEqualTo(threadCount);
+    }
+
+    @DisplayName("pub/sub 락 획득 요청이 동시에 100개 발생하면 모든 요청은 성공한다.")
+    @Test
+    void getPubSubLock_concurrently() throws InterruptedException {
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        AtomicInteger successCount = new AtomicInteger(0);
+
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    String result = testService.testPubSubLockMethod(1L);
                     if (result.equals("success")) {
                         successCount.incrementAndGet();
                     }
@@ -58,8 +85,13 @@ class RedissonLockAopTest {
 
     static class TestService {
 
-        @RedissonLock(key = "'test:' + #id")
-        public String testMethod(Long id) {
+        @DistributedLock(key = "'test:' + #id", type = LockType.SPIN_LOCK)
+        public String testSpinLockMethod(Long id) {
+            return "success";
+        }
+
+        @DistributedLock(key = "'test:' + #id", type = LockType.SPIN_LOCK)
+        public String testPubSubLockMethod(Long id) {
             return "success";
         }
     }

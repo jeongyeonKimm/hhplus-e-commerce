@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RedissonLock {
+public @interface DistributedLock {
 
     String key();
 
@@ -17,4 +17,6 @@ public @interface RedissonLock {
     long waitTime() default 5L;
 
     long leaseTime() default 3L;
+
+    LockType type() default LockType.SPIN_LOCK;
 }
