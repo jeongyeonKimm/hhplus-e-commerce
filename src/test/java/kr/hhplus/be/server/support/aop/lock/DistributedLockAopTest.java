@@ -4,8 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -74,7 +74,7 @@ class DistributedLockAopTest {
         assertThat(successCount.get()).isEqualTo(threadCount);
     }
 
-    @Configuration
+    @TestConfiguration
     static class TestConfig {
 
         @Bean
@@ -90,7 +90,7 @@ class DistributedLockAopTest {
             return "success";
         }
 
-        @DistributedLock(key = "'test:' + #id", type = LockType.SPIN_LOCK)
+        @DistributedLock(key = "'test:' + #id", type = LockType.PUB_SUB_LOCK)
         public String testPubSubLockMethod(Long id) {
             return "success";
         }
