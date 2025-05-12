@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.interfaces.api.bestseller;
 
 import kr.hhplus.be.server.application.bestseller.BestSellerFacade;
-import kr.hhplus.be.server.application.bestseller.dto.BestSellerGetResult;
 import kr.hhplus.be.server.common.response.ApiResponse;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.interfaces.api.bestseller.dto.response.BestProductListResponse;
 import kr.hhplus.be.server.interfaces.api.bestseller.dto.response.BestProductResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class BestSellerController implements BestSellerSpec {
 
     @GetMapping
     public ApiResponse<BestProductListResponse<BestProductResponse>> getBestProducts() {
-        BestSellerGetResult result = bestSellerFacade.getBestSellers();
+        BestSellerDto result = bestSellerFacade.getBestSellers();
         return ApiResponse.success(BestProductListResponse.from(result));
     }
 }

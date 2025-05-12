@@ -2,6 +2,7 @@ package kr.hhplus.be.server.application.bestseller;
 
 import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.BestSellerService;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderService;
@@ -9,7 +10,7 @@ import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,6 @@ public class BestSellerScheduler {
     private final OrderService orderService;
     private final ProductService productService;
     private final BestSellerService bestSellerService;
-    private final ApplicationContext applicationContext;
 
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
@@ -64,10 +64,11 @@ public class BestSellerScheduler {
         log.info("[BestSellerScheduler] 3일 지난 인기 상품 데이터 삭제 스케줄러 실행 완료");
     }
 
-    @Scheduled(cron = "0 50 23 * * *")
-    public void preloadBestSellersCache() {
-        BestSellerService proxy = applicationContext.getBean(BestSellerService.class);
-        proxy.refreshBestSellers();
+    @CachePut(value = "bestSellers", key = "'best'", cacheManager = "redisCacheManager")
+    @Scheduled(cron = "20 05 14 * * *")
+    public BestSellerDto preloadBestSellersCache() {
+        BestSellerDto bestSellers = bestSellerService.getBestSellers();
         log.info("[BestSellerScheduler] 3일간 인기 상품 캐싱 완료");
+        return bestSellers;
     }
 }
