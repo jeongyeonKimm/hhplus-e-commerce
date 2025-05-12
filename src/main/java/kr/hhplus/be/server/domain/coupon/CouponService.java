@@ -23,7 +23,6 @@ public class CouponService {
     private final UserCouponRepository userCouponRepository;
 
     @DistributedLock(key = "'coupon:' + #couponId", type = LockType.PUB_SUB_LOCK)
-    @Transactional
     public void issueCoupon(Long userId, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));

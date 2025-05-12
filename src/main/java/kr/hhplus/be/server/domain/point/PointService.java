@@ -20,7 +20,6 @@ public class PointService {
     private final PointRepository pointRepository;
 
     @DistributedLock(key = "'user:' + #userId", type = LockType.SPIN_LOCK)
-    @Transactional
     public Point chargePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserId(userId)
                 .orElseGet(() -> Point.of(userId, 0L));
@@ -45,7 +44,6 @@ public class PointService {
     }
 
     @DistributedLock(key = "'user:' + #userId", type = LockType.SPIN_LOCK)
-    @Transactional
     public Point usePoint(Long userId, Long amount) {
         Point point = pointRepository.findPointByUserId(userId)
                 .orElseThrow(() -> new ApiException(POINT_NOT_EXIST));

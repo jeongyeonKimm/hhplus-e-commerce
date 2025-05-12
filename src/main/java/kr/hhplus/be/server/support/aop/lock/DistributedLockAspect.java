@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.support.aop.lock;
 
+import kr.hhplus.be.server.support.aop.AopForTransaction;
 import kr.hhplus.be.server.support.aop.CustomSpringELParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class DistributedLockAspect {
 
     private static final String DISTRIBUTED_LOCK_KEY_PREFIX = "Lock:";
     private final LockStrategyFactory lockFactory;
+    private final AopForTransaction aopForTransaction;
 
     @Around("@annotation(kr.hhplus.be.server.support.aop.lock.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -34,7 +36,7 @@ public class DistributedLockAspect {
 
         return lockStrategy.execute(key, lock.timeUnit(), lock.waitTime(), lock.leaseTime(), () -> {
             try {
-                return joinPoint.proceed();
+                return aopForTransaction.proceed(joinPoint);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
