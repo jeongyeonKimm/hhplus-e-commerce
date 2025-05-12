@@ -85,12 +85,12 @@ class DistributedLockAopTest {
 
     static class TestService {
 
-        @DistributedLock(key = "'test:' + #id", type = LockType.SPIN_LOCK)
+        @DistributedLock(key = "'spin:' + #id", type = LockType.SPIN_LOCK)
         public String testSpinLockMethod(Long id) {
             return "success";
         }
 
-        @DistributedLock(key = "'test:' + #id", type = LockType.PUB_SUB_LOCK)
+        @DistributedLock(key = "'pubsub:' + #id", type = LockType.PUB_SUB_LOCK)
         public String testPubSubLockMethod(Long id) {
             return "success";
         }

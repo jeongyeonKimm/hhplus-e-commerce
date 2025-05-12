@@ -41,6 +41,7 @@ public class PubSubLockStrategy implements LockStrategy {
             throw new ApiException(LOCK_INTERRUPTED);
         } finally {
             if (available && rLock.isHeldByCurrentThread()) {
+                log.info("Lock 해제 성공: {}", key);
                 rLock.unlock();
             }
         }
