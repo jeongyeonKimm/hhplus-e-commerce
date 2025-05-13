@@ -78,12 +78,12 @@ class BestSellerCacheTest extends IntegrationTestSupport {
                         .set(field(BestSellerDto::getBestSellers), bestSellers)
                 .create());
 
-        Object before = redisTemplate.opsForValue().get("bestSellers::best");
+        Object before = redisTemplate.opsForValue().get("day3-best-sellers::best");
         assertThat(before).isNull();
 
         bestSellerFacade.getBestSellers();
 
-        Object after = redisTemplate.opsForValue().get("bestSellers::best");
+        Object after = redisTemplate.opsForValue().get("day3-best-sellers::best");
         assertThat(after).isNotNull();
 
         verify(bestSellerService, times(1)).getBestSellers();

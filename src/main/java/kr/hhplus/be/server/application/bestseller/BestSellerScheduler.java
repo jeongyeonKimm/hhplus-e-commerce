@@ -8,6 +8,7 @@ import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
+import kr.hhplus.be.server.support.cache.CacheNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
@@ -64,8 +65,8 @@ public class BestSellerScheduler {
         log.info("[BestSellerScheduler] 3일 지난 인기 상품 데이터 삭제 스케줄러 실행 완료");
     }
 
-    @CachePut(value = "bestSellers", key = "'best'", cacheManager = "redisCacheManager")
-    @Scheduled(cron = "20 05 14 * * *")
+    @CachePut(value = CacheNames.DAY3_BEST_SELLERS, key = "'best'", cacheManager = "redisCacheManager")
+    @Scheduled(cron = "0 50 23 * * *")
     public BestSellerDto preloadBestSellersCache() {
         BestSellerDto bestSellers = bestSellerService.getBestSellers();
         log.info("[BestSellerScheduler] 3일간 인기 상품 캐싱 완료");
