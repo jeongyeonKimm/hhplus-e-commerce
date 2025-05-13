@@ -2,6 +2,7 @@ package kr.hhplus.be.server.application.bestseller;
 
 import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.BestSellerService;
+import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.infrastructure.bestseller.BestSellerJpaRepository;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.instancio.Instancio;
@@ -12,12 +13,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.instancio.Select.field;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class BestSellerCacheTest extends IntegrationTestSupport {
 
@@ -50,6 +51,32 @@ class BestSellerCacheTest extends IntegrationTestSupport {
 
             bestSellerJpaRepository.saveAndFlush(bestSeller);
         });
+
+        List<BestSeller> bestSellers = List.of(
+                Instancio.of(BestSeller.class)
+                        .ignore(field(BestSeller::getCreatedAt))
+                        .ignore(field(BestSeller::getUpdatedAt))
+                        .create(),
+                Instancio.of(BestSeller.class)
+                        .ignore(field(BestSeller::getCreatedAt))
+                        .ignore(field(BestSeller::getUpdatedAt))
+                        .create(),
+                Instancio.of(BestSeller.class)
+                        .ignore(field(BestSeller::getCreatedAt))
+                        .ignore(field(BestSeller::getUpdatedAt))
+                        .create(),
+                Instancio.of(BestSeller.class)
+                        .ignore(field(BestSeller::getCreatedAt))
+                        .ignore(field(BestSeller::getUpdatedAt))
+                        .create(),
+                Instancio.of(BestSeller.class)
+                        .ignore(field(BestSeller::getCreatedAt))
+                        .ignore(field(BestSeller::getUpdatedAt))
+                        .create()
+        );
+        when(bestSellerService.getBestSellers()).thenReturn(Instancio.of(BestSellerDto.class)
+                        .set(field(BestSellerDto::getBestSellers), bestSellers)
+                .create());
 
         Object before = redisTemplate.opsForValue().get("bestSellers::best");
         assertThat(before).isNull();
