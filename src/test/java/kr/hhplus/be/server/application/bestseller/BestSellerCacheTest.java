@@ -5,7 +5,9 @@ import kr.hhplus.be.server.domain.bestseller.BestSellerService;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.infrastructure.bestseller.BestSellerJpaRepository;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
+import kr.hhplus.be.server.support.cache.CacheNames;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ class BestSellerCacheTest extends IntegrationTestSupport {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Disabled   // 추후 서비스가 확장되어 인기 상품을 RDB에 저장하는 경우 실행
     @DisplayName("인기 상품 조회를 하면 첫 요청은 DB에 접근하여 데이터를 조회하고, 이후 요청은 캐시에서 데이터를 조회한다.")
     @Test
     void getBestSellers_cache() {
@@ -78,12 +81,12 @@ class BestSellerCacheTest extends IntegrationTestSupport {
                         .set(field(BestSellerDto::getBestSellers), bestSellers)
                 .create());
 
-        Object before = redisTemplate.opsForValue().get("day3-best-sellers::best");
+        Object before = redisTemplate.opsForValue().get(CacheNames.DAY3_BEST_SELLERS);
         assertThat(before).isNull();
 
         bestSellerFacade.getBestSellers();
 
-        Object after = redisTemplate.opsForValue().get("day3-best-sellers::best");
+        Object after = redisTemplate.opsForValue().get(CacheNames.DAY3_BEST_SELLERS);
         assertThat(after).isNotNull();
 
         verify(bestSellerService, times(1)).getBestSellers();
