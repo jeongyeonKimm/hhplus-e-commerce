@@ -6,11 +6,11 @@ import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
+import kr.hhplus.be.server.domain.salesranking.SalesRankingRepository;
 import kr.hhplus.be.server.support.cache.CacheNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -29,13 +29,13 @@ import java.util.stream.IntStream;
 public class BestSellerScheduler {
 
     private final ProductService productService;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final SalesRankingRepository salesRankingRepository;
 
     private static final String DAILY_SALES_PREFIX = "sales:daily:";
     private static final String LATEST_3DAYS_SALES_PREFIX = "sales:3days:";
 
     @CachePut(value = CacheNames.DAY3_BEST_SELLERS, key = "'best'", cacheManager = "redisCacheManager")
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     public BestSellerDto getLatest3DaysTop5() {
         LocalDate today = LocalDate.now();
         String latest3daysSalesKey = LATEST_3DAYS_SALES_PREFIX + today.format(DateTimeFormatter.BASIC_ISO_DATE);
@@ -44,18 +44,12 @@ public class BestSellerScheduler {
                 .mapToObj(i -> DAILY_SALES_PREFIX + today.minusDays(i).format(DateTimeFormatter.BASIC_ISO_DATE))
                 .toList();
 
-        Long resultCount = redisTemplate.opsForZSet()
-                .unionAndStore(
-                        keys.get(0),
-                        keys.subList(1, keys.size()),
-                        latest3daysSalesKey
-                );
-        redisTemplate.expire(latest3daysSalesKey, Duration.ofDays(1));
+        Long resultCount = salesRankingRepository.aggregateSales(keys, latest3daysSalesKey);
+        salesRankingRepository.setSalesKeyTtl(latest3daysSalesKey, Duration.ofDays(1));
 
         log.info("[BestSellerScheduler] 최근 3일간 판매 상품 집계 완료. 총 상품 수 {}", resultCount);
 
-        Set<ZSetOperations.TypedTuple<String>> top5 = redisTemplate.opsForZSet()
-                .reverseRangeWithScores(latest3daysSalesKey, 0, 4);
+        Set<ZSetOperations.TypedTuple<String>> top5 = salesRankingRepository.getTopProducts(latest3daysSalesKey, 5);
 
         if (top5 == null || top5.isEmpty()) {
             log.info("[BestSellerScheduler] 최근 3일간 인기 상품 집계 결과 없음");
