@@ -31,4 +31,12 @@ public class CouponController implements CouponSpec {
         couponFacade.issueCoupon(request.toCouponIssueCommand());
         return ApiResponse.successWithCreated(List.of());
     }
+
+    @PostMapping("/issue/request")
+    public ApiResponse<String> requestIssueCoupon(@Valid @RequestBody CouponIssueRequest request) {
+        boolean result = couponFacade.requestIssueCoupon(request.toCouponIssueCommand());
+        return result
+                ? ApiResponse.success("쿠폰 발급 요청이 정상 처리되었습니다.")
+                : ApiResponse.error(400, "쿠폰 발급 요청에 실패하였습니다.");
+    }
 }

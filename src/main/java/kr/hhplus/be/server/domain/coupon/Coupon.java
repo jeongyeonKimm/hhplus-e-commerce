@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+import static kr.hhplus.be.server.common.exception.ErrorCode.COUPON_DATE_EXPIRED;
 import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_COUPON_STOCK;
 
 @Getter
@@ -65,5 +66,20 @@ public class Coupon extends BaseEntity {
 
     public boolean isExpired() {
         return this.endDate.isBefore(LocalDate.now());
+    }
+
+    public void validateIssuable() {
+        LocalDate now = LocalDate.now();
+        if (this.startDate.isAfter(now)|| isExpired()) {
+            throw new ApiException(COUPON_DATE_EXPIRED);
+        }
+
+        if (this.stock == null || this.stock <= 0) {
+            throw new ApiException(INSUFFICIENT_COUPON_STOCK);
+        }
+    }
+
+    public void deductCount(int size) {
+        this.stock = Math.max(0, this.stock - size);
     }
 }
