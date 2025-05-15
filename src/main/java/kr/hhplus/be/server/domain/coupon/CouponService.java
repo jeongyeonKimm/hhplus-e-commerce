@@ -1,7 +1,8 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import kr.hhplus.be.server.common.exception.ApiException;
-import kr.hhplus.be.server.support.aop.lock.RedissonLock;
+import kr.hhplus.be.server.support.aop.lock.DistributedLock;
+import kr.hhplus.be.server.support.aop.lock.LockType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +22,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
-    @RedissonLock(key = "'coupon:' + #couponId")
-    @Transactional
+    @DistributedLock(key = "'coupon:' + #couponId", type = LockType.PUB_SUB_LOCK)
     public void issueCoupon(Long userId, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));

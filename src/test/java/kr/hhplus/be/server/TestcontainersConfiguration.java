@@ -30,16 +30,17 @@ class TestcontainersConfiguration {
 		REDIS_CONTAINER.start();
 
 		String redisHost = REDIS_CONTAINER.getHost();
+		int redisPort = REDIS_CONTAINER.getMappedPort(6379);
 
 		System.setProperty("spring.data.redis.host", redisHost);
-		System.setProperty("spring.data.redis.port", String.valueOf(REDIS_PORT));
+		System.setProperty("spring.data.redis.port", String.valueOf(redisPort));
 		System.setProperty("spring.redis.redisson.config",
 				String.format("singleServerConfig:\n" +
 						"  address: \"redis://%s:%d\"\n" +
 						"  connectionMinimumIdleSize: 1\n" +
 						"  connectionPoolSize: 10\n" +
 						"  connectTimeout: 10000\n" +
-						"  timeout: 3000", redisHost, REDIS_PORT));
+						"  timeout: 3000", redisHost, redisPort));
 	}
 
 	@PreDestroy
