@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SalesRankingRedisRepositoryImplTest extends IntegrationTestSupport {
+class SalesRankingRedisRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
