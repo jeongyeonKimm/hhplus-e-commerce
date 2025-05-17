@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.interfaces.api.bestseller;
 
 import kr.hhplus.be.server.application.bestseller.BestSellerFacade;
-import kr.hhplus.be.server.application.bestseller.dto.BestSellerGetResult;
 import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.product.Product;
@@ -56,8 +55,7 @@ class BestSellerControllerIntegrationTest {
                 BestSeller.of(product5, 100L)
         );
 
-        BestSellerGetResult result = BestSellerGetResult.from(BestSellerDto.of(bestSellers));
-        given(bestSellerFacade.getBestSellers()).willReturn(result);
+        given(bestSellerFacade.getBestSellers()).willReturn(BestSellerDto.of(bestSellers));
 
         mockMvc.perform(get("/api/v1/bestsellers"))
                 .andExpect(jsonPath("$.code").value(200))

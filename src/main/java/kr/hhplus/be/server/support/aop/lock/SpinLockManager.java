@@ -10,7 +10,7 @@ import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
-public class LettuceLockManager {
+public class SpinLockManager {
 
     private final RedisTemplate<String, String> redisTemplate;
 
