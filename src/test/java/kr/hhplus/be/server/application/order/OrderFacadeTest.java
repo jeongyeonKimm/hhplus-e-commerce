@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,6 +38,9 @@ class OrderFacadeTest {
 
     @Mock
     private OrderService orderService;
+
+    @Mock
+    private SalesRankingCommitHandler salesRankingCommitHandler;
 
     @DisplayName("주문 생성 시 상품 재고 차감, 쿠폰 적용, 주문 생성이 수행된다.")
     @Test
@@ -73,5 +77,6 @@ class OrderFacadeTest {
         verify(orderService, times(1)).addProduct(order, product2, 1L);
         verify(couponService, times(1)).getUserCoupon(userCouponId);
         verify(orderService, times(1)).applyCoupon(order, userCoupon);
+        verify(salesRankingCommitHandler, times(1)).handlerAfterOrderCommit(anyMap());
     }
 }

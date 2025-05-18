@@ -2,8 +2,6 @@ package kr.hhplus.be.server.domain.bestseller;
 
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +15,7 @@ public class BestSellerService {
 
     private final BestSellerRepository bestSellerRepository;
 
-    @Cacheable(value = "bestSellers", key = "'best'", cacheManager = "redisCacheManager")
     public BestSellerDto getBestSellers() {
-        List<BestSeller> bestSellers = bestSellerRepository.getBestSellers();
-        return BestSellerDto.of(bestSellers);
-    }
-
-    @CachePut(value = "bestSellers", key = "'best'", cacheManager = "redisCacheManager")
-    public BestSellerDto refreshBestSellers() {
         List<BestSeller> bestSellers = bestSellerRepository.getBestSellers();
         return BestSellerDto.of(bestSellers);
     }

@@ -39,7 +39,8 @@ public enum ErrorCode {
 
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", 500, "서버 내부 오류입니다."),
     LOCK_INTERRUPTED("LOCK_INTERRUPTED", 500, "락 인터럽트가 발생하였습니다."),
-    LOCK_NOT_AVAILABLE("LOCK_NOT_AVAILABLE", 500, "락을 획득할 수 없습니다.");
+    LOCK_NOT_AVAILABLE("LOCK_NOT_AVAILABLE", 500, "락을 획득할 수 없습니다."),
+    PARSING_ERROR("PARSING_ERROR", 500, "SpEL 파싱 중 오류가 발생하였습니다");
 
     private final String code;
     private final int httpStatus;

@@ -20,4 +20,8 @@ public class BestSellerDto {
     public static BestSellerDto of(List<BestSeller> bestSellers) {
         return new BestSellerDto(bestSellers);
     }
+
+    public static BestSellerDto empty() {
+        return null;
+    }
 }
