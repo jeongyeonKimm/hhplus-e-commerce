@@ -42,6 +42,20 @@ public class CouponService {
         userCouponRepository.save(userCoupon);
     }
 
+    @Transactional
+    public boolean requestCouponIssuance(Long userId, Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new ApiException(INVALID_COUPON));
+
+        coupon.validateIssuable();
+
+        if (couponRepository.isAlreadyIssued(userId, couponId)) {
+            throw new ApiException(COUPON_ALREADY_ISSUED);
+        }
+
+        return couponRepository.requestIssuance(userId, couponId);
+    }
+
     public List<UserCoupon> getCoupons(Long userId) {
         List<UserCoupon> userCoupons = userCouponRepository.findByUserId(userId);
         List<Long> couponIds = userCoupons.stream()

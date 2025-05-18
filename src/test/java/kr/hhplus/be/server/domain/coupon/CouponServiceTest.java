@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.*;
@@ -109,6 +110,29 @@ class CouponServiceTest {
 
         verify(couponRepository, times(1)).findById(couponId);
         verify(userCouponRepository, times(1)).existsByUserIdAndCouponId(userId, couponId);
+    }
+
+    @DisplayName("이미 쿠폰이 발급된 사용자는 쿠폰 발급 요청에 실패한다.")
+    @Test
+    void requestCouponIssuance_alreadyIssuedUser() {
+        Long couponId = 1L;
+        Long userId = 10L;
+        LocalDate now = LocalDate.now();
+        Coupon coupon = Coupon.of(
+                "회원가입 할인 쿠폰",
+                60_000L,
+                DiscountType.AMOUNT,
+                now,
+                now.plusYears(1),
+                10L
+        );
+
+        given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
+        given(couponRepository.isAlreadyIssued(userId, couponId)).willReturn(true);
+
+        assertThatThrownBy(() -> couponService.requestCouponIssuance(10L, couponId))
+                .isInstanceOf(ApiException.class)
+                .hasMessage(COUPON_ALREADY_ISSUED.getMessage());
     }
 
 }
