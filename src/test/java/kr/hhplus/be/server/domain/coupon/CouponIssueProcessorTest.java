@@ -29,6 +29,9 @@ class CouponIssueProcessorTest extends IntegrationTestSupport {
     private UserRepository userRepository;
 
     @Autowired
+    private UserCouponRepository userCouponRepository;
+
+    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @DisplayName("쿠폰의 재고가 충분한 경우 발급 요청이 모두 처리된다.")
@@ -53,6 +56,9 @@ class CouponIssueProcessorTest extends IntegrationTestSupport {
 
         Coupon issuedCoupon = couponRepository.findById(savedCoupon.getId()).orElseThrow();
         assertThat(issuedCoupon.getStock()).isZero();
+
+        List<UserCoupon> userCoupons = userCouponRepository.findByCouponId(coupon.getId());
+        assertThat(userCoupons).hasSize(10);
     }
 
     @DisplayName("쿠폰의 재고가 충분하지 않은 경우 발급 요청만큼만 처리된다.")
@@ -83,5 +89,8 @@ class CouponIssueProcessorTest extends IntegrationTestSupport {
         String issuedKey = String.format(ISSUED_COUPON_KEY, savedCoupon.getId());
         Set<String> successMembers = redisTemplate.opsForSet().members(issuedKey);
         assertThat(successMembers.size()).isEqualTo(5);
+
+        List<UserCoupon> userCoupons = userCouponRepository.findByCouponId(coupon.getId());
+        assertThat(userCoupons).hasSize(5);
     }
 }
