@@ -16,7 +16,7 @@ import java.util.Set;
 public class CouponRepositoryImpl implements CouponRepository {
 
     private final CouponJpaRepository couponJpaRepository;
-    private final CouponRedisRepository couponRedisRepository;
+    private final CouponIssueRepository couponIssueRepository;
 
     @Override
     public Coupon save(Coupon coupon) {
@@ -40,32 +40,32 @@ public class CouponRepositoryImpl implements CouponRepository {
 
     @Override
     public boolean requestIssuance(Long userId, Long couponId) {
-        return couponRedisRepository.addRequest(userId, couponId);
+        return couponIssueRepository.tryReserveCoupon(userId, couponId);
     }
 
     @Override
     public boolean isAlreadyIssued(Long userId, Long couponId) {
-        return couponRedisRepository.isMember(userId, couponId);
+        return couponIssueRepository.isCouponIssued(userId, couponId);
     }
 
     @Override
     public Set<ZSetOperations.TypedTuple<String>> getRequests(Long couponId, int size) {
-        return couponRedisRepository.getRequests(couponId, size);
+        return couponIssueRepository.getReservedUser(couponId, size);
     }
 
     @Override
     public void deleteRequestKey(Long couponId) {
-        couponRedisRepository.deleteRequestKey(couponId);
+        couponIssueRepository.deleteSoldCoupon(couponId);
     }
 
     @Override
     public void addIssuedMember(Long couponId, List<Long> userIds) {
-        couponRedisRepository.addIssuedMember(couponId, userIds);
+        couponIssueRepository.addIssuedUser(couponId, userIds);
     }
 
     @Override
     public void addFailMember(Long couponId, List<Long> userIds) {
-        couponRedisRepository.addFailMember(couponId, userIds);
+        couponIssueRepository.addNotIssuedUser(couponId, userIds);
     }
 
     @Override

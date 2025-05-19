@@ -10,7 +10,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Repository
-public class CouponRedisRepositoryImpl implements CouponRedisRepository {
+public class CouponIssueRepository {
 
     private static final String REQUEST_ISSUE_COUPON_KEY = "coupon:request:%d";
     private static final String ISSUED_COUPON_KEY = "coupon:issued:%d";
@@ -18,8 +18,7 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Override
-    public boolean addRequest(Long userId, Long couponId) {
+    public boolean tryReserveCoupon(Long userId, Long couponId) {
         String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
         String value = "userId:" + userId;
         return Boolean.TRUE.equals(
@@ -30,8 +29,7 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
                 ));
     }
 
-    @Override
-    public boolean isMember(Long userId, Long couponId) {
+    public boolean isCouponIssued(Long userId, Long couponId) {
         String key = String.format(ISSUED_COUPON_KEY, couponId);
         String value = "userId:" + userId;
         return Boolean.TRUE.equals(
@@ -39,21 +37,18 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
         );
     }
 
-    @Override
-    public Set<ZSetOperations.TypedTuple<String>> getRequests(Long couponId, int size) {
+    public Set<ZSetOperations.TypedTuple<String>> getReservedUser(Long couponId, int size) {
         String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
         return redisTemplate.opsForZSet()
                 .rangeWithScores(key, 0, size - 1);
     }
 
-    @Override
-    public void deleteRequestKey(Long couponId) {
+    public void deleteSoldCoupon(Long couponId) {
         String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
         redisTemplate.delete(key);
     }
 
-    @Override
-    public void addIssuedMember(Long couponId, List<Long> userIds) {
+    public void addIssuedUser(Long couponId, List<Long> userIds) {
         String key = String.format(ISSUED_COUPON_KEY, couponId);
         userIds.forEach(userId -> {
             String value = "userId:" + userId;
@@ -61,8 +56,7 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
         });
     }
 
-    @Override
-    public void addFailMember(Long couponId, List<Long> userIds) {
+    public void addNotIssuedUser(Long couponId, List<Long> userIds) {
         String key = String.format(FAIL_COUPON_KEY, couponId);
         userIds.forEach(userId -> {
             String value = "userId:" + userId;
