@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -22,6 +23,6 @@ public class BestSellerDto {
     }
 
     public static BestSellerDto empty() {
-        return null;
+        return new BestSellerDto(Collections.emptyList());
     }
 }
