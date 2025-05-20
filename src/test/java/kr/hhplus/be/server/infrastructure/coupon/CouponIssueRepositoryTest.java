@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.infrastructure.coupon;
 
+import kr.hhplus.be.server.domain.coupon.CouponKey;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,10 +12,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CouponIssueRepositoryTest extends IntegrationTestSupport {
-
-    private static final String REQUEST_ISSUE_COUPON_KEY = "coupon:request:%d";
-    private static final String ISSUED_COUPON_KEY = "coupon:issued:%d";
-    private static final String FAIL_COUPON_KEY = "coupon:fail:%d";
 
     @Autowired
     private CouponIssueRepository couponIssueRepository;
@@ -30,7 +27,7 @@ class CouponIssueRepositoryTest extends IntegrationTestSupport {
         couponIssueRepository.tryReserveCoupon(10L, couponId);
         couponIssueRepository.tryReserveCoupon(11L, couponId);
 
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponReserveKey(couponId);
         List<Long> values = redisTemplate.opsForZSet()
                 .range(key, 0, 1)
                 .stream()
@@ -45,7 +42,7 @@ class CouponIssueRepositoryTest extends IntegrationTestSupport {
     void isMember() {
         Long couponId = 1L;
         Long userId = 10L;
-        String key = String.format(ISSUED_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponSuccessIssuanceKey(couponId);
         String value = "userId:" + userId;
 
         redisTemplate.opsForSet().add(key, value);
@@ -59,7 +56,7 @@ class CouponIssueRepositoryTest extends IntegrationTestSupport {
     @Test
     void getRequests() {
         Long couponId = 1L;
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponReserveKey(couponId);
         redisTemplate.opsForZSet().add(key, "userId:" + 10L, System.currentTimeMillis());
         redisTemplate.opsForZSet().add(key, "userId:" + 20L, System.currentTimeMillis());
         redisTemplate.opsForZSet().add(key, "userId:" + 30L, System.currentTimeMillis());
@@ -77,7 +74,7 @@ class CouponIssueRepositoryTest extends IntegrationTestSupport {
     @Test
     void deleteRequestKey() {
         Long couponId = 1L;
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponReserveKey(couponId);
         redisTemplate.opsForZSet().add(key, "userId:" + 10L, System.currentTimeMillis());
 
         couponIssueRepository.deleteSoldCoupon(couponId);
@@ -92,7 +89,7 @@ class CouponIssueRepositoryTest extends IntegrationTestSupport {
     void addIssuedMember() {
         Long couponId = 1L;
         List<Long> userIds = List.of(10L, 20L, 30L);
-        String key = String.format(ISSUED_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponSuccessIssuanceKey(couponId);
 
         couponIssueRepository.addIssuedUser(couponId, userIds);
 
@@ -109,7 +106,7 @@ class CouponIssueRepositoryTest extends IntegrationTestSupport {
     void addFailMember() {
         Long couponId = 1L;
         List<Long> userIds = List.of(10L, 20L, 30L);
-        String key = String.format(FAIL_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponFailIssuanceKey(couponId);
 
         couponIssueRepository.addNotIssuedUser(couponId, userIds);
 

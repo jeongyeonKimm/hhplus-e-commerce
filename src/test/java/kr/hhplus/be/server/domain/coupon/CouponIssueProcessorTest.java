@@ -17,8 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CouponIssueProcessorTest extends IntegrationTestSupport {
 
-    private static final String ISSUED_COUPON_KEY = "coupon:issued:%d";
-
     @Autowired
     private CouponIssueProcessor couponIssueProcessor;
 
@@ -86,7 +84,7 @@ class CouponIssueProcessorTest extends IntegrationTestSupport {
         Coupon issuedCoupon = couponRepository.findById(savedCoupon.getId()).orElseThrow();
         assertThat(issuedCoupon.getStock()).isZero();
 
-        String issuedKey = String.format(ISSUED_COUPON_KEY, savedCoupon.getId());
+        String issuedKey = CouponKey.getCouponSuccessIssuanceKey(savedCoupon.getId());
         Set<String> successMembers = redisTemplate.opsForSet().members(issuedKey);
         assertThat(successMembers.size()).isEqualTo(5);
 
