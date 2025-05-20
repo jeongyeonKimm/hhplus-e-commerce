@@ -4,6 +4,7 @@ import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
+import kr.hhplus.be.server.domain.salesranking.SalesRankingKey;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import kr.hhplus.be.server.support.cache.CacheNames;
 import org.instancio.Instancio;
@@ -16,7 +17,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,7 +41,6 @@ public class BestSellerIntegrationTest extends IntegrationTestSupport {
     @MockitoBean
     private ProductService productService;
 
-    private static final String DAILY_SALES_PREFIX = "sales:daily:";
     private static final String CACHE_KEY = "best";
 
     @DisplayName("최근 3일 판매량 집계 및 상위 5개 인기 상품을 캐싱한다.")
@@ -69,7 +68,7 @@ public class BestSellerIntegrationTest extends IntegrationTestSupport {
 
         when(productService.getProductByIds(anyList())).thenReturn(productMap);
 
-        BestSellerDto result = bestSellerScheduler.getLatest3DaysTop5();
+        bestSellerScheduler.scheduleBestSellerUpdate();
 
         Cache cache = cacheManager.getCache(CacheNames.DAY3_BEST_SELLERS);
         assertThat(cache).isNotNull();
@@ -87,7 +86,7 @@ public class BestSellerIntegrationTest extends IntegrationTestSupport {
     }
 
     private void addSales(LocalDate date, Long productId, long score) {
-        String key = DAILY_SALES_PREFIX + date.format(DateTimeFormatter.BASIC_ISO_DATE);
+        String key = SalesRankingKey.getSalesDailyKey(date);
         String value = "product:" + productId.toString();
         redisTemplate.opsForZSet().add(key, value, score);
     }
