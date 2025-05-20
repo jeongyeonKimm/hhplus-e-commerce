@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.salesranking;
+package kr.hhplus.be.server.domain.salesranking.dto;
 
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.common.exception.ErrorCode;

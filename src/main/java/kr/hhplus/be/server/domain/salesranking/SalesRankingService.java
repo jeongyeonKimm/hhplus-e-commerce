@@ -4,6 +4,7 @@ import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductService;
+import kr.hhplus.be.server.domain.salesranking.dto.SalesRankingResult;
 import kr.hhplus.be.server.support.cache.CacheNames;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
