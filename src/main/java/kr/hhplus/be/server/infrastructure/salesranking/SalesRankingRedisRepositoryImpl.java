@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.infrastructure.salesranking;
 
+import kr.hhplus.be.server.domain.salesranking.SalesRankingKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +16,6 @@ import java.util.Set;
 @Repository
 public class SalesRankingRedisRepositoryImpl implements SalesRankingRedisRepository {
 
-    private static final String SALES_DAILY_KEY_PREFIX = "sales:daily:";
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -52,6 +51,6 @@ public class SalesRankingRedisRepositoryImpl implements SalesRankingRedisReposit
 
     private String generateDailySalesKey() {
         LocalDate today = LocalDate.now();
-        return SALES_DAILY_KEY_PREFIX + today.format(DateTimeFormatter.BASIC_ISO_DATE);
+        return SalesRankingKey.getSalesDailyKey(today);
     }
 }
