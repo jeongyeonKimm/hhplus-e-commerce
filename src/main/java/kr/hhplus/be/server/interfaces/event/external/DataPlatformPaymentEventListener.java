@@ -11,7 +11,7 @@ import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMI
 
 @RequiredArgsConstructor
 @Component
-public class DataOrderEventListener {
+public class DataPlatformPaymentEventListener {
 
     private final DataPlatformSender sender;
 
