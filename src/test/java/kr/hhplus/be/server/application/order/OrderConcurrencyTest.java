@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.application.order;
 
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
+import kr.hhplus.be.server.application.order.dto.OrderExpireCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderProduct;
 import kr.hhplus.be.server.domain.order.OrderRepository;
-import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -32,9 +33,6 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
 
     @Autowired
     private OrderFacade orderFacade;
-
-    @Autowired
-    private OrderService orderService;
 
     @Autowired
     private ProductRepository productRepository;
@@ -118,7 +116,7 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
     @DisplayName("동일한 상품에 동시에 재고 복원, 포인트 복원 요청을 했을 때 모든 요청이 반영되어야 한다.")
     @Test
     void expireOrder_concurrently() throws InterruptedException {
-        pointRepository.savePoint(Point.of(1L, 1_000_000L));
+        Point point = pointRepository.savePoint(Point.of(1L, 1_000_000L));
         Product product = productRepository.save(Product.of(
                 "product",
                 "This is a product",
@@ -126,17 +124,17 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
                 100L)
         );
 
+        List<Order> unpaidOrder = new ArrayList<>();
+
         for (int i = 0; i < 10; i++) {
             Order order = orderRepository.saveOrder(Order.of(1L));
 
             OrderProduct orderProduct = OrderProduct.of(order, product, 10L);
-            order.addProduct(product, orderProduct);
-
-            orderRepository.saveOrder(order);
             orderRepository.saveOrderProduct(orderProduct);
-        }
 
-        productRepository.save(product);
+            order.addProduct(product, orderProduct);
+            orderRepository.saveOrder(order);
+        }
 
         List<Order> unpaidOrders = orderRepository.findAllOrders();
 
@@ -144,11 +142,9 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
         CountDownLatch latch = new CountDownLatch(unpaidOrders.size());
 
         for (Order order : unpaidOrders) {
-            List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
-            order.insertOrderProducts(orderProducts);
             executor.execute(() -> {
                 try {
-                    orderService.expireOrder(order);
+                    orderFacade.expire(OrderExpireCommand.of(order));
                 } catch (Exception e) {
                     System.out.println("예외 발생: " + e.getMessage());
                 } finally {
@@ -161,5 +157,9 @@ public class OrderConcurrencyTest extends IntegrationTestSupport {
 
         Product restoredProduct = productRepository.findById(product.getId()).orElseThrow();
         assertThat(restoredProduct.getStock()).isEqualTo(100L);
+
+        long expectedBalance = point.getBalance() + (product.getPrice() * 10L * unpaidOrders.size());
+        Point restoredPoint = pointRepository.findPointByUserId(1L).orElseThrow();
+        assertThat(restoredPoint.getBalance()).isEqualTo(expectedBalance);
     }
 }

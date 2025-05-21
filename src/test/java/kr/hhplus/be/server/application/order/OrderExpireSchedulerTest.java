@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.application.order;
 
+import kr.hhplus.be.server.application.order.dto.OrderExpireCommand;
 import kr.hhplus.be.server.domain.order.Order;
-import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.order.OrderStatus;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.List;
 
 import static org.instancio.Select.field;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +27,7 @@ class OrderExpireSchedulerTest {
     private OrderExpireScheduler orderExpireScheduler;
 
     @Mock
-    private OrderService orderService;
+    private OrderFacade orderFacade;
 
     @DisplayName("결제가 되지 않고 5분이 지난 주문은 만료 처리를 한다.")
     @Test
@@ -40,12 +41,11 @@ class OrderExpireSchedulerTest {
         List<Order> expiredOrders = List.of(order1, order2);
 
         Duration duration = Duration.ofMinutes(5);
-        given(orderService.getUnpaidOrdersExceed(duration)).willReturn(expiredOrders);
+        given(orderFacade.getUnpaidOrdersExceed(duration)).willReturn(expiredOrders);
 
         orderExpireScheduler.expireUnpaidOrders();
 
-        verify(orderService, times(1)).getUnpaidOrdersExceed(duration);
-        verify(orderService, times(1)).expireOrder(order1);
-        verify(orderService, times(1)).expireOrder(order2);
+        verify(orderFacade, times(1)).getUnpaidOrdersExceed(duration);
+        verify(orderFacade, times(2)).expire(any(OrderExpireCommand.class));
     }
 }

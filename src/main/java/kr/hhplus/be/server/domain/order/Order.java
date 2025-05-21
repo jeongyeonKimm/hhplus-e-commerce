@@ -101,12 +101,4 @@ public class Order extends BaseEntity {
                 .filter(p -> p.getId().equals(orderProduct.getProductId()))
                 .findFirst();
     }
-
-    public void insertOrderProducts(List<OrderProduct> orderProducts) {
-        if (orderProducts == null) {
-            throw new ApiException(INVALID_ORDER_PRODUCTS);
-        }
-
-        this.orderProducts = orderProducts;
-    }
 }

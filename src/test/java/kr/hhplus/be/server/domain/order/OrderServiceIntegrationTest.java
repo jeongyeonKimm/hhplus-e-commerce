@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.domain.coupon.*;
-import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
@@ -137,7 +136,6 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
     void expireOrder() {
         User user = userRepository.save(User.of());
         long balance = 10000L;
-        Point point = pointRepository.savePoint(Point.of(user.getId(), balance));
         Order order = orderService.createOrder(user.getId());
 
         Product product1 = productRepository.save(Product.of("product1", "sample product", 1000L, 100L));
@@ -147,11 +145,13 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         Product product3 = productRepository.save(Product.of("product3", "sample product", 3000L, 100L));
         orderService.addProduct(order, product3, 1L);
 
-        orderService.expireOrder(order);
+        List<Product> products = List.of(product1, product2, product3);
+        orderService.expireOrder(order, products);
 
-        assertThat(order.getStatus()).isEqualTo(OrderStatus.EXPIRED);
-        long expected = balance + product1.getPrice() + product2.getPrice() + product3.getPrice();
-        Point foundPoint = pointRepository.findPointByUserId(user.getId()).get();
-        assertThat(foundPoint.getBalance()).isEqualTo(expected);
+        Order expiredOrder = orderRepository.findOrderById(order.getId()).orElseThrow();
+        assertThat(expiredOrder.getStatus()).isEqualTo(OrderStatus.EXPIRED);
+        assertThat(product1.getStock()).isEqualTo(100L);
+        assertThat(product2.getStock()).isEqualTo(100L);
+        assertThat(product3.getStock()).isEqualTo(100L);
     }
 }

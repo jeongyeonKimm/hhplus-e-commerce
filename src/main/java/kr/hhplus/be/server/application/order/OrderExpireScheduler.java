@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.application.order;
 
+import kr.hhplus.be.server.application.order.dto.OrderExpireCommand;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,19 @@ import java.util.List;
 @Component
 public class OrderExpireScheduler {
 
-    private final OrderService orderService;
+    private final OrderFacade orderFacade;
 
     @Scheduled(fixedDelay = 60_000)
     @Transactional
     public void expireUnpaidOrders() {
-        List<Order> unpaidOrders = orderService.getUnpaidOrdersExceed(Duration.ofMinutes(5));
+        List<Order> unpaidOrders = orderFacade.getUnpaidOrdersExceed(Duration.ofMinutes(5));
 
         long successCount = 0;
         long failCount = 0;
 
         for (Order order : unpaidOrders) {
             try {
-                orderService.expireOrder(order);
+                orderFacade.expire(OrderExpireCommand.of(order));
                 successCount++;
             } catch (Exception e) {
                 failCount++;
