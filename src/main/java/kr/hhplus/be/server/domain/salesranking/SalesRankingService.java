@@ -3,7 +3,7 @@ package kr.hhplus.be.server.domain.salesranking;
 import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.product.Product;
-import kr.hhplus.be.server.domain.product.ProductService;
+import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.salesranking.dto.SalesRankingResult;
 import kr.hhplus.be.server.support.cache.CacheNames;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class SalesRankingService {
 
-    private final ProductService productService;
+    private final ProductRepository productRepository;
     private final SalesRankingRepository salesRankingRepository;
 
     @CachePut(value = CacheNames.DAY3_BEST_SELLERS, key = "'best'", cacheManager = "redisCacheManager")
@@ -55,7 +57,9 @@ public class SalesRankingService {
                 .map(t -> SalesRankingResult.extractProductId(t.getValue()))
                 .toList();
 
-        Map<Long, Product> productMap = productService.getProductByIds(productIds);
+        Map<Long, Product> productMap = productRepository.findAllByIds(productIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
 
         List<BestSeller> bestSellers = topTuples.stream()
                 .map(t -> {
