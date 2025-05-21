@@ -45,7 +45,7 @@ class OrderServiceTest {
         long orderId = 1L;
         given(orderRepository.findOrderById(orderId)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> orderService.getOrderData(orderId))
+        assertThatThrownBy(() -> orderService.sendOrderData(orderId))
                 .isInstanceOf(ApiException.class)
                 .hasMessage(INVALID_ORDER.getMessage());
     }

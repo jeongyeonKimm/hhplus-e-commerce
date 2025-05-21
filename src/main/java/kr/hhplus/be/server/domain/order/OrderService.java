@@ -4,10 +4,11 @@ import kr.hhplus.be.server.application.external.dto.OrderData;
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
+import kr.hhplus.be.server.domain.payment.PaymentEvent;
+import kr.hhplus.be.server.domain.payment.PaymentEventPublisher;
 import kr.hhplus.be.server.domain.point.PointService;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
-import kr.hhplus.be.server.domain.product.ProductService;
 import kr.hhplus.be.server.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class OrderService {
     private final PointService pointService;
     private final CouponService couponService;
     private final ProductRepository productRepository;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Transactional
     public Order createOrder(Long userId) {
@@ -67,13 +69,14 @@ public class OrderService {
         orderRepository.saveOrder(order);
     }
 
-    public OrderData getOrderData(Long orderId) {
+    public void sendOrderData(Long orderId) {
         Order order = orderRepository.findOrderById(orderId)
                 .orElseThrow(() -> new ApiException(INVALID_ORDER));
 
         List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(orderId);
 
-        return OrderData.from(order, orderProducts);
+        OrderData orderData = OrderData.from(order, orderProducts);
+        paymentEventPublisher.publish(PaymentEvent.Completed.from(orderData));
     }
 
     public Order getOrder(Long orderId) {
