@@ -3,8 +3,10 @@ package kr.hhplus.be.server.application.bestseller;
 import kr.hhplus.be.server.domain.bestseller.BestSeller;
 import kr.hhplus.be.server.domain.bestseller.dto.BestSellerDto;
 import kr.hhplus.be.server.domain.product.Product;
+import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.product.ProductService;
 import kr.hhplus.be.server.domain.salesranking.SalesRankingKey;
+import kr.hhplus.be.server.domain.salesranking.SalesRankingService;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import kr.hhplus.be.server.support.cache.CacheNames;
 import org.instancio.Instancio;
@@ -18,14 +20,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 public class BestSellerIntegrationTest extends IntegrationTestSupport {
 
@@ -38,35 +38,41 @@ public class BestSellerIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private CacheManager cacheManager;
 
-    @MockitoBean
-    private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private SalesRankingService salesRankingService;
 
     private static final String CACHE_KEY = "best";
 
     @DisplayName("최근 3일 판매량 집계 및 상위 5개 인기 상품을 캐싱한다.")
     @Test
     void getLatest3DaysTop5_aggregate_and_caching() {
+        LongStream.rangeClosed(1, 5)
+                .mapToObj(i -> {
+                    Product product = Product.of(
+                            "Product " + i,
+                            "상품입니다.",
+                            1000L * i,
+                            10L * i
+                    );
+                    productRepository.save(product);
+                    return product;
+                })
+                .toList();
+
+        List<Product> savedProducts = productRepository.findAll();
+        List<Long> productIds = savedProducts.stream()
+                .map(Product::getId)
+                .toList();
+
         LocalDate today = LocalDate.now();
-        addSales(today, 101L, 10);
-        addSales(today.minusDays(1), 102L, 20);
-        addSales(today.minusDays(2), 103L, 15);
-        addSales(today.minusDays(2), 104L, 5);
-        addSales(today.minusDays(2), 105L, 1);
-
-        Map<Long, Product> productMap = LongStream.rangeClosed(1, 5)
-                .boxed()
-                .collect(Collectors.toMap(
-                        i -> 100L + i,
-                        i -> Instancio.of(Product.class)
-                                .set(field(Product::getId), 100L + i)
-                                .set(field(Product::getName), "Product " + i)
-                                .set(field(Product::getDescription), "상품입니다.")
-                                .set(field(Product::getPrice), 1000L * i)
-                                .set(field(Product::getStock), 10L * i)
-                                .create()
-                ));
-
-        when(productService.getProductByIds(anyList())).thenReturn(productMap);
+        addSales(today, productIds.get(0), 10);
+        addSales(today.minusDays(1), productIds.get(1), 20);
+        addSales(today.minusDays(2), productIds.get(2), 15);
+        addSales(today.minusDays(2), productIds.get(3), 5);
+        addSales(today.minusDays(2), productIds.get(4), 1);
 
         bestSellerScheduler.scheduleBestSellerUpdate();
 
@@ -77,7 +83,13 @@ public class BestSellerIntegrationTest extends IntegrationTestSupport {
         assertThat(cached).isNotNull();
         assertThat(cached.getBestSellers()).hasSize(5);
 
-        List<Long> expectedIds = List.of(102L, 103L, 101L, 104L, 105L);
+        List<Long> expectedIds = List.of(
+                productIds.get(1),
+                productIds.get(2),
+                productIds.get(0),
+                productIds.get(3),
+                productIds.get(4)
+        );
         List<Long> actualIds = cached.getBestSellers().stream()
                 .map(BestSeller::getProductId)
                 .toList();
