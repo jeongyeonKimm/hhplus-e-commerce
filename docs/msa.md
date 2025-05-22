@@ -59,6 +59,97 @@ MSA에서는 각 서비스가 독립된 데이터베이스를 가지기 때문�
 
 - 중간 단계 실패 시 `OrderCanceledEvent`, `ProductRollbackEvent` 등 보상 이벤트 발행
 
+```java
+public class OrderService {
+    
+    @Transactional
+    public void createOrder(...) {
+        // 주문 생성
+        orderRepository.save(order);
+        
+        // 주문 완료 이벤트 발행
+        eventPublisher.publish(OrderEvent.OrderCreatedEvent(...));
+    }
+    
+    ...
+}
+
+public class ProductOrderEventListener {
+    ...
+
+    @Async
+    @EventListener
+    public void handle(OrderEvent.OrderCreatedEvent event) {
+        try {
+            재고_차감();
+        } catch (...) {
+            // 재고 차감 실패 이벤트 발행
+            eventPublisher.publish(ProductEvent.StockDeductFailedEvent(...));
+        }
+    }
+
+    @Async
+    @EventListener
+    public void handle(ProductEvent.StockDeductFailedEvent event) {
+        재고_롤백();
+        주문_상태_변경();
+    }
+}
+```
+
+```java
+public class PaymentService {
+    ...
+    
+    @Transactional
+    public void pay(...) {
+        try {
+            결제();
+
+            // 결제 완료 이벤트 발행
+            eventListener.publish(PaymentEvent.PaymentCompleted(...));
+        } catch(...) {
+            // 결제 실패 이벤트 발행
+            eventListener.publish(PaymentEvent.PaymentFailed(...));
+        }
+    }
+}
+
+public class ProductPaymentEventListener {
+    @Async
+    @EventListener
+    public void handle(PaymentEvent.PaymentFailed event) {
+        재고_롤백();
+    }
+}
+
+public class CouponPaymentEventListener {
+    
+    @Async
+    @EventListener
+    public void handle(PaymentEvent.PaymentFailed event) {
+        쿠폰_롤백();
+    }
+}
+
+public class OrderPaymentEventListener {
+    @Async
+    @EventListener
+    public void handle(PaymentEvent.PaymentCompleted event) {
+        // 주문 상태 PAID로 변경
+        주문_상태_변경();
+    }
+}
+
+public class DataPaymentEventListener {
+    @Async
+    @TransactionalEventListeners(AFTER_COMMIT)
+    public void handle(PaymentEvent.PaymentCompleted event) {
+        데이터_전송();
+    }
+}
+```
+
 #### ✔️ 트랜잭션 보상 예시
 
 | 실패 단계    | 보상 트랜잭션                 |
