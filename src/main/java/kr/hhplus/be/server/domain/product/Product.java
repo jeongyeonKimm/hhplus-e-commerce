@@ -7,7 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.*;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INSUFFICIENT_STOCK;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_RESTORE_QUANTITY;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

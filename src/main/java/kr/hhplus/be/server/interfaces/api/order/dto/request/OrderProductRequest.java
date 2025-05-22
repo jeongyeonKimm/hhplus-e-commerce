@@ -3,7 +3,6 @@ package kr.hhplus.be.server.interfaces.api.order.dto.request;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

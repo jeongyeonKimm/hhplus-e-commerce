@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import kr.hhplus.be.server.application.point.dto.command.ChargePointCommand;
-import lombok.Builder;
 import lombok.Getter;
 
 @Schema(description = "포인트 충전 요청 DTO")

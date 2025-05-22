@@ -8,7 +8,6 @@ import kr.hhplus.be.server.domain.product.Product;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

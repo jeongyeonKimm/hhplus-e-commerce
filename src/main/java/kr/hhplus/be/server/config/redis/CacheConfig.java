@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.config.redis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import kr.hhplus.be.server.support.cache.CacheType;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
