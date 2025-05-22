@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.application.payment;
 
+import kr.hhplus.be.server.application.external.DataPlatformSender;
 import kr.hhplus.be.server.application.order.OrderFacade;
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
@@ -9,6 +10,7 @@ import kr.hhplus.be.server.domain.coupon.*;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderRepository;
 import kr.hhplus.be.server.domain.order.OrderStatus;
+import kr.hhplus.be.server.domain.payment.PaymentEvent;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
@@ -19,12 +21,19 @@ import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+@RecordApplicationEvents
 class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
@@ -51,9 +60,15 @@ class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ApplicationEvents events;
+
+    @MockitoSpyBean
+    private DataPlatformSender dataPlatformSender;
+
     @DisplayName("결제를 하면 주문 금액을 포인트에서 차감, 주문 상태를 PAID로 변환한 뒤, 주문 이력을 외부 데이터 플랫폼에 전송한다.")
     @Test
-    void payment() {
+    void pay() throws InterruptedException {
         long initialBalance = 20000L;
         User user = userRepository.save(User.of());
         Point point = pointRepository.savePoint(Point.of(user.getId(), initialBalance));
@@ -84,12 +99,17 @@ class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
 
         PaymentCommand paymentCommand = PaymentCommand.of(result.getOrderId());
 
-        paymentFacade.payment(paymentCommand);
+        paymentFacade.pay(paymentCommand);
 
-        Point usedPoint = pointRepository.findPointByUserId(user.getId()).get();
+        Point usedPoint = pointRepository.findPointByUserId(user.getId()).orElseThrow();
         assertThat(usedPoint.getBalance()).isEqualTo(7000L);
 
-        Order order = orderRepository.findOrderById(result.getOrderId()).get();
+        Order order = orderRepository.findOrderById(result.getOrderId()).orElseThrow();
         assertThat(order.getStatus()).isEqualTo(OrderStatus.PAID);
+
+        long eventCount = events.stream(PaymentEvent.Completed.class).count();
+        assertThat(eventCount).isEqualTo(1);
+
+        verify(dataPlatformSender, times(1)).send(anyString());
     }
 }

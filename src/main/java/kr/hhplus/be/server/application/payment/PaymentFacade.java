@@ -16,7 +16,7 @@ public class PaymentFacade {
     private final OrderService orderService;
 
     @Transactional
-    public void payment(PaymentCommand command) {
+    public void pay(PaymentCommand command) {
         Order order = orderService.getOrder(command.getOrderId());
 
         pointService.usePoint(order.getUserId(), order.getTotalAmount());

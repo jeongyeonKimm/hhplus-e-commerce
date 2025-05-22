@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.*;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
