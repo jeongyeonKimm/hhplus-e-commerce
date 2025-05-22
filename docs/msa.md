@@ -11,6 +11,8 @@
 
 도메인과 DB, 배포 단위를 기준으로 다음과 같이 마이크로서비스 단위를 분리한다.
 
+<img width="925" alt="Image" src="https://github.com/user-attachments/assets/c9372b5e-b051-41d8-b4a2-b3642101c07b" />
+
 | 마이크로서비스                   | 주요 책임      | 주요 데이터          | 주요 기능              |
 |---------------------------|------------|-----------------|--------------------|
 | **User Service**          | 사용자 계정 관리  | 사용자 정보          | 회원가입, 로그인, 인증 등    |
@@ -49,7 +51,7 @@ MSA에서는 각 서비스가 독립된 데이터베이스를 가지기 때문�
 
 - Order Service: 주문 생성 → `OrderCreatedEvent` 발행
 
-- Product Service: 재고 차감 → `ProductRollbackEvent` 발행
+- Product Service: 재고 차감 → `ProductDuductedEvent` 발행
 
 - Payment Service: 결제, 포인트/쿠폰 처리 → `PaymentCompletedEvent` 발행
 
