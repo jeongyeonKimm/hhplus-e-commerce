@@ -2,13 +2,10 @@ package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.application.external.dto.OrderData;
 import kr.hhplus.be.server.common.exception.ApiException;
-import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
-import kr.hhplus.be.server.domain.point.PointService;
+import kr.hhplus.be.server.domain.payment.PaymentEvent;
+import kr.hhplus.be.server.domain.payment.PaymentEventPublisher;
 import kr.hhplus.be.server.domain.product.Product;
-import kr.hhplus.be.server.domain.product.ProductRepository;
-import kr.hhplus.be.server.domain.product.ProductService;
-import kr.hhplus.be.server.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +14,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kr.hhplus.be.server.common.exception.ErrorCode.*;
+import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -25,16 +22,10 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.*;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserService userService;
-    private final PointService pointService;
-    private final CouponService couponService;
-    private final ProductRepository productRepository;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Transactional
     public Order createOrder(Long userId) {
-        if (!userService.exists(userId)) {
-            throw new ApiException(INVALID_USER);
-        }
         return Order.of(userId);
     }
 
@@ -67,13 +58,20 @@ public class OrderService {
         orderRepository.saveOrder(order);
     }
 
-    public OrderData getOrderData(Long orderId) {
+    @Transactional
+    public void expireOrder(Order order, List<Product> products) {
+        order.expired(products);
+        orderRepository.saveOrder(order);
+    }
+
+    public void sendOrderData(Long orderId) {
         Order order = orderRepository.findOrderById(orderId)
                 .orElseThrow(() -> new ApiException(INVALID_ORDER));
 
         List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(orderId);
 
-        return OrderData.from(order, orderProducts);
+        OrderData orderData = OrderData.from(order, orderProducts);
+        paymentEventPublisher.publish(PaymentEvent.Completed.from(orderData));
     }
 
     public Order getOrder(Long orderId) {
@@ -86,36 +84,7 @@ public class OrderService {
         return orderRepository.findByStatusAndCreatedAtBefore(OrderStatus.NOT_PAID, threshold);
     }
 
-    @Transactional
-    public void expireOrder(Order order) {
-        List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
-        List<Long> productIds = order.getProductIds(orderProducts);
-        List<Product> products = productIds.stream()
-                .map(productId -> productRepository.findByIdWithLock(productId)
-                        .orElseThrow(() -> new ApiException(INVALID_PRODUCT)))
-                .toList();
-
-        order.expired(products);
-
-        pointService.rollbackPoint(order.getUserId(), order.getTotalAmount());
-
-        if (order.getIsCouponApplied()) {
-            couponService.rollbackCoupon(order.getUserCouponId());
-        }
-
-        orderRepository.saveOrder(order);
-    }
-
-    public List<Order> findPaidOrdersBetween(LocalDateTime start, LocalDateTime end) {
-        if (start == null || end == null) {
-            throw new ApiException(INVALID_DATE_TIME);
-        }
-        return orderRepository.findPaidOrdersBetween(start, end)
-                .stream()
-                .peek(order -> {
-                    List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(order.getId());
-                    order.insertOrderProducts(orderProducts);
-                })
-                .toList();
+    public List<OrderProduct> getOrderProducts(Long orderId) {
+        return orderRepository.findOrderProductsByOrderId(orderId);
     }
 }

@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.coupon;
 
-import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CouponServiceIntegrationTest extends IntegrationTestSupport {
 

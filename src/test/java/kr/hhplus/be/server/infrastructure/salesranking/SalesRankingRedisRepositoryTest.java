@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.infrastructure.salesranking;
 
+import kr.hhplus.be.server.domain.salesranking.SalesRankingKey;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +22,6 @@ class SalesRankingRedisRepositoryTest extends IntegrationTestSupport {
     @Autowired
     private SalesRankingRedisRepository redisRepository;
 
-    private static final String DAILY_SALES_KEY_PREFIX = "sales:daily:";
-    
     @DisplayName("상품 판매량을 ZSET에 증가시킨다.")
     @Test
     void increaseSalesCount() {
@@ -33,7 +31,8 @@ class SalesRankingRedisRepositoryTest extends IntegrationTestSupport {
 
         redisRepository.increaseSalesCount(sales);
 
-        String key = DAILY_SALES_KEY_PREFIX + LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+        LocalDate now = LocalDate.now();
+        String key = SalesRankingKey.getSalesDailyKey(now);
         Double score1 = redisTemplate.opsForZSet().score(key, "product:101");
         Double score2 = redisTemplate.opsForZSet().score(key, "product:102");
 
@@ -48,7 +47,8 @@ class SalesRankingRedisRepositoryTest extends IntegrationTestSupport {
 
         redisRepository.increaseSalesCount(sales);
 
-        String key = DAILY_SALES_KEY_PREFIX + LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+        LocalDate now = LocalDate.now();
+        String key = SalesRankingKey.getSalesDailyKey(now);
         Long ttl = redisTemplate.getExpire(key, TimeUnit.DAYS);
 
         assertThat(ttl).isGreaterThan(0L);

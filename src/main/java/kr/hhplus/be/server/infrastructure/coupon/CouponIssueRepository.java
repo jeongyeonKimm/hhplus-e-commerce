@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.infrastructure.coupon;
 
+import kr.hhplus.be.server.domain.coupon.CouponKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -10,17 +11,12 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Repository
-public class CouponRedisRepositoryImpl implements CouponRedisRepository {
-
-    private static final String REQUEST_ISSUE_COUPON_KEY = "coupon:request:%d";
-    private static final String ISSUED_COUPON_KEY = "coupon:issued:%d";
-    private static final String FAIL_COUPON_KEY = "coupon:fail:%d";
+public class CouponIssueRepository {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Override
-    public boolean addRequest(Long userId, Long couponId) {
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+    public boolean tryReserveCoupon(Long userId, Long couponId) {
+        String key = CouponKey.getCouponReserveKey(couponId);
         String value = "userId:" + userId;
         return Boolean.TRUE.equals(
                 redisTemplate.opsForZSet().add(
@@ -30,40 +26,35 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
                 ));
     }
 
-    @Override
-    public boolean isMember(Long userId, Long couponId) {
-        String key = String.format(ISSUED_COUPON_KEY, couponId);
+    public boolean isCouponIssued(Long userId, Long couponId) {
+        String key = CouponKey.getCouponSuccessIssuanceKey(couponId);
         String value = "userId:" + userId;
         return Boolean.TRUE.equals(
                 redisTemplate.opsForSet().isMember(key, value)
         );
     }
 
-    @Override
-    public Set<ZSetOperations.TypedTuple<String>> getRequests(Long couponId, int size) {
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+    public Set<ZSetOperations.TypedTuple<String>> getReservedUser(Long couponId, int size) {
+        String key = CouponKey.getCouponReserveKey(couponId);
         return redisTemplate.opsForZSet()
                 .rangeWithScores(key, 0, size - 1);
     }
 
-    @Override
-    public void deleteRequestKey(Long couponId) {
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+    public void deleteSoldCoupon(Long couponId) {
+        String key = CouponKey.getCouponReserveKey(couponId);
         redisTemplate.delete(key);
     }
 
-    @Override
-    public void addIssuedMember(Long couponId, List<Long> userIds) {
-        String key = String.format(ISSUED_COUPON_KEY, couponId);
+    public void addIssuedUser(Long couponId, List<Long> userIds) {
+        String key = CouponKey.getCouponSuccessIssuanceKey(couponId);
         userIds.forEach(userId -> {
             String value = "userId:" + userId;
             redisTemplate.opsForSet().add(key, value);
         });
     }
 
-    @Override
-    public void addFailMember(Long couponId, List<Long> userIds) {
-        String key = String.format(FAIL_COUPON_KEY, couponId);
+    public void addNotIssuedUser(Long couponId, List<Long> userIds) {
+        String key = CouponKey.getCouponFailIssuanceKey(couponId);
         userIds.forEach(userId -> {
             String value = "userId:" + userId;
             redisTemplate.opsForSet().add(key, value);

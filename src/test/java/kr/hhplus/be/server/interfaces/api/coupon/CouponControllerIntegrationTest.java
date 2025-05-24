@@ -8,7 +8,6 @@ import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.interfaces.api.coupon.dto.request.CouponIssueRequest;
-import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

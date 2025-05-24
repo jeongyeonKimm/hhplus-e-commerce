@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.interfaces.api.coupon.dto.response;
 
 import kr.hhplus.be.server.application.coupon.dto.CouponGetResult;
-import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import lombok.Getter;
 

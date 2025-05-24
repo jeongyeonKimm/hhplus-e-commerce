@@ -20,6 +20,11 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
+    public void saveAll(List<UserCoupon> userCoupons) {
+        userCouponJpaRepository.saveAll(userCoupons);
+    }
+
+    @Override
     public Optional<UserCoupon> findById(Long userCouponId) {
         return userCouponJpaRepository.findById(userCouponId);
     }
@@ -32,5 +37,10 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     @Override
     public List<UserCoupon> findByUserId(Long userId) {
         return userCouponJpaRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<UserCoupon> findByCouponId(Long couponId) {
+        return userCouponJpaRepository.findByCouponId(couponId);
     }
 }

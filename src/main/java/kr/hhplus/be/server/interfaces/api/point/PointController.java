@@ -35,7 +35,7 @@ public class PointController implements PointSpec {
 
     @PostMapping("/use")
     public ApiResponse<PointResponse> usePoint(@Valid @RequestBody PointUseRequest request) {
-        paymentFacade.payment(request.toPaymentCommand());
+        paymentFacade.pay(request.toPaymentCommand());
         return ApiResponse.successWithNoContent();
     }
 }

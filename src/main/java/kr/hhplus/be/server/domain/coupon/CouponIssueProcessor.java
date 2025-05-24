@@ -21,6 +21,7 @@ public class CouponIssueProcessor {
     private static final int BATCH_SIZE = 1000;
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
+    private final UserCouponRepository userCouponRepository;
 
     @Transactional
     public void processCouponIssuance() {
@@ -78,6 +79,12 @@ public class CouponIssueProcessor {
         }
 
         coupon.deductCount(result.getSuccessUserIds().size());
+
+        List<UserCoupon> userCoupons = result.getSuccessUserIds().stream()
+                .map(userId -> UserCoupon.of(userId, coupon.getId()))
+                .toList();
+
+        userCouponRepository.saveAll(userCoupons);
     }
 
     private long extractUserId(ZSetOperations.TypedTuple<String> request) {

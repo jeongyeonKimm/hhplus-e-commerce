@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.infrastructure.coupon;
 
+import kr.hhplus.be.server.domain.coupon.CouponKey;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,14 +11,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CouponRedisRepositoryTest extends IntegrationTestSupport {
-
-    private static final String REQUEST_ISSUE_COUPON_KEY = "coupon:request:%d";
-    private static final String ISSUED_COUPON_KEY = "coupon:issued:%d";
-    private static final String FAIL_COUPON_KEY = "coupon:fail:%d";
+class CouponIssueRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
-    private CouponRedisRepository couponRedisRepository;
+    private CouponIssueRepository couponIssueRepository;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -27,10 +24,10 @@ class CouponRedisRepositoryTest extends IntegrationTestSupport {
     void addRequest() {
         Long couponId = 1L;
 
-        couponRedisRepository.addRequest(10L, couponId);
-        couponRedisRepository.addRequest(11L, couponId);
+        couponIssueRepository.tryReserveCoupon(10L, couponId);
+        couponIssueRepository.tryReserveCoupon(11L, couponId);
 
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponReserveKey(couponId);
         List<Long> values = redisTemplate.opsForZSet()
                 .range(key, 0, 1)
                 .stream()
@@ -45,12 +42,12 @@ class CouponRedisRepositoryTest extends IntegrationTestSupport {
     void isMember() {
         Long couponId = 1L;
         Long userId = 10L;
-        String key = String.format(ISSUED_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponSuccessIssuanceKey(couponId);
         String value = "userId:" + userId;
 
         redisTemplate.opsForSet().add(key, value);
 
-        boolean isMember = couponRedisRepository.isMember(userId, couponId);
+        boolean isMember = couponIssueRepository.isCouponIssued(userId, couponId);
 
         assertThat(isMember).isTrue();
     }
@@ -59,13 +56,13 @@ class CouponRedisRepositoryTest extends IntegrationTestSupport {
     @Test
     void getRequests() {
         Long couponId = 1L;
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponReserveKey(couponId);
         redisTemplate.opsForZSet().add(key, "userId:" + 10L, System.currentTimeMillis());
         redisTemplate.opsForZSet().add(key, "userId:" + 20L, System.currentTimeMillis());
         redisTemplate.opsForZSet().add(key, "userId:" + 30L, System.currentTimeMillis());
 
         int size = 2;
-        List<Long> requestUserIds = couponRedisRepository.getRequests(couponId, size)
+        List<Long> requestUserIds = couponIssueRepository.getReservedUser(couponId, size)
                 .stream()
                 .map(request -> Long.parseLong(request.getValue().substring("userId:".length())))
                 .toList();
@@ -77,10 +74,10 @@ class CouponRedisRepositoryTest extends IntegrationTestSupport {
     @Test
     void deleteRequestKey() {
         Long couponId = 1L;
-        String key = String.format(REQUEST_ISSUE_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponReserveKey(couponId);
         redisTemplate.opsForZSet().add(key, "userId:" + 10L, System.currentTimeMillis());
 
-        couponRedisRepository.deleteRequestKey(couponId);
+        couponIssueRepository.deleteSoldCoupon(couponId);
 
         Long size = redisTemplate.opsForZSet().size(key);
 
@@ -92,9 +89,9 @@ class CouponRedisRepositoryTest extends IntegrationTestSupport {
     void addIssuedMember() {
         Long couponId = 1L;
         List<Long> userIds = List.of(10L, 20L, 30L);
-        String key = String.format(ISSUED_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponSuccessIssuanceKey(couponId);
 
-        couponRedisRepository.addIssuedMember(couponId, userIds);
+        couponIssueRepository.addIssuedUser(couponId, userIds);
 
         List<Long> issuedUserIds = redisTemplate.opsForSet().members(key)
                 .stream()
@@ -109,9 +106,9 @@ class CouponRedisRepositoryTest extends IntegrationTestSupport {
     void addFailMember() {
         Long couponId = 1L;
         List<Long> userIds = List.of(10L, 20L, 30L);
-        String key = String.format(FAIL_COUPON_KEY, couponId);
+        String key = CouponKey.getCouponFailIssuanceKey(couponId);
 
-        couponRedisRepository.addFailMember(couponId, userIds);
+        couponIssueRepository.addNotIssuedUser(couponId, userIds);
 
         List<Long> issuedUserIds = redisTemplate.opsForSet().members(key)
                 .stream()

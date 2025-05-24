@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_PRODUCT;
@@ -31,9 +29,7 @@ public class ProductService {
                 .orElseThrow(() -> new ApiException(INVALID_PRODUCT));
     }
 
-    public Map<Long, Product> getProductByIds(List<Long> productIds) {
-        List<Product> products = productRepository.findAllByIds(productIds);
-        return products.stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
+    public List<Product> getAllProductsByIds(List<Long> productIds) {
+        return productRepository.findAllByIds(productIds);
     }
 }
