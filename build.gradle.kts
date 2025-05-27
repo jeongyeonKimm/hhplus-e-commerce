@@ -53,6 +53,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	testImplementation("com.redis.testcontainers:testcontainers-redis:1.6.4")
 
+	// Kafka
+	implementation("org.springframework.kafka:spring-kafka")
+	testImplementation("org.testcontainers:kafka:1.20.1")
+
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
