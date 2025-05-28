@@ -11,6 +11,7 @@ import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderRepository;
 import kr.hhplus.be.server.domain.order.OrderStatus;
 import kr.hhplus.be.server.domain.payment.PaymentEvent;
+import kr.hhplus.be.server.domain.payment.PaymentEventPublisher;
 import kr.hhplus.be.server.domain.point.Point;
 import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -64,11 +66,11 @@ class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
     private ApplicationEvents events;
 
     @MockitoSpyBean
-    private DataPlatformSender dataPlatformSender;
+    private PaymentEventPublisher eventPublisher;
 
-    @DisplayName("결제를 하면 주문 금액을 포인트에서 차감, 주문 상태를 PAID로 변환한 뒤, 주문 이력을 외부 데이터 플랫폼에 전송한다.")
+    @DisplayName("결제를 하면 주문 금액을 포인트에서 차감, 주문 상태를 PAID로 변환한 뒤, 결제 완료 이벤트를 발행한다")
     @Test
-    void pay() throws InterruptedException {
+    void pay() {
         long initialBalance = 20000L;
         User user = userRepository.save(User.of());
         Point point = pointRepository.savePoint(Point.of(user.getId(), initialBalance));
@@ -110,6 +112,6 @@ class PaymentFacadeIntegrationTest extends IntegrationTestSupport {
         long eventCount = events.stream(PaymentEvent.Completed.class).count();
         assertThat(eventCount).isEqualTo(1);
 
-        verify(dataPlatformSender, times(1)).send(anyString());
+        verify(eventPublisher, times(1)).publish(any(PaymentEvent.Completed.class));
     }
 }

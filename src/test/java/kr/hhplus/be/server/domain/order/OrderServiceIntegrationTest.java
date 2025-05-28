@@ -6,7 +6,10 @@ import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserRepository;
+import kr.hhplus.be.server.domain.outbox.Outbox;
+import kr.hhplus.be.server.infrastructure.outbox.OutboxRepositoryImpl;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,12 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static kr.hhplus.be.server.support.event.EventStatus.SEND_SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.instancio.Select.field;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
@@ -40,6 +47,9 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private PointRepository pointRepository;
+
+    @Autowired
+    private OutboxRepositoryImpl outboxRepository;
 
     @DisplayName("사용자 ID를 이용해 주문을 생성한다.")
     @Test
@@ -153,5 +163,28 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(product1.getStock()).isEqualTo(100L);
         assertThat(product2.getStock()).isEqualTo(100L);
         assertThat(product3.getStock()).isEqualTo(100L);
+    }
+
+    @DisplayName("주문 정보를 조회하고 결제 완료 이벤트를 발행하여 아웃박스에 저장한다.")
+    @Test
+    void sendOrderData() {
+        Order order = Instancio.of(Order.class)
+                .ignore(field(Order::getId))
+                .create();
+        Order savedOrder = orderRepository.saveOrder(order);
+
+        orderService.sendOrderData(savedOrder.getId());
+
+        Outbox outbox = outboxRepository.findByAggregateId(savedOrder.getId()).orElseThrow();
+        assertThat(outbox).isNotNull();
+        assertThat(outbox.getAggregateId()).isEqualTo(savedOrder.getId());
+        assertThat(outbox.getEventType()).isEqualTo("PaymentEvent.Completed");
+
+        await()
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Outbox updatedOutbox = outboxRepository.findByAggregateId(savedOrder.getId()).orElseThrow();
+                    assertThat(updatedOutbox.getEventStatus()).isEqualTo(SEND_SUCCESS);
+                });
     }
 }
