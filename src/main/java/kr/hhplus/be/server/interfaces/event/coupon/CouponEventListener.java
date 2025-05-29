@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.domain.coupon.CouponEvent;
 import kr.hhplus.be.server.domain.coupon.CouponOutbox;
-import kr.hhplus.be.server.domain.coupon.CouponOutboxRepository;
+import kr.hhplus.be.server.domain.coupon.CouponOutboxService;
 import kr.hhplus.be.server.infrastructure.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -18,7 +18,7 @@ import static kr.hhplus.be.server.support.event.EventStatus.INIT;
 @Component
 public class CouponEventListener {
 
-    private final CouponOutboxRepository couponOutboxRepository;
+    private final CouponOutboxService couponOutboxService;
     private final KafkaProducer kafkaProducer;
     private final ObjectMapper objectMapper;
 
@@ -27,7 +27,7 @@ public class CouponEventListener {
         String payload = objectMapper.writeValueAsString(event);
 
         CouponOutbox outbox = CouponOutbox.of(event.couponId(), event.id(), event.eventType(), INIT, payload);
-        couponOutboxRepository.save(outbox);
+        couponOutboxService.save(outbox);
     }
 
     @Async

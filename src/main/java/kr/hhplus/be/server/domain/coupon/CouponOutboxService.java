@@ -39,4 +39,8 @@ public class CouponOutboxService {
                             .orElseThrow(() -> new ApiException(INVALID_OUTBOX)))
                 .toList();
     }
+
+    public void save(CouponOutbox outbox) {
+        couponOutboxRepository.save(outbox);
+    }
 }

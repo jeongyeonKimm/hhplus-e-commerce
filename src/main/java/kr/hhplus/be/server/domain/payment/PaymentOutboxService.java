@@ -36,4 +36,8 @@ public class PaymentOutboxService {
                     }
                 });
     }
+
+    public void save(PaymentOutbox outbox) {
+        paymentOutboxRepository.save(outbox);
+    }
 }

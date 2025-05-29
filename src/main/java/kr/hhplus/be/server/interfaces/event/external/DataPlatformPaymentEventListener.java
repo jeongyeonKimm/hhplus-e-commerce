@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.domain.payment.PaymentEvent;
 import kr.hhplus.be.server.domain.payment.PaymentOutbox;
-import kr.hhplus.be.server.domain.payment.PaymentOutboxRepository;
+import kr.hhplus.be.server.domain.payment.PaymentOutboxService;
 import kr.hhplus.be.server.infrastructure.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -18,7 +18,7 @@ import static kr.hhplus.be.server.support.event.EventStatus.INIT;
 @Component
 public class DataPlatformPaymentEventListener {
 
-    private final PaymentOutboxRepository paymentOutboxRepository;
+    private final PaymentOutboxService paymentOutboxService;
     private final KafkaProducer kafkaProducer;
     private final ObjectMapper objectMapper;
 
@@ -27,7 +27,7 @@ public class DataPlatformPaymentEventListener {
         String payload = objectMapper.writeValueAsString(event);
 
         PaymentOutbox outbox = PaymentOutbox.of(event.orderId(), event.id(), event.eventType(), INIT, payload);
-        paymentOutboxRepository.save(outbox);
+        paymentOutboxService.save(outbox);
     }
 
     @Async
