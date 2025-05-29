@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.coupon.CouponEvent;
 import kr.hhplus.be.server.domain.coupon.CouponIssueProcessor;
-import kr.hhplus.be.server.domain.outbox.Outbox;
-import kr.hhplus.be.server.domain.outbox.OutboxService;
+import kr.hhplus.be.server.domain.coupon.CouponOutbox;
+import kr.hhplus.be.server.domain.coupon.CouponOutboxService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,7 +21,7 @@ import static kr.hhplus.be.server.common.exception.ErrorCode.INTERNAL_SERVER_ERR
 @Component
 public class CouponConsumer {
 
-    private final OutboxService outboxService;
+    private final CouponOutboxService couponOutboxService;
     private final CouponIssueProcessor couponIssueProcessor;
     private final ObjectMapper objectMapper;
 
@@ -41,8 +41,8 @@ public class CouponConsumer {
 
             couponIssueProcessor.processCouponIssuance(events);
 
-            List<Outbox> outboxes = outboxService.getAllOutboxesByReservedEvent(events);
-            outboxes.forEach(Outbox::markAsSuccess);
+            List<CouponOutbox> outboxes = couponOutboxService.getAllByEvent(events);
+            outboxes.forEach(CouponOutbox::markAsSuccess);
 
             log.info("Kafka 메시지 수신 성공");
         } catch (Exception e) {

@@ -1,13 +1,13 @@
 package kr.hhplus.be.server.domain.order;
 
 import kr.hhplus.be.server.domain.coupon.*;
+import kr.hhplus.be.server.domain.payment.PaymentOutbox;
+import kr.hhplus.be.server.domain.payment.PaymentOutboxRepository;
 import kr.hhplus.be.server.domain.point.PointRepository;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.product.ProductRepository;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserRepository;
-import kr.hhplus.be.server.domain.outbox.Outbox;
-import kr.hhplus.be.server.infrastructure.outbox.OutboxRepositoryImpl;
 import kr.hhplus.be.server.support.IntegrationTestSupport;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
     private PointRepository pointRepository;
 
     @Autowired
-    private OutboxRepositoryImpl outboxRepository;
+    private PaymentOutboxRepository paymentOutboxRepository;
 
     @DisplayName("사용자 ID를 이용해 주문을 생성한다.")
     @Test
@@ -175,15 +175,15 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
         orderService.sendOrderData(savedOrder.getId());
 
-        Outbox outbox = outboxRepository.findByAggregateId(savedOrder.getId()).orElseThrow();
+        PaymentOutbox outbox = paymentOutboxRepository.findByOrderId(savedOrder.getId()).orElseThrow();
         assertThat(outbox).isNotNull();
-        assertThat(outbox.getAggregateId()).isEqualTo(savedOrder.getId());
+        assertThat(outbox.getOrderId()).isEqualTo(savedOrder.getId());
         assertThat(outbox.getEventType()).isEqualTo("PaymentEvent.Completed");
 
         await()
                 .atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
-                    Outbox updatedOutbox = outboxRepository.findByAggregateId(savedOrder.getId()).orElseThrow();
+                    PaymentOutbox updatedOutbox = paymentOutboxRepository.findByOrderId(savedOrder.getId()).orElseThrow();
                     assertThat(updatedOutbox.getEventStatus()).isEqualTo(SEND_SUCCESS);
                 });
     }

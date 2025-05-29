@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.application.external.DataPlatformSender;
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.common.exception.ErrorCode;
-import kr.hhplus.be.server.domain.outbox.OutboxService;
 import kr.hhplus.be.server.domain.payment.PaymentEvent;
-import kr.hhplus.be.server.domain.outbox.Outbox;
+import kr.hhplus.be.server.domain.payment.PaymentOutbox;
+import kr.hhplus.be.server.domain.payment.PaymentOutboxService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class DataPlatformConsumer {
 
-    private final OutboxService outboxService;
+    private final PaymentOutboxService paymentOutboxService;
     private final DataPlatformSender dataPlatformSender;
     private final ObjectMapper objectMapper;
 
@@ -31,7 +31,7 @@ public class DataPlatformConsumer {
             event = objectMapper.readValue(message, PaymentEvent.Completed.class);
             dataPlatformSender.send(event.toString());
 
-            Outbox outbox = outboxService.getOutbox(event);
+            PaymentOutbox outbox = paymentOutboxService.getOutbox(event);
             outbox.markAsSuccess();
 
             log.info("Kafka 메시지 수신 성공: {}", event);
