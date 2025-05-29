@@ -26,7 +26,7 @@ public class DataPlatformPaymentEventListener {
     public void saveOutbox(PaymentEvent.Completed event) throws JsonProcessingException {
         String payload = objectMapper.writeValueAsString(event);
 
-        Outbox outbox = Outbox.of(event.orderId(), event.eventType(), INIT, payload);
+        Outbox outbox = Outbox.of("order-data", event.orderId(), event.eventType(), INIT, payload);
         outboxRepository.save(outbox);
     }
 

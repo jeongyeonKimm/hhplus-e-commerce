@@ -22,6 +22,8 @@ public class Outbox extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String topic;
+
     private Long aggregateId;
 
     private String eventType;
@@ -34,7 +36,8 @@ public class Outbox extends BaseEntity {
 
     private LocalDateTime occurredAt;
 
-    private Outbox(Long aggregateId, String eventType, EventStatus eventStatus, String payload, LocalDateTime occurredAt) {
+    private Outbox(String topic, Long aggregateId, String eventType, EventStatus eventStatus, String payload, LocalDateTime occurredAt) {
+        this.topic = topic;
         this.aggregateId = aggregateId;
         this.eventType = eventType;
         this.eventStatus = eventStatus;
@@ -42,8 +45,9 @@ public class Outbox extends BaseEntity {
         this.occurredAt = occurredAt;
     }
 
-    public static Outbox of(Long aggregateId, String eventType, EventStatus eventStatus, String payload) {
+    public static Outbox of(String topic, Long aggregateId, String eventType, EventStatus eventStatus, String payload) {
         return new Outbox(
+                topic,
                 aggregateId,
                 eventType,
                 eventStatus,
