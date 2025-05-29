@@ -16,6 +16,11 @@ public class CouponOutboxRepositoryImpl implements CouponOutboxRepository {
     private final CouponOutboxJpaRepository couponOutboxJpaRepository;
 
     @Override
+    public Optional<CouponOutbox> findByCouponId(Long couponId) {
+        return couponOutboxJpaRepository.findByCouponId(couponId);
+    }
+
+    @Override
     public List<CouponOutbox> findAllByEventStatus(EventStatus eventStatus) {
         return couponOutboxJpaRepository.findAllByEventStatus(eventStatus);
     }

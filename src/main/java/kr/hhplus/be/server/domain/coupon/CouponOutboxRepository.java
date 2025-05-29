@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface CouponOutboxRepository {
 
+    Optional<CouponOutbox> findByCouponId(Long couponId);
+
     List<CouponOutbox> findAllByEventStatus(EventStatus eventStatus);
 
     Optional<CouponOutbox> findByEventId(String eventId);
