@@ -24,7 +24,7 @@ public class DataPlatformConsumer {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    @KafkaListener(topics = "order-data", groupId = "test-group")
+    @KafkaListener(topics = "order-data", groupId = "order-data-group")
     public void consume(String message) {
         PaymentEvent.Completed event  = null;
         try {

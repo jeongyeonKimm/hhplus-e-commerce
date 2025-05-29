@@ -12,4 +12,6 @@ public interface OutboxJpaRepository extends JpaRepository<Outbox, Long> {
     List<Outbox> findByEventStatus(EventStatus eventStatus);
 
     Optional<Outbox> findByAggregateId(Long aggregateId);
+
+    Optional<Outbox> findByPayload(String payload);
 }

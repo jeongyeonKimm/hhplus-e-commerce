@@ -14,7 +14,12 @@ public class OutboxScheduler {
     private final OutboxService outboxService;
 
     @Scheduled(fixedDelay = 1000)
-    public void publishOutboxEvent() {
-        outboxService.republishOutboxEvent();
+    public void publishOrderDataOutboxEvent() {
+        outboxService.republishOutboxEvent("order-data", false);
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void publishCouponOutboxEvent() {
+        outboxService.republishOutboxEvent("coupon-reserved", true);
     }
 }

@@ -30,7 +30,22 @@ public class KafkaProducer {
         }
     }
 
+    public void publish(String topic, String key, DomainEvent event) {
+        try {
+            String message = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send(topic, key, message);
+            log.info("Kafka 메시지 발행 성공: {}", event);
+        } catch (JsonProcessingException e) {
+            log.error("Kafka 메시지 발행 실패. JSON 파싱 오류: {}", event, e);
+            throw new ApiException(PARSING_ERROR);
+        }
+    }
+
     public void publish(String topic, String message) {
         kafkaTemplate.send(topic, message);
+    }
+
+    public void publish(String topic, String key, String payload) {
+        kafkaTemplate.send(topic, key, payload);
     }
 }

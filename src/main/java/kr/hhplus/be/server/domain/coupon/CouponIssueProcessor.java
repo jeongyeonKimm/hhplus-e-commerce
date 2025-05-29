@@ -1,16 +1,15 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import kr.hhplus.be.server.common.exception.ApiException;
+import kr.hhplus.be.server.common.exception.ErrorCode;
 import kr.hhplus.be.server.domain.coupon.dto.IssuanceResult;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
@@ -18,43 +17,35 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class CouponIssueProcessor {
 
-    private static final int BATCH_SIZE = 1000;
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
     private final UserCouponRepository userCouponRepository;
 
     @Transactional
-    public void processCouponIssuance() {
-        LocalDate now = LocalDate.now();
-        List<Coupon> coupons = couponRepository.findIssuableCoupons(now);
+    public void processCouponIssuance(List<CouponEvent.Reserved> events) {
+        Long couponId = events.get(0).couponId();
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new ApiException(ErrorCode.INVALID_COUPON));
 
-        for (Coupon coupon : coupons) {
-            Set<ZSetOperations.TypedTuple<String>> requests = couponRepository.getRequests(coupon.getId(), BATCH_SIZE);
-            if (requests == null || requests.isEmpty()) {
-                couponRepository.deleteRequestKey(coupon.getId());
-                continue;
-            }
-
-            IssuanceResult result = processRequests(coupon, requests);
-            saveResults(coupon, result);
-        }
+        IssuanceResult result = processRequests(coupon, events);
+        saveResults(coupon, result);
 
         log.info("[CouponIssueProcessor] 쿠폰 발급 처리가 완료되었습니다.");
     }
 
-    private IssuanceResult processRequests(Coupon coupon, Set<ZSetOperations.TypedTuple<String>> requests) {
+    private IssuanceResult processRequests(Coupon coupon, List<CouponEvent.Reserved> events) {
         IssuanceResult result = new IssuanceResult();
 
         Long issuableCount = coupon.getStock();
         AtomicLong issueCount = new AtomicLong();
 
-        for (ZSetOperations.TypedTuple<String> request : requests) {
+        for (CouponEvent.Reserved event : events) {
             if (issuableCount <= issueCount.get()) {
                 couponRepository.deleteRequestKey(coupon.getId());
                 break;
             }
 
-            Long userId = extractUserId(request);
+            Long userId = event.userId();
             userRepository.findById(userId).ifPresent(user -> {
                 try {
                     issueCount.getAndIncrement();
@@ -85,9 +76,5 @@ public class CouponIssueProcessor {
                 .toList();
 
         userCouponRepository.saveAll(userCoupons);
-    }
-
-    private long extractUserId(ZSetOperations.TypedTuple<String> request) {
-        return Long.parseLong(request.getValue().substring("userId:".length()));
     }
 }

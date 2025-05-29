@@ -29,4 +29,9 @@ public class OutboxRepositoryImpl implements OutboxRepository {
     public Optional<Outbox> findByAggregateId(Long aggregateId) {
         return outboxJpaRepository.findByAggregateId(aggregateId);
     }
+
+    @Override
+    public Optional<Outbox> findByPayload(String payload) {
+        return outboxJpaRepository.findByPayload(payload);
+    }
 }
