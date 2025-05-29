@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.application.payment;
 
-import kr.hhplus.be.server.application.external.DataPlatformSender;
 import kr.hhplus.be.server.application.order.OrderFacade;
 import kr.hhplus.be.server.application.order.dto.OrderCreateCommand;
 import kr.hhplus.be.server.application.order.dto.OrderProductInfo;
@@ -31,7 +30,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

@@ -3,7 +3,6 @@ package kr.hhplus.be.server.domain.order;
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.payment.PaymentEvent;
 import kr.hhplus.be.server.domain.payment.PaymentEventPublisher;
-import kr.hhplus.be.server.domain.user.UserService;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,12 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_ORDER;
-import static kr.hhplus.be.server.common.exception.ErrorCode.INVALID_USER;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
