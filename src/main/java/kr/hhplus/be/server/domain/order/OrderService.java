@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.order;
 
-import kr.hhplus.be.server.application.external.dto.OrderData;
 import kr.hhplus.be.server.common.exception.ApiException;
 import kr.hhplus.be.server.domain.coupon.UserCoupon;
 import kr.hhplus.be.server.domain.payment.PaymentEvent;
@@ -64,14 +63,15 @@ public class OrderService {
         orderRepository.saveOrder(order);
     }
 
+    @Transactional
     public void sendOrderData(Long orderId) {
         Order order = orderRepository.findOrderById(orderId)
                 .orElseThrow(() -> new ApiException(INVALID_ORDER));
 
         List<OrderProduct> orderProducts = orderRepository.findOrderProductsByOrderId(orderId);
 
-        OrderData orderData = OrderData.from(order, orderProducts);
-        paymentEventPublisher.publish(PaymentEvent.Completed.from(orderData));
+        PaymentEvent.Completed event = PaymentEvent.Completed.from(order, orderProducts);
+        paymentEventPublisher.publish(event);
     }
 
     public Order getOrder(Long orderId) {

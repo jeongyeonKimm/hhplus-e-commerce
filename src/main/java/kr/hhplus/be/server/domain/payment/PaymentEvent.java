@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.domain.payment;
 
-import kr.hhplus.be.server.application.external.dto.OrderData;
-import kr.hhplus.be.server.application.external.dto.OrderProductData;
+import kr.hhplus.be.server.domain.order.Order;
+import kr.hhplus.be.server.domain.order.OrderProduct;
+import kr.hhplus.be.server.support.event.DomainEvent;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class PaymentEvent {
@@ -13,17 +15,26 @@ public class PaymentEvent {
             Long userCouponId,
             Boolean isCouponApplied,
             Long totalAmount,
-            List<OrderProductData> orderProducts
-    ) {
-        public static Completed from(OrderData orderData) {
+            List<OrderProduct> orderProducts,
+            LocalDateTime payCompletedAt,
+            LocalDateTime createdAt
+    ) implements DomainEvent {
+        public static Completed from(Order order, List<OrderProduct> orderProducts) {
             return new Completed(
-                    orderData.getOrderId(),
-                    orderData.getUserId(),
-                    orderData.getUserCouponId(),
-                    orderData.getIsCouponApplied(),
-                    orderData.getTotalAmount(),
-                    orderData.getOrderProducts()
+                    order.getId(),
+                    order.getUserId(),
+                    order.getUserCouponId(),
+                    order.getIsCouponApplied(),
+                    order.getTotalAmount(),
+                    orderProducts,
+                    order.getCreatedAt(),
+                    LocalDateTime.now()
             );
+        }
+
+        @Override
+        public Long aggregateId() {
+            return this.orderId;
         }
     }
 }

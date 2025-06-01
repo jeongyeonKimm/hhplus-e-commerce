@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.application.external.dto.OrderProductData;
 import kr.hhplus.be.server.domain.BaseEntity;
 import kr.hhplus.be.server.domain.product.Product;
 import lombok.AccessLevel;
@@ -44,10 +43,6 @@ public class OrderProduct extends BaseEntity {
                 product.getPrice(),
                 quantity
         );
-    }
-
-    public OrderProductData toData() {
-        return OrderProductData.of(productId, price, getQuantity());
     }
 
     public Long getTotalPrice() {
