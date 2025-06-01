@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,12 +46,14 @@ class CouponIssueProcessorTest extends IntegrationTestSupport {
                 10L);
         Coupon savedCoupon = couponRepository.save(coupon);
 
-        for (int i = 0; i < 10; i++) {
-            User user = userRepository.save(User.of());
-            couponRepository.requestIssuance(user.getId(), savedCoupon.getId());
-        }
+        List<CouponEvent.Reserved> events = IntStream.range(0, 10)
+                .mapToObj(i -> {
+                    User user = userRepository.save(User.of());
+                    return CouponEvent.Reserved.from(savedCoupon.getId(), user.getId());
+                })
+                .toList();
 
-        couponIssueProcessor.processCouponIssuance();
+        couponIssueProcessor.processCouponIssuance(events);
 
         Coupon issuedCoupon = couponRepository.findById(savedCoupon.getId()).orElseThrow();
         assertThat(issuedCoupon.getStock()).isZero();
@@ -79,7 +82,14 @@ class CouponIssueProcessorTest extends IntegrationTestSupport {
             couponRepository.requestIssuance(user.getId(), savedCoupon.getId());
         }
 
-        couponIssueProcessor.processCouponIssuance();
+        List<CouponEvent.Reserved> events = IntStream.range(0, 10)
+                .mapToObj(i -> {
+                    User user = userRepository.save(User.of());
+                    return CouponEvent.Reserved.from(savedCoupon.getId(), user.getId());
+                })
+                .toList();
+
+        couponIssueProcessor.processCouponIssuance(events);
 
         Coupon issuedCoupon = couponRepository.findById(savedCoupon.getId()).orElseThrow();
         assertThat(issuedCoupon.getStock()).isZero();

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.outbox;
+package kr.hhplus.be.server.domain.coupon;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.BaseEntity;
@@ -14,15 +14,17 @@ import static kr.hhplus.be.server.support.event.EventStatus.SEND_SUCCESS;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "outbox")
+@Table(name = "coupon_outbox")
 @Entity
-public class Outbox extends BaseEntity {
+public class CouponOutbox extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long aggregateId;
+    private Long couponId;
+
+    private String eventId;
 
     private String eventType;
 
@@ -34,17 +36,19 @@ public class Outbox extends BaseEntity {
 
     private LocalDateTime occurredAt;
 
-    private Outbox(Long aggregateId, String eventType, EventStatus eventStatus, String payload, LocalDateTime occurredAt) {
-        this.aggregateId = aggregateId;
+    private CouponOutbox(Long couponId, String eventId, String eventType, EventStatus eventStatus, String payload, LocalDateTime occurredAt) {
+        this.couponId = couponId;
+        this.eventId = eventId;
         this.eventType = eventType;
         this.eventStatus = eventStatus;
         this.payload = payload;
         this.occurredAt = occurredAt;
     }
 
-    public static Outbox of(Long aggregateId, String eventType, EventStatus eventStatus, String payload) {
-        return new Outbox(
-                aggregateId,
+    public static CouponOutbox of(Long couponId, String eventId, String eventType, EventStatus eventStatus, String payload) {
+        return new CouponOutbox(
+                couponId,
+                eventId,
                 eventType,
                 eventStatus,
                 payload,

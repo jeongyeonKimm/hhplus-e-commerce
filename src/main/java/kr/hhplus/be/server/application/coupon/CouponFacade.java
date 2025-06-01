@@ -20,8 +20,8 @@ public class CouponFacade {
         couponService.issueCoupon(command.getUserId(), command.getCouponId());
     }
 
-    public boolean requestIssueCoupon(CouponIssueCommand command) {
-        return couponService.requestCouponIssuance(command.getUserId(), command.getCouponId());
+    public void requestIssueCoupon(CouponIssueCommand command) {
+        couponService.requestCouponIssuance(command.getUserId(), command.getCouponId());
     }
 
     public CouponGetResult getCoupons(CouponGetCommand command) {

@@ -21,6 +21,7 @@ public class CouponService {
 
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
+    private final CouponEventPublisher couponEventPublisher;
 
     @DistributedLock(key = "'coupon:' + #couponId", type = LockType.PUB_SUB_LOCK)
     public void issueCoupon(Long userId, Long couponId) {
@@ -43,7 +44,7 @@ public class CouponService {
     }
 
     @Transactional
-    public boolean requestCouponIssuance(Long userId, Long couponId) {
+    public void requestCouponIssuance(Long userId, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ApiException(INVALID_COUPON));
 
@@ -53,7 +54,8 @@ public class CouponService {
             throw new ApiException(COUPON_ALREADY_ISSUED);
         }
 
-        return couponRepository.requestIssuance(userId, couponId);
+        CouponEvent.Reserved event = CouponEvent.Reserved.from(couponId, userId);
+        couponEventPublisher.publish(event);
     }
 
     public List<UserCoupon> getCoupons(Long userId) {
