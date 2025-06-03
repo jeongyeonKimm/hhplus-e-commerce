@@ -133,7 +133,7 @@ public class DummyDataService {
     }
 
     private void insertPoints(long batchNumber) {
-        String sql = "INSERT INTO point (id, user_id, balance, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO point (id, user_id, balance, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
 
         List<Object[]> batchParams = new ArrayList<>();
 
@@ -144,7 +144,7 @@ public class DummyDataService {
 
         for (long i = start; i < end; i++) {
             long balance = random.nextInt(1_000_001);
-            batchParams.add(new Object[]{i, i, balance, 0, now, now});
+            batchParams.add(new Object[]{i, i, balance, now, now});
         }
 
         jdbcTemplate.batchUpdate(sql, batchParams);
