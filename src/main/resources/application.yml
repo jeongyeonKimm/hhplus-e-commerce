@@ -24,7 +24,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: kafka:9094
     properties:
       request.timeout.ms: 20000
       retry.backoff.ms: 500
@@ -51,11 +51,20 @@ spring.config.activate.on-profile: local, test
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3307/hhplus?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
+    url: jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
     username: application
     password: application
 
   data:
     redis:
-      host: localhost
-      port: 6380
+      host: redis
+      port: 6379
+
+  kafka:
+    bootstrap-servers: kafka:9094
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
