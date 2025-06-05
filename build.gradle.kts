@@ -57,6 +57,10 @@ dependencies {
 	implementation("org.springframework.kafka:spring-kafka")
 	testImplementation("org.testcontainers:kafka:1.20.1")
 
+	// Monitoring
+	implementation ("org.springframework.boot:spring-boot-starter-actuator")
+	implementation ("io.micrometer:micrometer-registry-prometheus")
+
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 

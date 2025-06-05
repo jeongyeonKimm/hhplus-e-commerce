@@ -11,7 +11,7 @@ public class PaymentOutboxScheduler {
 
     private final PaymentOutboxService paymentOutboxService;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 5000)
     public void publishOrderDataOutboxEvent() {
         paymentOutboxService.republishOutboxEvent();
     }

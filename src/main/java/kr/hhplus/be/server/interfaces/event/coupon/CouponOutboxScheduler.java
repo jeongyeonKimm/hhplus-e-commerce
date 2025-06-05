@@ -11,7 +11,7 @@ public class CouponOutboxScheduler {
 
     private final CouponOutboxService couponOutboxService;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 5000)
     public void publishCouponOutboxEvent() {
         couponOutboxService.republishCouponOutbox();
     }
